@@ -1,0 +1,111 @@
+import express from 'express';
+import { body, validationResult } from 'express-validator';
+import { auth, requireRole } from '../middleware/auth.js';
+import User from '../models/User.js';
+
+const router = express.Router();
+
+// Get all users (Super Admin only)
+router.get('/', auth, requireRole(['SUPER_ADMIN']), async (req, res) => {
+  try {
+    const users = await User.find().select('-password');
+    res.json(users);
+  } catch (error) {
+    res.status(500).json({ message: 'Server error' });
+  }
+});
+
+// Create new user (Super Admin only)
+router.post('/', [
+  auth,
+  requireRole(['SUPER_ADMIN']),
+  body('name').notEmpty(),
+  body('email').isEmail(),
+  body('password').isLength({ min: 6 }),
+  body('role').isIn(['SUPER_ADMIN', 'PANEL_ADMIN'])
+], async (req, res) => {
+  try {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({ errors: errors.array() });
+    }
+
+    const { name, email, password, role } = req.body;
+    const userExists = await User.findOne({ email });
+
+    if (userExists) {
+      return res.status(400).json({ message: 'User already exists' });
+    }
+
+    const user = new User({
+      name,
+      email,
+      password,
+      role
+    });
+
+    await user.save();
+    const { password: _, ...userResponse } = user.toObject();
+    res.status(201).json(userResponse);
+  } catch (error) {
+    res.status(500).json({ message: 'Server error' });
+  }
+});
+
+// Update user
+router.put('/:id', [
+  auth,
+  requireRole(['SUPER_ADMIN']),
+  body('name').optional().notEmpty(),
+  body('email').optional().isEmail(),
+  body('role').optional().isIn(['SUPER_ADMIN', 'PANEL_ADMIN'])
+], async (req, res) => {
+  try {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({ errors: errors.array() });
+    }
+
+    const { name, email, role } = req.body;
+    const user = await User.findById(req.params.id);
+
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    if (email && email !== user.email) {
+      const emailExists = await User.findOne({ email });
+      if (emailExists) {
+        return res.status(400).json({ message: 'Email already in use' });
+      }
+    }
+
+    user.name = name || user.name;
+    user.email = email || user.email;
+    user.role = role || user.role;
+
+    await user.save();
+    const { password: _, ...userResponse } = user.toObject();
+    res.json(userResponse);
+  } catch (error) {
+    res.status(500).json({ message: 'Server error' });
+  }
+});
+
+// Deactivate user
+router.delete('/:id', auth, requireRole(['SUPER_ADMIN']), async (req, res) => {
+  try {
+    const user = await User.findById(req.params.id);
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    user.isActive = false;
+    await user.save();
+    res.json({ message: 'User deactivated successfully' });
+  } catch (error) {
+    res.status(500).json({ message: 'Server error' });
+  }
+});
+
+export default router;
