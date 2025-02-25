@@ -1,14 +1,8 @@
 import React from 'react';
 import { Save } from 'lucide-react';
 import { WalletCard } from './WalletCard';
-import { BlockchainWallet, WalletSettings } from '../../types/settings';
 
-interface WalletSectionProps {
-  walletSettings: WalletSettings;
-  onWalletChange: (network: string, type: string, wallet: BlockchainWallet) => void;
-  onSave: () => void;
-  onRefreshBalance: (network: string, type: string) => void;
-}
+
 
 const ADDRESS_FORMATS = {
   ethereum: {
@@ -38,7 +32,7 @@ export function WalletSection({
   onWalletChange,
   onSave,
   onRefreshBalance
-}: WalletSectionProps) {
+}) {
   return (
     <div className="space-y-6">
       {Object.entries(walletSettings).map(([network, wallets]) => (
@@ -51,7 +45,7 @@ export function WalletSection({
               wallet={wallet}
               onAddressChange={(address) => onWalletChange(network, type, { ...wallet, address })}
               onRefreshBalance={() => onRefreshBalance(network, type)}
-              addressFormat={ADDRESS_FORMATS[network as keyof typeof ADDRESS_FORMATS]}
+              addressFormat={ADDRESS_FORMATS[network ]}
             />
           ))}
         </div>
@@ -59,7 +53,7 @@ export function WalletSection({
 
       <button
         onClick={onSave}
-        className="w-full px-4 py-2 bg-gradient-to-r from-orange-400 to-green-400 text-white rounded-lg hover:from-orange-500 hover:to-green-500 transition-all flex items-center justify-center space-x-2"
+        className="w-full px-4 py-2 bg-gradient-to-r from-blue-400 to-white 400 text-white rounded-lg hover:from-blue-500 hover:to-white 500 transition-all flex items-center justify-center space-x-2"
       >
         <Save className="w-4 h-4" />
         <span>Save Changes</span>

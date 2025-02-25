@@ -17,7 +17,7 @@ export function Dashboard() {
           change="+12.5%"
           isPositive={true}
           icon={Wallet}
-          color="bg-green-500/10 text-green-500"
+          color="bg-blue-500/10  text-white"
         />
         <StatCard
           title="Active Casinos"
@@ -25,7 +25,7 @@ export function Dashboard() {
           change="+3"
           isPositive={true}
           icon={Building2}
-          color="bg-orange-500/10 text-orange-500"
+          color="bg-blue-500/10 text-blue-500"
         />
         <StatCard
           title="Pending Transactions"
@@ -65,7 +65,7 @@ export function Dashboard() {
                   <td className="py-3">Casino Royal</td>
                   <td className="py-3">$1,234.56</td>
                   <td className="py-3">
-                    <span className="px-2 py-1 rounded-full text-xs bg-green-500/20 text-green-500">
+                    <span className="px-2 py-1 rounded-full text-xs bg-green-400 text-black 500">
                       Completed
                     </span>
                   </td>
@@ -80,16 +80,8 @@ export function Dashboard() {
   );
 }
 
-interface StatCardProps {
-  title: string;
-  value: string;
-  change: string;
-  isPositive: boolean;
-  icon: React.ElementType;
-  color: string;
-}
 
-function StatCard({ title, value, change, isPositive, icon: Icon, color }: StatCardProps) {
+function StatCard({ title, value, change, isPositive, icon: Icon, color }) {
   return (
     <div className="bg-gray-800 rounded-lg p-6">
       <div className="flex justify-between items-start">
@@ -103,11 +95,11 @@ function StatCard({ title, value, change, isPositive, icon: Icon, color }: StatC
       </div>
       <div className="flex items-center mt-4">
         {isPositive ? (
-          <ArrowUpRight className="w-4 h-4 text-green-500" />
+          <ArrowUpRight className="w-4 h-4 text-white 500" />
         ) : (
           <ArrowDownRight className="w-4 h-4 text-red-500" />
         )}
-        <span className={`ml-1 ${isPositive ? 'text-green-500' : 'text-red-500'}`}>
+        <span className={`ml-1 ${isPositive ? 'text-white 500' : 'text-red-500'}`}>
           {change}
         </span>
       </div>

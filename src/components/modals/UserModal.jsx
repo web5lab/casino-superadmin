@@ -1,17 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { X } from 'lucide-react';
-import { User, UserRole } from '../../types/auth';
 
-interface UserModalProps {
-  isOpen: boolean;
-  onClose: () => void;
-  onSubmit: (user: Partial<User>) => void;
-  user?: User;
-  mode: 'create' | 'edit';
-}
 
-export function UserModal({ isOpen, onClose, onSubmit, user, mode }: UserModalProps) {
-  const [formData, setFormData] = useState<Partial<User>>({
+export function UserModal({ isOpen, onClose, onSubmit, user, mode }) {
+  const [formData, setFormData] = useState({
     name: '',
     email: '',
     role: 'PANEL_ADMIN'
@@ -23,7 +15,7 @@ export function UserModal({ isOpen, onClose, onSubmit, user, mode }: UserModalPr
     }
   }, [user, mode]);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = (e) => {
     e.preventDefault();
     onSubmit(formData);
     onClose();
@@ -51,7 +43,7 @@ export function UserModal({ isOpen, onClose, onSubmit, user, mode }: UserModalPr
               required
               value={formData.name || ''}
               onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-              className="w-full px-4 py-2 bg-gray-900 border border-gray-700 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-orange-300"
+              className="w-full px-4 py-2 bg-gray-900 border border-gray-700 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-blue-300"
               placeholder="Enter user's name"
             />
           </div>
@@ -63,7 +55,7 @@ export function UserModal({ isOpen, onClose, onSubmit, user, mode }: UserModalPr
               required
               value={formData.email || ''}
               onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-              className="w-full px-4 py-2 bg-gray-900 border border-gray-700 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-orange-300"
+              className="w-full px-4 py-2 bg-gray-900 border border-gray-700 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-blue-300"
               placeholder="Enter email address"
             />
           </div>
@@ -73,8 +65,8 @@ export function UserModal({ isOpen, onClose, onSubmit, user, mode }: UserModalPr
             <select
               required
               value={formData.role || 'PANEL_ADMIN'}
-              onChange={(e) => setFormData({ ...formData, role: e.target.value as UserRole })}
-              className="w-full px-4 py-2 bg-gray-900 border border-gray-700 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-orange-300"
+              onChange={(e) => setFormData({ ...formData, role: e.target.value  })}
+              className="w-full px-4 py-2 bg-gray-900 border border-gray-700 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-blue-300"
             >
               <option value="PANEL_ADMIN">Panel Admin</option>
               <option value="SUPER_ADMIN">Super Admin</option>
@@ -87,7 +79,7 @@ export function UserModal({ isOpen, onClose, onSubmit, user, mode }: UserModalPr
               <input
                 type="password"
                 required
-                className="w-full px-4 py-2 bg-gray-900 border border-gray-700 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-orange-300"
+                className="w-full px-4 py-2 bg-gray-900 border border-gray-700 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-blue-300"
                 placeholder="Enter initial password"
               />
               <p className="mt-1 text-sm text-gray-400">
@@ -106,7 +98,7 @@ export function UserModal({ isOpen, onClose, onSubmit, user, mode }: UserModalPr
             </button>
             <button
               type="submit"
-              className="px-4 py-2 bg-gradient-to-r from-orange-400 to-green-400 text-white rounded-lg hover:from-orange-500 hover:to-green-500 transition-all"
+              className="px-4 py-2 bg-gradient-to-r from-blue-400 to-white 400 text-white rounded-lg hover:from-blue-500 hover:to-white 500 transition-all"
             >
               {mode === 'create' ? 'Create User' : 'Save Changes'}
             </button>

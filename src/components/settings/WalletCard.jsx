@@ -1,18 +1,5 @@
 import React from 'react';
 import { Copy, RefreshCw } from 'lucide-react';
-import { BlockchainWallet } from '../../types/settings';
-
-interface WalletCardProps {
-  title: string;
-  wallet: BlockchainWallet;
-  onAddressChange: (address: string) => void;
-  onRefreshBalance: () => void;
-  addressFormat: {
-    regex: RegExp;
-    placeholder: string;
-    example: string;
-  };
-}
 
 export function WalletCard({ 
   title, 
@@ -20,8 +7,8 @@ export function WalletCard({
   onAddressChange, 
   onRefreshBalance,
   addressFormat 
-}: WalletCardProps) {
-  const handleAddressChange = (newAddress: string) => {
+}) {
+  const handleAddressChange = (newAddress) => {
     if (newAddress && !addressFormat.regex.test(newAddress)) {
       return; // Invalid format
     }
@@ -39,7 +26,7 @@ export function WalletCard({
               type="text"
               value={wallet.address}
               onChange={(e) => handleAddressChange(e.target.value)}
-              className="flex-1 px-2 py-1 bg-gray-900 border border-gray-700 rounded text-white text-sm font-mono focus:outline-none focus:ring-2 focus:ring-orange-300"
+              className="flex-1 px-2 py-1 bg-gray-900 border border-gray-700 rounded text-white text-sm font-mono focus:outline-none focus:ring-2 focus:ring-blue-300"
               placeholder={addressFormat.placeholder}
             />
             <button 

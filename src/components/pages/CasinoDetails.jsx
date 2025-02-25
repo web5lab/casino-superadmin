@@ -12,7 +12,6 @@ import {
   XCircle,
   BarChart3
 } from 'lucide-react';
-import { Casino } from '../../types/auth';
 
 const mockCasinoDetails = {
   id: 'casino1',
@@ -70,7 +69,7 @@ export function CasinoDetails() {
           <p className="text-gray-400">ID: {casino.id}</p>
         </div>
         <span className={`px-3 py-1 rounded-full text-sm ${
-          casino.status === 'active' ? 'bg-green-500/20 text-green-500' : 'bg-red-500/20 text-red-500'
+          casino.status === 'active' ? 'bg-white 500/20 text-white 500' : 'bg-red-500/20 text-red-500'
         }`}>
           {casino.status.toUpperCase()}
         </span>
@@ -82,14 +81,14 @@ export function CasinoDetails() {
           value={`$${casino.analytics.totalVolume.toLocaleString()}`}
           change="+15.3%"
           icon={DollarSign}
-          color="bg-green-500/10 text-green-500"
+          color="bg-white 500/10 text-white 500"
         />
         <StatCard
           title="Total Fees Earned"
           value={`$${casino.analytics.totalFees.toLocaleString()}`}
           change="+8.2%"
           icon={TrendingUp}
-          color="bg-orange-500/10 text-orange-500"
+          color="bg-blue-500/10 text-blue-500"
         />
         <StatCard
           title="Active Users"
@@ -123,7 +122,7 @@ export function CasinoDetails() {
             {casino.analytics.volumeByDay.map((day) => (
               <div key={day.day} className="flex-1 flex flex-col items-center">
                 <div 
-                  className="w-full bg-orange-500/20 rounded-t-lg hover:bg-orange-500/30 transition-colors"
+                  className="w-full bg-blue-500/20 rounded-t-lg hover:bg-blue-500/30 transition-colors"
                   style={{ 
                     height: `${(day.volume / Math.max(...casino.analytics.volumeByDay.map(d => d.volume))) * 100}%` 
                   }}
@@ -142,7 +141,7 @@ export function CasinoDetails() {
               <div key={index} className="flex items-center justify-between p-3 bg-gray-700/50 rounded-lg">
                 <div className="flex items-center space-x-3">
                   {activity.type === 'deposit' ? (
-                    <TrendingUp className="w-5 h-5 text-green-500" />
+                    <TrendingUp className="w-5 h-5 text-white 500" />
                   ) : (
                     <TrendingDown className="w-5 h-5 text-red-500" />
                   )}
@@ -154,7 +153,7 @@ export function CasinoDetails() {
                 <div className="text-right">
                   <p className="text-white">${activity.amount.toLocaleString()}</p>
                   <p className={`text-sm ${
-                    activity.status === 'completed' ? 'text-green-500' : 'text-red-500'
+                    activity.status === 'completed' ? 'text-white 500' : 'text-red-500'
                   }`}>
                     {activity.status}
                   </p>
@@ -251,15 +250,8 @@ export function CasinoDetails() {
   );
 }
 
-interface StatCardProps {
-  title: string;
-  value: string;
-  change: string;
-  icon: React.ElementType;
-  color: string;
-}
 
-function StatCard({ title, value, change, icon: Icon, color }: StatCardProps) {
+function StatCard({ title, value, change, icon: Icon, color }) {
   return (
     <div className="bg-gray-800 rounded-lg p-6">
       <div className="flex justify-between items-start">
@@ -272,20 +264,15 @@ function StatCard({ title, value, change, icon: Icon, color }: StatCardProps) {
         </div>
       </div>
       <div className="flex items-center mt-4">
-        <TrendingUp className="w-4 h-4 text-green-500" />
-        <span className="ml-1 text-green-500">{change}</span>
+        <TrendingUp className="w-4 h-4 text-white 500" />
+        <span className="ml-1 text-white 500">{change}</span>
       </div>
     </div>
   );
 }
 
-interface MetricItemProps {
-  label: string;
-  value: string;
-  icon: React.ElementType;
-}
 
-function MetricItem({ label, value, icon: Icon }: MetricItemProps) {
+function MetricItem({ label, value, icon: Icon }) {
   return (
     <div className="flex items-center justify-between p-3 bg-gray-700/50 rounded-lg">
       <div className="flex items-center space-x-3">
@@ -297,19 +284,13 @@ function MetricItem({ label, value, icon: Icon }: MetricItemProps) {
   );
 }
 
-interface ApiStatusItemProps {
-  label: string;
-  status: 'operational' | 'warning' | 'error';
-  endpoint: string;
-}
-
-function ApiStatusItem({ label, status, endpoint }: ApiStatusItemProps) {
+function ApiStatusItem({ label, status, endpoint }) {
   return (
     <div className="p-3 bg-gray-700/50 rounded-lg">
       <div className="flex items-center justify-between mb-2">
         <span className="text-gray-400">{label}</span>
         <span className={`flex items-center ${
-          status === 'operational' ? 'text-green-500' :
+          status === 'operational' ? 'text-white 500' :
           status === 'warning' ? 'text-yellow-500' :
           'text-red-500'
         }`}>

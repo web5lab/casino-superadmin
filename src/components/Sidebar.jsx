@@ -10,13 +10,10 @@ import {
   History,
   LogOut
 } from 'lucide-react';
-import { User } from '../types/auth';
 
-interface SidebarProps {
-  currentUser: User;
-}
 
-export function Sidebar({ currentUser }: SidebarProps) {
+
+export function Sidebar({ currentUser }) {
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -41,7 +38,7 @@ export function Sidebar({ currentUser }: SidebarProps) {
             onClick={() => navigate(item.path)}
             className={`flex items-center space-x-3 w-full p-3 rounded-lg transition-colors ${
               isActive 
-                ? 'bg-gray-700 text-orange-300' 
+                ? 'bg-gray-700 text-blue-300' 
                 : 'hover:bg-gray-700/50'
             }`}
           >

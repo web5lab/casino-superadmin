@@ -1,9 +1,8 @@
 import React from 'react';
 import { useState } from 'react';
-import { Transaction } from '../../types/auth';
 import { Search, Filter } from 'lucide-react';
 
-const mockTransactions: Transaction[] = [
+const mockTransactions = [
   {
     id: 'tx1',
     amount: 1234.56,
@@ -35,7 +34,7 @@ export function Transactions() {
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               placeholder="Search transactions..."
-              className="w-full sm:w-64 pl-10 pr-4 py-2 bg-gray-800 border border-gray-700 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-orange-300"
+              className="w-full sm:w-64 pl-10 pr-4 py-2 bg-gray-800 border border-gray-700 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-blue-300"
             />
           </div>
           <div className="relative flex-1 sm:flex-initial">
@@ -45,7 +44,7 @@ export function Transactions() {
           <select 
             value={statusFilter}
             onChange={(e) => setStatusFilter(e.target.value)}
-            className="w-full sm:w-48 pl-10 pr-4 py-2 bg-gray-800 border border-gray-700 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-orange-300"
+            className="w-full sm:w-48 pl-10 pr-4 py-2 bg-gray-800 border border-gray-700 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-blue-300"
           >
             <option value="all">All Status</option>
             <option value="completed">Completed</option>
@@ -80,7 +79,7 @@ export function Transactions() {
                     <td className="p-4">{tx.currency}</td>
                     <td className="p-4">
                       <span className={`px-2 py-1 rounded-full text-xs ${
-                        tx.status === 'completed' ? 'bg-green-500/20 text-green-500' :
+                        tx.status === 'completed' ? 'bg-green-400 text-black 500' :
                         tx.status === 'pending' ? 'bg-yellow-500/20 text-yellow-500' :
                         'bg-red-500/20 text-red-500'
                       }`}>
@@ -108,7 +107,7 @@ export function Transactions() {
                 </div>
                 <div>
                     <span className={`px-2 py-1 rounded-full text-xs ${
-                      tx.status === 'completed' ? 'bg-green-500/20 text-green-500' :
+                      tx.status === 'completed' ? 'bg-white 500/20 text-white 500' :
                       tx.status === 'pending' ? 'bg-yellow-500/20 text-yellow-500' :
                       'bg-red-500/20 text-red-500'
                     }`}>

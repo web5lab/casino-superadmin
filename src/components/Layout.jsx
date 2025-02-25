@@ -10,14 +10,8 @@ import { Currencies } from './pages/Currencies';
 import { Users } from './pages/Users';
 import { History } from './pages/History';
 import { Settings } from './pages/Settings';
-import { User } from '../types/auth';
 
-interface LayoutProps {
-  children: React.ReactNode;
-  user: User;
-}
-
-export function Layout({ user }: LayoutProps) {
+export function Layout({ user }) {
   return (
     <div className="min-h-screen bg-gray-900">
       <TopBar user={user} />
@@ -40,3 +34,5 @@ export function Layout({ user }: LayoutProps) {
     </div>
   );
 }
+
+

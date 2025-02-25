@@ -11,28 +11,21 @@ import {
   Save
 } from 'lucide-react';
 import { WalletSection } from '../settings/WalletSection';
-import type {
-  SecuritySettings,
-  NotificationSettings,
-  PaymentSettings,
-  WalletSettings,
-  BlockchainWallet
-} from '../../types/settings';
 
 export function Settings() {
-  const [securitySettings, setSecuritySettings] = useState<SecuritySettings>({
+  const [securitySettings, setSecuritySettings] = useState({
     twoFactorEnabled: false,
     sessionTimeout: 30,
     passwordLastChanged: new Date().toISOString()
   });
 
-  const [notificationSettings, setNotificationSettings] = useState<NotificationSettings>({
+  const [notificationSettings, setNotificationSettings] = useState({
     emailEnabled: true,
     pushEnabled: false,
     transactionThreshold: 1000
   });
 
-  const [paymentSettings, setPaymentSettings] = useState<PaymentSettings>({
+  const [paymentSettings, setPaymentSettings] = useState({
     dailyLimit: 10000,
     monthlyLimit: 100000,
     autoApprovalLimit: 1000
@@ -43,22 +36,22 @@ export function Settings() {
   const [confirmPassword, setConfirmPassword] = useState('');
   const [passwordError, setPasswordError] = useState('');
   const [showPasswordModal, setShowPasswordModal] = useState(false);
-  const [saveSuccess, setSaveSuccess] = useState<string | null>(null);
+  const [saveSuccess, setSaveSuccess] = useState(null);
 
-  const [walletSettings, setWalletSettings] = useState<WalletSettings>({
+  const [walletSettings, setWalletSettings] = useState({
     ethereum: {
       adminWallet: {
         address: '0x742d35Cc6634C0532925a3b844Bc454e4438f44e',
         balance: 25000.50,
         extraInfo: {
-          'Total Fees Collected': { amount: 1234.56, color: 'text-green-500' }
+          'Total Fees Collected': { amount: 1234.56, color: 'text-white 500' }
         }
       },
       fundingWallet: {
         address: '0x123f681646d4a755815f9cb19e1acc8565a0c2ac',
         balance: 5000.75,
         extraInfo: {
-          'Total Gas Spent': { amount: 456.78, color: 'text-orange-500' }
+          'Total Gas Spent': { amount: 456.78, color: 'text-blue-500' }
         }
       }
     },
@@ -67,14 +60,14 @@ export function Settings() {
         address: '7xKXtg2CW87d97TXJSDpbD5jBkheTqA83TZRuJosgAsU',
         balance: 15000.25,
         extraInfo: {
-          'Total Fees Collected': { amount: 890.12, color: 'text-green-500' }
+          'Total Fees Collected': { amount: 890.12, color: 'text-white 500' }
         }
       },
       fundingWallet: {
         address: '3Kz9QYZgSEqXWzbCaEy9thgFd8UJFMkf8QWL6tzeqNT3',
         balance: 3000.50,
         extraInfo: {
-          'Total Gas Spent': { amount: 234.56, color: 'text-orange-500' }
+          'Total Gas Spent': { amount: 234.56, color: 'text-blue-500' }
         }
       }
     },
@@ -83,14 +76,14 @@ export function Settings() {
         address: 'bc1qxy2kgdygjrsqtzq2n0yrf2493p83kkfjhx0wlh',
         balance: 45000.75,
         extraInfo: {
-          'Total Fees Collected': { amount: 2345.67, color: 'text-green-500' }
+          'Total Fees Collected': { amount: 2345.67, color: 'text-white 500' }
         }
       },
       fundingWallet: {
         address: '1A1zP1eP5QGefi2DMPTfTL5SLmv7DivfNa',
         balance: 8000.25,
         extraInfo: {
-          'Network Fees': { amount: 789.12, color: 'text-orange-500' }
+          'Network Fees': { amount: 789.12, color: 'text-blue-500' }
         }
       }
     },
@@ -99,20 +92,20 @@ export function Settings() {
         address: 'TRWBqiqoFZysoAeyR1J35ibuyc8EvhUAoY',
         balance: 12000.35,
         extraInfo: {
-          'Total Fees Collected': { amount: 567.89, color: 'text-green-500' }
+          'Total Fees Collected': { amount: 567.89, color: 'text-white 500' }
         }
       },
       fundingWallet: {
         address: 'TNPeeaaFB7K9v3DkeqYdqKAb2p6s2jYa5h',
         balance: 4000.15,
         extraInfo: {
-          'Energy Spent': { amount: 123.45, color: 'text-orange-500' }
+          'Energy Spent': { amount: 123.45, color: 'text-blue-500' }
         }
       }
     }
   });
 
-  const handlePasswordChange = (e: React.FormEvent) => {
+  const handlePasswordChange = (e) => {
     e.preventDefault();
     if (newPassword !== confirmPassword) {
       setPasswordError('Passwords do not match');
@@ -131,7 +124,7 @@ export function Settings() {
     showSuccessMessage('Password updated successfully');
   };
 
-  const showSuccessMessage = (message: string) => {
+  const showSuccessMessage = (message) => {
     setSaveSuccess(message);
     setTimeout(() => setSaveSuccess(null), 3000);
   };
@@ -151,11 +144,11 @@ export function Settings() {
     showSuccessMessage('Payment settings updated successfully');
   };
 
-  const handleWalletChange = (network: string, type: string, wallet: BlockchainWallet) => {
+  const handleWalletChange = (network, type, wallet) => {
     setWalletSettings(prev => ({
       ...prev,
       [network]: {
-        ...prev[network as keyof WalletSettings],
+        ...prev[network ],
         [type]: wallet
       }
     }));
@@ -166,7 +159,7 @@ export function Settings() {
     showSuccessMessage('Wallet settings updated successfully');
   };
 
-  const handleRefreshBalance = (network: string, type: string) => {
+  const handleRefreshBalance = (network, type) => {
     // Here you would typically make an API call to fetch the latest balance
     showSuccessMessage(`${network} ${type} balance refreshed`);
   };
@@ -214,7 +207,7 @@ export function Settings() {
                 })}
                 className="sr-only peer"
               />
-              <div className="w-11 h-6 bg-gray-700 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-orange-300 rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-gradient-to-r peer-checked:from-orange-400 peer-checked:to-green-400"></div>
+              <div className="w-11 h-6 bg-gray-700 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-gradient-to-r peer-checked:from-blue-400 peer-checked:to-white 400"></div>
             </label>
           </div>
 
@@ -240,7 +233,7 @@ export function Settings() {
 
         <button
           onClick={handleSecuritySave}
-          className="w-full px-4 py-2 bg-gradient-to-r from-orange-400 to-green-400 text-white rounded-lg hover:from-orange-500 hover:to-green-500 transition-all flex items-center justify-center space-x-2"
+          className="w-full px-4 py-2 bg-gradient-to-r from-blue-400 to-white 400 text-white rounded-lg hover:from-blue-500 hover:to-white 500 transition-all flex items-center justify-center space-x-2"
         >
           <Save className="w-4 h-4" />
           <span>Save Changes</span>
@@ -269,7 +262,7 @@ export function Settings() {
                 })}
                 className="sr-only peer"
               />
-              <div className="w-11 h-6 bg-gray-700 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-orange-300 rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-gradient-to-r peer-checked:from-orange-400 peer-checked:to-green-400"></div>
+              <div className="w-11 h-6 bg-gray-700 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-gradient-to-r peer-checked:from-blue-400 peer-checked:to-white 400"></div>
             </label>
           </div>
 
@@ -288,7 +281,7 @@ export function Settings() {
                 })}
                 className="sr-only peer"
               />
-              <div className="w-11 h-6 bg-gray-700 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-orange-300 rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-gradient-to-r peer-checked:from-orange-400 peer-checked:to-green-400"></div>
+              <div className="w-11 h-6 bg-gray-700 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-gradient-to-r peer-checked:from-blue-400 peer-checked:to-white 400"></div>
             </label>
           </div>
 
@@ -305,7 +298,7 @@ export function Settings() {
                   ...notificationSettings,
                   transactionThreshold: parseInt(e.target.value)
                 })}
-                className="flex-1 px-4 py-2 bg-gray-900 border border-gray-700 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-orange-300"
+                className="flex-1 px-4 py-2 bg-gray-900 border border-gray-700 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-blue-300"
               />
             </div>
           </div>
@@ -313,7 +306,7 @@ export function Settings() {
 
         <button
           onClick={handleNotificationSave}
-          className="w-full px-4 py-2 bg-gradient-to-r from-orange-400 to-green-400 text-white rounded-lg hover:from-orange-500 hover:to-green-500 transition-all flex items-center justify-center space-x-2"
+          className="w-full px-4 py-2 bg-gradient-to-r from-blue-400 to-white 400 text-white rounded-lg hover:from-blue-500 hover:to-white 500 transition-all flex items-center justify-center space-x-2"
         >
           <Save className="w-4 h-4" />
           <span>Save Changes</span>
@@ -340,7 +333,7 @@ export function Settings() {
                   ...paymentSettings,
                   dailyLimit: parseInt(e.target.value)
                 })}
-                className="flex-1 px-4 py-2 bg-gray-900 border border-gray-700 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-orange-300"
+                className="flex-1 px-4 py-2 bg-gray-900 border border-gray-700 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-blue-300"
               />
             </div>
           </div>
@@ -358,7 +351,7 @@ export function Settings() {
                   ...paymentSettings,
                   monthlyLimit: parseInt(e.target.value)
                 })}
-                className="flex-1 px-4 py-2 bg-gray-900 border border-gray-700 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-orange-300"
+                className="flex-1 px-4 py-2 bg-gray-900 border border-gray-700 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-blue-300"
               />
             </div>
           </div>
@@ -376,7 +369,7 @@ export function Settings() {
                   ...paymentSettings,
                   autoApprovalLimit: parseInt(e.target.value)
                 })}
-                className="flex-1 px-4 py-2 bg-gray-900 border border-gray-700 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-orange-300"
+                className="flex-1 px-4 py-2 bg-gray-900 border border-gray-700 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-blue-300"
               />
             </div>
           </div>
@@ -384,7 +377,7 @@ export function Settings() {
 
         <button
           onClick={handlePaymentSave}
-          className="w-full px-4 py-2 bg-gradient-to-r from-orange-400 to-green-400 text-white rounded-lg hover:from-orange-500 hover:to-green-500 transition-all flex items-center justify-center space-x-2"
+          className="w-full px-4 py-2 bg-gradient-to-r from-blue-400 to-white 400 text-white rounded-lg hover:from-blue-500 hover:to-white 500 transition-all flex items-center justify-center space-x-2"
         >
           <Save className="w-4 h-4" />
           <span>Save Changes</span>
@@ -400,7 +393,7 @@ export function Settings() {
       <h1 className="text-2xl font-bold text-white">Settings</h1>
 
       {saveSuccess && (
-        <div className="fixed top-4 right-4 bg-green-500/90 text-white px-4 py-2 rounded-lg flex items-center space-x-2 animate-fade-in-out">
+        <div className="fixed top-4 right-4 bg-white 500/90 text-white px-4 py-2 rounded-lg flex items-center space-x-2 animate-fade-in-out">
           <Check className="w-4 h-4" />
           <span>{saveSuccess}</span>
         </div>
@@ -410,8 +403,8 @@ export function Settings() {
         {settingSections.map((section) => (
           <div key={section.title} className="bg-gray-800 rounded-lg p-6">
             <div className="flex items-center space-x-3 mb-6">
-              <div className="p-2 bg-orange-500/10 rounded-lg">
-                <section.icon className="w-6 h-6 text-orange-500" />
+              <div className="p-2 bg-blue-500/10 rounded-lg">
+                <section.icon className="w-6 h-6 text-blue-500" />
               </div>
               <h2 className="text-xl font-semibold text-white">{section.title}</h2>
             </div>
@@ -467,7 +460,7 @@ export function Settings() {
                 type="password"
                 value={currentPassword}
                 onChange={(e) => setCurrentPassword(e.target.value)}
-                className="w-full px-4 py-2 bg-gray-900 border border-gray-700 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-orange-300"
+                className="w-full px-4 py-2 bg-gray-900 border border-gray-700 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-blue-300"
                 required
               />
             </div>
@@ -477,7 +470,7 @@ export function Settings() {
                 type="password"
                 value={newPassword}
                 onChange={(e) => setNewPassword(e.target.value)}
-                className="w-full px-4 py-2 bg-gray-900 border border-gray-700 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-orange-300"
+                className="w-full px-4 py-2 bg-gray-900 border border-gray-700 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-blue-300"
                 required
               />
             </div>
@@ -487,7 +480,7 @@ export function Settings() {
                 type="password"
                 value={confirmPassword}
                 onChange={(e) => setConfirmPassword(e.target.value)}
-                className="w-full px-4 py-2 bg-gray-900 border border-gray-700 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-orange-300"
+                className="w-full px-4 py-2 bg-gray-900 border border-gray-700 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-blue-300"
                 required
               />
             </div>
@@ -508,7 +501,7 @@ export function Settings() {
               </button>
               <button
                 type="submit"
-                className="px-4 py-2 bg-gradient-to-r from-orange-400 to-green-400 text-white rounded-lg hover:from-orange-500 hover:to-green-500 transition-all"
+                className="px-4 py-2 bg-gradient-to-r from-blue-400 to-white 400 text-white rounded-lg hover:from-blue-500 hover:to-white 500 transition-all"
               >
                 Change Password
               </button>

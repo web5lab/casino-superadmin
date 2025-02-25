@@ -9,6 +9,8 @@
   100% { opacity: 0; transform: translateY(-1rem); }
 }
 
+
+
 .animate-fade-in-out {
   animation: fadeInOut 3s ease-in-out forwards;
 }

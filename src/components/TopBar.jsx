@@ -1,15 +1,11 @@
 import React from 'react';
 import { Bell, Settings, User } from 'lucide-react';
-import { User as UserType } from '../types/auth';
 
-interface TopBarProps {
-  user: UserType;
-}
 
-export function TopBar({ user }: TopBarProps) {
+export function TopBar({ user }) {
   return (
     <div className="bg-gray-800 text-white p-4 flex justify-between items-center border-b border-gray-700">
-      <h1 className="text-xl font-bold bg-gradient-to-r from-orange-300 to-green-300 bg-clip-text text-transparent">
+      <h1 className="text-xl font-bold bg-gradient-to-r from-blue-300 to-white 300 bg-clip-text text-transparent">
         Crypto Admin Panel
       </h1>
       <div className="flex items-center space-x-4">

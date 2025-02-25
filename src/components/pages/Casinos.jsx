@@ -1,9 +1,8 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Building2, Check, X, Plus, Palette } from 'lucide-react';
-import { Casino } from '../../types/auth';
 
-const mockCasinos: Casino[] = [
+const mockCasinos= [
   {
     id: 'casino1',
     name: 'Royal Casino',
@@ -29,14 +28,14 @@ export function Casinos() {
   const navigate = useNavigate();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [currentStep, setCurrentStep] = useState(1);
-  const [newCasino, setNewCasino] = useState<Partial<Casino>>({
+  const [newCasino, setNewCasino] = useState({
     theme: {
       primaryColor: '#FFA500',
       secondaryColor: '#90EE90'
     }
   });
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = (e) => {
     e.preventDefault();
     // Here you would typically make an API call to create the casino
     console.log('New casino:', newCasino);
@@ -56,7 +55,7 @@ export function Casinos() {
         <h1 className="text-2xl font-bold text-white">Casinos</h1>
         <button 
           onClick={() => setIsModalOpen(true)}
-          className="px-4 py-2 bg-gradient-to-r from-orange-400 to-green-400 rounded-lg text-white hover:from-orange-500 hover:to-green-500 transition-all flex items-center space-x-2"
+          className="px-4 py-2 bg-gradient-to-r from-blue-400 to-white 400 rounded-lg text-white hover:from-blue-500 hover:to-white 500 transition-all flex items-center space-x-2"
         >
           <Plus className="w-5 h-5" />
           Add New Casino
@@ -68,8 +67,8 @@ export function Casinos() {
           <div key={casino.id} className="bg-gray-800 rounded-lg p-6 space-y-4">
             <div className="flex justify-between items-start">
               <div className="flex items-center space-x-3">
-                <div className="p-2 bg-orange-500/10 rounded-lg">
-                  <Building2 className="w-6 h-6 text-orange-500" />
+                <div className="p-2 bg-blue-500/10 rounded-lg">
+                  <Building2 className="w-6 h-6 text-blue-500" />
                 </div>
                 <div>
                   <h3 className="text-lg font-semibold text-white">{casino.name}</h3>
@@ -77,7 +76,7 @@ export function Casinos() {
                 </div>
               </div>
               <span className={`px-2 py-1 rounded-full text-xs ${
-                casino.status === 'active' ? 'bg-green-500/20 text-green-500' : 'bg-red-500/20 text-red-500'
+                casino.status === 'active' ? 'bg-white 500/20 text-white 500' : 'bg-red-500/20 text-red-500'
               }`}>
                 {casino.status.toUpperCase()}
               </span>
@@ -108,7 +107,7 @@ export function Casinos() {
               >
                 View Details
               </button>
-              <button className="px-4 py-2 bg-green-500/20 text-green-500 rounded-lg hover:bg-green-500/30 transition-colors">
+              <button className="px-4 py-2 bg-white 500/20 text-white 500 rounded-lg hover:bg-white 500/30 transition-colors">
                 <Check className="w-5 h-5" />
               </button>
               <button className="px-4 py-2 bg-red-500/20 text-red-500 rounded-lg hover:bg-red-500/30 transition-colors">
@@ -138,7 +137,7 @@ export function Casinos() {
                   <div
                     key={step}
                     className={`flex-1 h-2 rounded-full ${
-                      step <= currentStep ? 'bg-orange-400' : 'bg-gray-700'
+                      step <= currentStep ? 'bg-blue-400' : 'bg-gray-700'
                     }`}
                   />
                 ))}
@@ -162,7 +161,7 @@ export function Casinos() {
                       required
                       value={newCasino.name || ''}
                       onChange={(e) => setNewCasino({ ...newCasino, name: e.target.value })}
-                      className="w-full px-4 py-2 bg-gray-900 border border-gray-700 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-orange-300"
+                      className="w-full px-4 py-2 bg-gray-900 border border-gray-700 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-blue-300"
                       placeholder="Enter casino name"
                     />
                   </div>
@@ -181,7 +180,7 @@ export function Casinos() {
                         ...newCasino,
                         apiConfig: { ...newCasino.apiConfig, balanceApi: e.target.value }
                       })}
-                      className="w-full px-4 py-2 bg-gray-900 border border-gray-700 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-orange-300"
+                      className="w-full px-4 py-2 bg-gray-900 border border-gray-700 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-blue-300"
                       placeholder="https://api.example.com/balance"
                     />
                   </div>
@@ -195,7 +194,7 @@ export function Casinos() {
                         ...newCasino,
                         apiConfig: { ...newCasino.apiConfig, depositApi: e.target.value }
                       })}
-                      className="w-full px-4 py-2 bg-gray-900 border border-gray-700 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-orange-300"
+                      className="w-full px-4 py-2 bg-gray-900 border border-gray-700 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-blue-300"
                       placeholder="https://api.example.com/deposit"
                     />
                   </div>
@@ -209,7 +208,7 @@ export function Casinos() {
                         ...newCasino,
                         apiConfig: { ...newCasino.apiConfig, deductionApi: e.target.value }
                       })}
-                      className="w-full px-4 py-2 bg-gray-900 border border-gray-700 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-orange-300"
+                      className="w-full px-4 py-2 bg-gray-900 border border-gray-700 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-blue-300"
                       placeholder="https://api.example.com/deduct"
                     />
                   </div>
@@ -223,7 +222,7 @@ export function Casinos() {
                         ...newCasino,
                         apiConfig: { ...newCasino.apiConfig, secretKey: e.target.value }
                       })}
-                      className="w-full px-4 py-2 bg-gray-900 border border-gray-700 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-orange-300"
+                      className="w-full px-4 py-2 bg-gray-900 border border-gray-700 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-blue-300"
                       placeholder="Enter secret key"
                     />
                   </div>
@@ -252,7 +251,7 @@ export function Casinos() {
                             ...newCasino,
                             theme: { ...newCasino.theme, primaryColor: e.target.value }
                           })}
-                          className="flex-1 px-4 py-2 bg-gray-900 border border-gray-700 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-orange-300"
+                          className="flex-1 px-4 py-2 bg-gray-900 border border-gray-700 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-blue-300"
                         />
                       </div>
                     </div>
@@ -275,7 +274,7 @@ export function Casinos() {
                             ...newCasino,
                             theme: { ...newCasino.theme, secondaryColor: e.target.value }
                           })}
-                          className="flex-1 px-4 py-2 bg-gray-900 border border-gray-700 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-orange-300"
+                          className="flex-1 px-4 py-2 bg-gray-900 border border-gray-700 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-blue-300"
                         />
                       </div>
                     </div>
@@ -289,13 +288,13 @@ export function Casinos() {
                         ...newCasino,
                         theme: { ...newCasino.theme, logo: e.target.value }
                       })}
-                      className="w-full px-4 py-2 bg-gray-900 border border-gray-700 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-orange-300"
+                      className="w-full px-4 py-2 bg-gray-900 border border-gray-700 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-blue-300"
                       placeholder="https://example.com/logo.png"
                     />
                   </div>
                   <div className="mt-4 p-4 bg-gray-900 rounded-lg">
                     <div className="flex items-center space-x-2 mb-2">
-                      <Palette className="w-5 h-5 text-orange-400" />
+                      <Palette className="w-5 h-5 text-blue-400" />
                       <h3 className="text-white font-medium">Preview</h3>
                     </div>
                     <div className="flex space-x-4">
@@ -325,7 +324,7 @@ export function Casinos() {
                 <button
                   type={currentStep === 3 ? 'submit' : 'button'}
                   onClick={() => currentStep < 3 && setCurrentStep(currentStep + 1)}
-                  className="px-4 py-2 bg-gradient-to-r from-orange-400 to-green-400 text-white rounded-lg hover:from-orange-500 hover:to-green-500 transition-all ml-auto"
+                  className="px-4 py-2 bg-gradient-to-r from-blue-400 to-white 400 text-white rounded-lg hover:from-blue-500 hover:to-white 500 transition-all ml-auto"
                 >
                   {currentStep === 3 ? 'Create Casino' : 'Next'}
                 </button>

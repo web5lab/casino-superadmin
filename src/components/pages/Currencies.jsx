@@ -1,8 +1,7 @@
 import React, { useState } from 'react';
 import { DollarSign, Plus, Search, RefreshCw } from 'lucide-react';
-import { Currency } from '../../types/auth';
 
-const mockCurrencies: Currency[] = [
+const mockCurrencies= [
   {
     code: 'USD',
     name: 'US Dollar',
@@ -38,12 +37,12 @@ const mockCurrencies: Currency[] = [
 ];
 
 export function Currencies() {
-  const [currencies, setCurrencies] = useState<Currency[]>(mockCurrencies);
+  const [currencies, setCurrencies] = useState(mockCurrencies);
   const [searchTerm, setSearchTerm] = useState('');
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [newCurrency, setNewCurrency] = useState<Partial<Currency>>({});
+  const [newCurrency, setNewCurrency] = useState({});
 
-  const handleToggleCurrency = (code: string) => {
+  const handleToggleCurrency = (code) => {
     setCurrencies(currencies.map(currency => 
       currency.code === code 
         ? { ...currency, enabled: !currency.enabled }
@@ -51,7 +50,7 @@ export function Currencies() {
     ));
   };
 
-  const handleAddCurrency = (e: React.FormEvent) => {
+  const handleAddCurrency = (e) => {
     e.preventDefault();
     if (newCurrency.code && newCurrency.name && newCurrency.symbol) {
       setCurrencies([...currencies, {
@@ -59,7 +58,7 @@ export function Currencies() {
         enabled: true,
         exchangeRate: newCurrency.exchangeRate || 1,
         lastUpdated: new Date().toISOString()
-      } as Currency]);
+      } ]);
       setIsModalOpen(false);
       setNewCurrency({});
     }
@@ -84,12 +83,12 @@ export function Currencies() {
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               placeholder="Search currencies..."
-              className="w-full sm:w-64 pl-10 pr-4 py-2 bg-gray-800 border border-gray-700 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-orange-300"
+              className="w-full sm:w-64 pl-10 pr-4 py-2 bg-gray-800 border border-gray-700 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-blue-300"
             />
           </div>
           <button
             onClick={() => setIsModalOpen(true)}
-            className="px-4 py-2 bg-gradient-to-r from-orange-400 to-green-400 rounded-lg text-white hover:from-orange-500 hover:to-green-500 transition-all flex items-center space-x-2"
+            className="px-4 py-2 bg-gradient-to-r from-blue-400 to-white 400 rounded-lg text-white hover:from-blue-500 hover:to-white 500 transition-all flex items-center space-x-2"
           >
             <Plus className="w-5 h-5" />
             <span>Add Currency</span>
@@ -102,8 +101,8 @@ export function Currencies() {
           <div key={currency.code} className="bg-gray-800 rounded-lg p-6 space-y-4">
             <div className="flex justify-between items-start">
               <div className="flex items-center space-x-3">
-                <div className="p-2 bg-orange-500/10 rounded-lg">
-                  <DollarSign className="w-6 h-6 text-orange-500" />
+                <div className="p-2 bg-blue-500/10 rounded-lg">
+                  <DollarSign className="w-6 h-6 text-blue-500" />
                 </div>
                 <div>
                   <h3 className="text-lg font-semibold text-white">{currency.code}</h3>
@@ -117,7 +116,7 @@ export function Currencies() {
                   onChange={() => handleToggleCurrency(currency.code)}
                   className="sr-only peer"
                 />
-                <div className="w-11 h-6 bg-gray-700 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-orange-300 rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-gradient-to-r peer-checked:from-orange-400 peer-checked:to-green-400"></div>
+                <div className="w-11 h-6 bg-gray-700 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-gradient-to-r peer-checked:from-blue-400 peer-checked:to-white 400"></div>
               </label>
             </div>
 
@@ -172,7 +171,7 @@ export function Currencies() {
                   maxLength={5}
                   value={newCurrency.code || ''}
                   onChange={(e) => setNewCurrency({ ...newCurrency, code: e.target.value.toUpperCase() })}
-                  className="w-full px-4 py-2 bg-gray-900 border border-gray-700 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-orange-300"
+                  className="w-full px-4 py-2 bg-gray-900 border border-gray-700 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-blue-300"
                   placeholder="e.g., USD"
                 />
               </div>
@@ -183,7 +182,7 @@ export function Currencies() {
                   required
                   value={newCurrency.name || ''}
                   onChange={(e) => setNewCurrency({ ...newCurrency, name: e.target.value })}
-                  className="w-full px-4 py-2 bg-gray-900 border border-gray-700 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-orange-300"
+                  className="w-full px-4 py-2 bg-gray-900 border border-gray-700 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-blue-300"
                   placeholder="e.g., US Dollar"
                 />
               </div>
@@ -195,7 +194,7 @@ export function Currencies() {
                   maxLength={3}
                   value={newCurrency.symbol || ''}
                   onChange={(e) => setNewCurrency({ ...newCurrency, symbol: e.target.value })}
-                  className="w-full px-4 py-2 bg-gray-900 border border-gray-700 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-orange-300"
+                  className="w-full px-4 py-2 bg-gray-900 border border-gray-700 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-blue-300"
                   placeholder="e.g., $"
                 />
               </div>
@@ -207,7 +206,7 @@ export function Currencies() {
                   step="0.000001"
                   value={newCurrency.exchangeRate || ''}
                   onChange={(e) => setNewCurrency({ ...newCurrency, exchangeRate: parseFloat(e.target.value) })}
-                  className="w-full px-4 py-2 bg-gray-900 border border-gray-700 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-orange-300"
+                  className="w-full px-4 py-2 bg-gray-900 border border-gray-700 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-blue-300"
                   placeholder="e.g., 1.0"
                 />
               </div>
@@ -222,7 +221,7 @@ export function Currencies() {
                 </button>
                 <button
                   type="submit"
-                  className="px-4 py-2 bg-gradient-to-r from-orange-400 to-green-400 text-white rounded-lg hover:from-orange-500 hover:to-green-500 transition-all"
+                  className="px-4 py-2 bg-gradient-to-r from-blue-400 to-white 400 text-white rounded-lg hover:from-blue-500 hover:to-white 500 transition-all"
                 >
                   Add Currency
                 </button>

@@ -1,18 +1,14 @@
 import React, { useState } from 'react';
 import { Lock, User } from 'lucide-react';
-import { User as UserType } from '../types/auth';
 
-interface LoginProps {
-  onLogin: (user: UserType) => void;
-}
 
-export function Login({ onLogin }: LoginProps) {
+export function Login({ onLogin }) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setIsLoading(true);
     setError('');
@@ -50,7 +46,7 @@ export function Login({ onLogin }: LoginProps) {
     <div className="min-h-screen bg-gray-900 flex items-center justify-center p-4">
       <div className="max-w-md w-full space-y-8 bg-gray-800 p-8 rounded-xl">
         <div className="text-center">
-          <h1 className="text-2xl font-bold bg-gradient-to-r from-orange-300 to-green-300 bg-clip-text text-transparent">
+          <h1 className="text-2xl font-bold bg-gradient-to-r from-blue-300 to-white 300 bg-clip-text text-transparent">
             Crypto Admin Panel
           </h1>
           <p className="mt-2 text-gray-400">Sign in to your account</p>
@@ -73,7 +69,7 @@ export function Login({ onLogin }: LoginProps) {
                 required
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="block w-full pl-10 pr-3 py-2 border border-gray-700 rounded-lg bg-gray-900 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-orange-300 focus:border-transparent"
+                className="block w-full pl-10 pr-3 py-2 border border-gray-700 rounded-lg bg-gray-900 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-300 focus:border-transparent"
                 placeholder="Email address"
               />
             </div>
@@ -86,7 +82,7 @@ export function Login({ onLogin }: LoginProps) {
                 required
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className="block w-full pl-10 pr-3 py-2 border border-gray-700 rounded-lg bg-gray-900 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-orange-300 focus:border-transparent"
+                className="block w-full pl-10 pr-3 py-2 border border-gray-700 rounded-lg bg-gray-900 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-300 focus:border-transparent"
                 placeholder="Password"
               />
             </div>
@@ -98,13 +94,13 @@ export function Login({ onLogin }: LoginProps) {
                 id="remember-me"
                 name="remember-me"
                 type="checkbox"
-                className="h-4 w-4 rounded border-gray-700 bg-gray-900 text-orange-300 focus:ring-orange-300"
+                className="h-4 w-4 rounded border-gray-700 bg-gray-900 text-blue-300 focus:ring-blue-300"
               />
               <label htmlFor="remember-me" className="ml-2 block text-sm text-gray-400">
                 Remember me
               </label>
             </div>
-            <button type="button" className="text-sm text-orange-300 hover:text-orange-400">
+            <button type="button" className="text-sm text-blue-300 hover:text-blue-400">
               Forgot password?
             </button>
           </div>
@@ -112,7 +108,7 @@ export function Login({ onLogin }: LoginProps) {
           <button
             type="submit"
             disabled={isLoading}
-            className="w-full flex justify-center py-2 px-4 border border-transparent rounded-lg shadow-sm text-white bg-gradient-to-r from-orange-400 to-green-400 hover:from-orange-500 hover:to-green-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-300 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200"
+            className="w-full flex justify-center py-2 px-4 border border-transparent rounded-lg shadow-sm text-white bg-gradient-to-r from-blue-400 to-white 400 hover:from-blue-500 hover:to-white 500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-300 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200"
           >
             {isLoading ? (
               <svg className="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
@@ -132,7 +128,7 @@ export function Login({ onLogin }: LoginProps) {
             <p>Panel Admin: panel@example.com / admin</p>
           </div>
           <span className="text-gray-400">Need help? </span>
-          <button className="text-orange-300 hover:text-orange-400">Contact support</button>
+          <button className="text-blue-300 hover:text-blue-400">Contact support</button>
         </div>
       </div>
     </div>

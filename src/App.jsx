@@ -1,14 +1,13 @@
-import React from 'react';
 import { useState } from 'react';
 import { BrowserRouter } from 'react-router-dom';
 import { Layout } from './components/Layout';
 import { Login } from './components/Login';
-import { User } from './types/auth';
+
 
 function App() {
-  const [user, setUser] = useState<User | null>(null);
+  const [user, setUser] = useState(null);
 
-  const handleLogin = (loggedInUser: User) => {
+  const handleLogin = (loggedInUser) => {
     setUser(loggedInUser);
   };
 
