@@ -4,12 +4,12 @@ const walletSchema = new mongoose.Schema({
   network: {
     type: String,
     required: true,
-    enum: ['ethereum', 'solana', 'bitcoin']
+    enum: ['ethereum', 'tron', 'bitcoin']
   },
   type: {
     type: String,
     required: true,
-    enum: ['adminWallet', 'fundingWallet']
+    enum: ['adminWallet', 'fundingWallet','userWallet']
   },
   address: {
     type: String,

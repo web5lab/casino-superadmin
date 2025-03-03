@@ -15,6 +15,15 @@ router.get('/', auth, async (req, res) => {
   }
 });
 
+router.post('/create-user', auth, async (req, res) => {
+  try {
+    const casinos = await Casino.find();
+    res.json(casinos);
+  } catch (error) {
+    res.status(500).json({ message: 'Server error' });
+  }
+});
+
 // Get casino by ID
 router.get('/:id', auth, async (req, res) => {
   try {
