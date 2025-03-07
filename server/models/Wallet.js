@@ -9,7 +9,7 @@ const walletSchema = new mongoose.Schema({
   type: {
     type: String,
     required: true,
-    enum: ['adminWallet', 'fundingWallet','userWallet']
+    enum: ['adminWallet', 'fundingWallet', 'userWallet']
   },
   address: {
     type: String,
@@ -19,9 +19,10 @@ const walletSchema = new mongoose.Schema({
     type: String,
     required: true
   },
-  balance: {
-    type: Number,
-    default: 0
+  Currency: {
+    id: { type: String, required: true },
+    balance: { type: String, required: true },
+    network: { type: String, required: true }
   },
   extraInfo: {
     type: Map,

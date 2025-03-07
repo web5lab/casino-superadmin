@@ -25,7 +25,10 @@ const currencySchema = new mongoose.Schema({
   exchangeRate: {
     type: Number,
     required: true
-  }
+  },
+  network:[{
+    id:{type:String,default:""}
+  }]
 }, {
   timestamps: true
 });
