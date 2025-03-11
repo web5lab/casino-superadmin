@@ -1,9 +1,11 @@
 import { createSlice } from '@reduxjs/toolkit'
-import {  logInApi } from './global.Action'
+import {  getCasinos, GetCurrencies, logInApi } from './global.Action'
 
 
 const initialState = {
   user: null,
+  currencies:[],
+  casinos:[],
 }
 
 export const globalSlice = createSlice({
@@ -24,6 +26,26 @@ export const globalSlice = createSlice({
       })
       .addCase(logInApi.fulfilled, (state, action) => {
         state.user = action.payload;
+      });
+      builder
+      .addCase(GetCurrencies.pending, (state) => {
+        state.currencies = [];
+      })
+      .addCase(GetCurrencies.rejected, (state, action) => {
+        state.currencies = [];
+      })
+      .addCase(GetCurrencies.fulfilled, (state, action) => {
+        state.currencies = action.payload;
+      });
+      builder
+      .addCase(getCasinos.pending, (state) => {
+        state.casinos = [];
+      })
+      .addCase(getCasinos.rejected, (state, action) => {
+        state.casinos = [];
+      })
+      .addCase(getCasinos.fulfilled, (state, action) => {
+        state.casinos = action.payload;
       });
    
   }

@@ -9,6 +9,8 @@ import {
   Users,
   BarChart3,
   Shield,
+  Bot,
+  LogOut
 } from 'lucide-react';
 
 const menuItems = [
@@ -16,22 +18,20 @@ const menuItems = [
   { icon: CreditCard, label: 'Wallet', path: '/wallet' },
   { icon: Wallet, label: 'Transactions', path: '/transactions' },
   { icon: ArrowDownLeft, label: 'Withdrawals', path: '/withdrawals' },
-  { icon: Users, label: 'Users', path: '/users' },
   { icon: Settings, label: 'Settings', path: '/settings' },
-  { icon: BarChart3, label: 'Analytics', path: '/analytics' },
   { icon: UserCog, label: 'Sub-Admins', path: '/sub-admins' },
 ];
 
 export default function Sidebar() {
   return (
-    <div className="w-64 bg-white border-r border-gray-200 h-screen fixed left-0 top-0">
+    <div className="w-64 bg-white border-r border-gray-200 h-screen fixed left-0 top-0 flex flex-col">
       <div className="p-6">
         <h1 className="text-xl font-bold text-blue-600 flex items-center gap-2">
-          <Wallet className="w-6 h-6" />
-          CryptoAdmin
+          <Bot className="w-6 h-6" />
+          Admin Panel
         </h1>
       </div>
-      <nav className="mt-6">
+      <nav className="mt-6 flex-grow">
         {menuItems.map((item) => (
           <a
             key={item.path}
@@ -43,6 +43,15 @@ export default function Sidebar() {
           </a>
         ))}
       </nav>
+      <div className="border-t border-gray-200 mt-auto">
+        <a
+          href="/logout"
+          className="flex items-center gap-3 px-6 py-4 text-red-600 hover:bg-red-50 transition-colors"
+        >
+          <LogOut className="w-5 h-5" />
+          Logout
+        </a>
+      </div>
     </div>
   );
 }

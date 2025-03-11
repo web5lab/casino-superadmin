@@ -1,6 +1,41 @@
 import React from 'react';
 import { ArrowUpRight, ArrowDownRight, DollarSign, Users, Activity, TrendingUp } from 'lucide-react';
 
+
+const metrics = [
+  {
+    title: 'Total Transaction Volume',
+    value: '$12.5M',
+    change: '+15.3%',
+    trend: 'up',
+  },
+  {
+    title: 'Average Transaction Size',
+    value: '$2,450',
+    change: '+5.2%',
+    trend: 'up',
+  },
+  {
+    title: 'Active Users',
+    value: '3,123',
+    change: '-2.1%',
+    trend: 'down',
+  },
+  {
+    title: 'Conversion Rate',
+    value: '2.8%',
+    change: '+0.5%',
+    trend: 'up',
+  },
+];
+
+const topCurrencies = [
+  { name: 'Bitcoin', volume: '$5.2M', change: '+12.3%' },
+  { name: 'Ethereum', volume: '$3.1M', change: '+8.7%' },
+  { name: 'USDT', volume: '$2.8M', change: '+5.2%' },
+  { name: 'Solana', volume: '$1.4M', change: '+15.8%' },
+];
+
 const stats = [
   {
     title: 'Total Volume',
@@ -79,7 +114,77 @@ export default function Dashboard() {
           </div>
         ))}
       </div>
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <div className="bg-white rounded-xl shadow-sm p-6">
+          <div className="flex items-center justify-between mb-6">
+            <h2 className="text-lg font-semibold">Volume by Currency</h2>
+            <TrendingUp className="w-5 h-5 text-gray-400" />
+          </div>
+          <div className="space-y-4">
+            {topCurrencies.map((currency) => (
+              <div key={currency.name} className="flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                  <div className="w-8 h-8 bg-blue-50 rounded-lg flex items-center justify-center">
+                    <span className="text-sm font-semibold text-blue-600">
+                      {currency.name.substring(0, 3).toUpperCase()}
+                    </span>
+                  </div>
+                  <span className="font-medium">{currency.name}</span>
+                </div>
+                <div className="text-right">
+                  <p className="font-medium">{currency.volume}</p>
+                  <p className="text-sm text-green-500">{currency.change}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
 
+        <div className="bg-white rounded-xl shadow-sm p-6">
+          <h2 className="text-lg font-semibold mb-6">Transaction Success Rate</h2>
+          <div className="relative pt-1">
+            <div className="flex mb-2 items-center justify-between">
+              <div>
+                <span className="text-xs font-semibold inline-block py-1 px-2 uppercase rounded-full text-green-600 bg-green-200">
+                  Success
+                </span>
+              </div>
+              <div className="text-right">
+                <span className="text-xs font-semibold inline-block text-green-600">98%</span>
+              </div>
+            </div>
+            <div className="overflow-hidden h-2 mb-4 text-xs flex rounded bg-green-200">
+              <div className="w-[98%] shadow-none flex flex-col text-center whitespace-nowrap text-white justify-center bg-green-500"></div>
+            </div>
+            <div className="flex mb-2 items-center justify-between">
+              <div>
+                <span className="text-xs font-semibold inline-block py-1 px-2 uppercase rounded-full text-yellow-600 bg-yellow-200">
+                  Pending
+                </span>
+              </div>
+              <div className="text-right">
+                <span className="text-xs font-semibold inline-block text-yellow-600">1.5%</span>
+              </div>
+            </div>
+            <div className="overflow-hidden h-2 mb-4 text-xs flex rounded bg-yellow-200">
+              <div className="w-[1.5%] shadow-none flex flex-col text-center whitespace-nowrap text-white justify-center bg-yellow-500"></div>
+            </div>
+            <div className="flex mb-2 items-center justify-between">
+              <div>
+                <span className="text-xs font-semibold inline-block py-1 px-2 uppercase rounded-full text-red-600 bg-red-200">
+                  Failed
+                </span>
+              </div>
+              <div className="text-right">
+                <span className="text-xs font-semibold inline-block text-red-600">0.5%</span>
+              </div>
+            </div>
+            <div className="overflow-hidden h-2 text-xs flex rounded bg-red-200">
+              <div className="w-[0.5%] shadow-none flex flex-col text-center whitespace-nowrap text-white justify-center bg-red-500"></div>
+            </div>
+          </div>
+        </div>
+      </div>
       <div className="bg-white rounded-xl shadow-sm p-6">
         <h2 className="text-lg font-semibold mb-4">Recent Transactions</h2>
         <div className="overflow-x-auto">

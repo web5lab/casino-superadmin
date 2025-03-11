@@ -25,8 +25,8 @@ const currencySchema = new mongoose.Schema({
     type: Number,
     required: true
   },
-  network:[{
-    id:{type:String,default:""}
+  network: [{
+    id: { type: String, default: "" }
   }]
 }, {
   timestamps: true

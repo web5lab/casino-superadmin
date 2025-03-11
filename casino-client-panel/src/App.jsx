@@ -6,10 +6,7 @@ import Layout from './components/Layout.jsx';
 import WalletPage from './components/WalletPage.jsx';
 import Dashboard from './components/Dashboard.jsx';
 import TransactionsPage from './components/TransactionsPage.jsx';
-import UsersPage from './components/UsersPage.jsx';
 import SettingsPage from './components/SettingsPage.jsx';
-import AnalyticsPage from './components/AnalyticsPage.jsx';
-import CompliancePage from './components/CompliancePage.jsx';
 import WithdrawalRequestsPage from './components/WithdrawalRequestsPage.jsx';
 import NotificationsPage from './components/NotificationsPage.jsx';
 import SubAdminsPage from './components/SubAdminsPage.jsx';
@@ -50,41 +47,11 @@ function App() {
           }
         />
         <Route
-          path="/users"
-          element={
-            <PrivateRoute>
-              <Layout>
-                <UsersPage />
-              </Layout>
-            </PrivateRoute>
-          }
-        />
-        <Route
           path="/settings"
           element={
             <PrivateRoute>
               <Layout>
                 <SettingsPage />
-              </Layout>
-            </PrivateRoute>
-          }
-        />
-        <Route
-          path="/analytics"
-          element={
-            <PrivateRoute>
-              <Layout>
-                <AnalyticsPage />
-              </Layout>
-            </PrivateRoute>
-          }
-        />
-        <Route
-          path="/compliance"
-          element={
-            <PrivateRoute>
-              <Layout>
-                <CompliancePage />
               </Layout>
             </PrivateRoute>
           }

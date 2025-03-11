@@ -1,11 +1,30 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import axiosInstance from "../axios/axiosInstance";
 
-export const GetUserData = createAsyncThunk(
-    "global/getUserData",
+export const GetCurrencies = createAsyncThunk(
+    "global/GetCurrencies",
     async (token) => {
         try {
-            const Response = await axiosInstance.get(`/auth/user-data`, {
+            const Response = await axiosInstance.get(`/api/currencies`, {
+                headers: {
+                    Authorization: `Bearer ${token}` // Add the token to the request headers
+                }
+            });
+            console.log("api data", Response);
+            return Response.data;
+        } catch (err) {
+            if (err) {
+                throw err;
+            }
+        }
+    }
+);
+
+export const getCasinos = createAsyncThunk(
+    "global/getCasinos",
+    async (token) => {
+        try {
+            const Response = await axiosInstance.get(`/api/casinos`, {
                 headers: {
                     Authorization: `Bearer ${token}` // Add the token to the request headers
                 }

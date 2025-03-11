@@ -11,8 +11,6 @@ export default function Layout() {
   const users = useSelector(UserSelector);
   const currentUser = useSelector(currentUserSelector)
   const dispatch = useDispatch()
-
-
   const toggleMenu = () => {
     setMenuOpen(!menuOpen);
   };
@@ -38,7 +36,7 @@ export default function Layout() {
                 className="inline-flex items-center px-4 py-2 rounded-lg bg-gray-700 hover:bg-gray-600 transition-colors"
               >
                 <Wallet className="w-5 h-5 mr-2" />
-                {currentUser.userId} (₹{currentUser.balance})
+                {currentUser?.userId} (₹{currentUser?.balance})
               </Link>
               <button
                 onClick={toggleMenu}
@@ -48,7 +46,7 @@ export default function Layout() {
               </button>
               {menuOpen && (
                 <div className="absolute top-12 right-0 mt-2 w-48 bg-gray-800 border border-gray-700 rounded-lg shadow-lg">
-                  {users.map((user) => (
+                  {users?.map((user) => (
                     <button
                       onClick={() => switchUser(user)}
                       className="block w-full text-left px-4 py-2 text-sm text-white hover:bg-gray-700"
@@ -65,7 +63,7 @@ export default function Layout() {
 
       {/* Main Content */}
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <h1 className="text-2xl mb-4">Current User: {currentUser.userId}</h1>
+        <h1 className="text-2xl mb-4">Current User: {currentUser?.userId}</h1>
         <Outlet />
       </main>
     </div>

@@ -28,7 +28,7 @@ export default function LoginPage() {
       <div className="sm:mx-auto sm:w-full sm:max-w-md">
         <div className="text-center">
           <Wallet className="mx-auto h-12 w-12 text-blue-600" />
-          <h2 className="mt-6 text-3xl font-bold text-gray-900">CryptoAdmin</h2>
+          <h2 className="mt-6 text-3xl font-bold text-gray-900">Admin Panel</h2>
           <p className="mt-2 text-gray-600">Sign in to your admin account</p>
         </div>
 

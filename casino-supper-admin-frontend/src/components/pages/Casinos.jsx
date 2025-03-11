@@ -1,6 +1,10 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Building2, Check, X, Plus, Palette } from 'lucide-react';
+import { useDispatch, useSelector } from 'react-redux';
+import { casinosSelector, userSelector } from '../../store/global.Selctor';
+import { useEffect } from 'react';
+import { getCasinos } from '../../store/global.Action';
 
 const mockCasinos = [
   {
@@ -35,7 +39,12 @@ export function Casinos() {
       secondaryColor: '#90EE90'
     }
   });
-
+  const user = useSelector(userSelector)
+  const dispatch = useDispatch();
+  const casinos = useSelector(casinosSelector); 
+  useEffect(() => {
+    dispatch(getCasinos(user.token))
+  }, [])
   const handleSubmit = (e) => {
     e.preventDefault();
     // Here you would typically make an API call to create the casino
@@ -64,7 +73,7 @@ export function Casinos() {
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {mockCasinos.map((casino) => (
+        {casinos.map((casino) => (
           <div key={casino.id} className="bg-gray-800 rounded-lg p-6 space-y-4">
             <div className="flex justify-between items-start">
               <div className="flex items-center space-x-3">
@@ -79,25 +88,25 @@ export function Casinos() {
               <span className={`px-2 py-1 rounded-full text-xs ${
                 casino.status === 'active' ? 'bg-green-500/20 text-green-500' : 'bg-red-500/20 text-red-500'
               }`}>
-                {casino.status.toUpperCase()}
+                {casino?.status?.toUpperCase() === 'ACTIVE' ? 'Active' : 'Inactive'}
               </span>
             </div>
 
             <div className="grid grid-cols-2 gap-4">
               <div className="bg-gray-700/50 p-3 rounded-lg">
                 <p className="text-sm text-gray-400">Balance</p>
-                <p className="text-lg font-semibold text-white">${casino.balance.toLocaleString()}</p>
+                <p className="text-lg font-semibold text-white">${casino?.balance?.toLocaleString()}</p>
               </div>
               <div className="bg-gray-700/50 p-3 rounded-lg">
                 <p className="text-sm text-gray-400">Transactions</p>
-                <p className="text-lg font-semibold text-white">{casino.transactions}</p>
+                <p className="text-lg font-semibold text-white">{casino?.transactions}</p>
               </div>
             </div>
 
             <div className="pt-4 border-t border-gray-700">
               <div className="flex justify-between items-center">
                 <span className="text-sm text-gray-400">Last Active</span>
-                <span className="text-sm text-white">{new Date(casino.lastActive).toLocaleString()}</span>
+                <span className="text-sm text-white">{new Date(casino.updatedAt).toLocaleString()}</span>
               </div>
             </div>
 

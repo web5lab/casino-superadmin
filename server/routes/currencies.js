@@ -15,6 +15,15 @@ router.get('/', authenticateToken, async (req, res) => {
   }
 });
 
+router.get('/currencies', async (req, res) => {
+  try {
+    const currencies = await Currency.find();
+    res.json(currencies);
+  } catch (error) {
+    res.status(500).json({ message: 'Server error' });
+  }
+});
+
 // Get currency by code
 router.get('/:code', authenticateToken, async (req, res) => {
   try {
@@ -44,7 +53,7 @@ router.post('/', [
     }
 
     const { code, name, symbol, exchangeRate } = req.body;
-    
+
     const currencyExists = await Currency.findOne({ code: code.toUpperCase() });
     if (currencyExists) {
       return res.status(400).json({ message: 'Currency already exists' });
@@ -105,7 +114,7 @@ router.patch('/:code/toggle', authenticateToken, requireRole(['SUPER_ADMIN']), a
 
     currency.enabled = !currency.enabled;
     await currency.save();
-    
+
     res.json(currency);
   } catch (error) {
     res.status(500).json({ message: 'Server error' });

@@ -19,7 +19,7 @@ export default function SettingsPage() {
         </button>
       </div>
 
-      <div className="bg-white rounded-xl shadow-sm">
+      {/* <div className="bg-white rounded-xl shadow-sm">
         <div className="p-6 border-b border-gray-200">
           <h2 className="text-lg font-semibold">API Configuration</h2>
           <p className="text-gray-500 mt-1">Manage API keys and endpoints for external integrations</p>
@@ -120,7 +120,7 @@ export default function SettingsPage() {
             ))}
           </div>
         </div>
-      </div>
+      </div> */}
 
       <div className="bg-white rounded-xl shadow-sm">
         <div className="p-6 border-b border-gray-200">
@@ -148,7 +148,7 @@ export default function SettingsPage() {
               defaultValue="10000"
             />
           </div>
-          <div>
+          {/* <div>
             <label className="flex items-center gap-2">
               <input type="checkbox" className="rounded text-blue-600" defaultChecked />
               <span className="text-sm text-gray-700">Require 2FA for withdrawals</span>
@@ -159,7 +159,7 @@ export default function SettingsPage() {
               <input type="checkbox" className="rounded text-blue-600" defaultChecked />
               <span className="text-sm text-gray-700">Enable KYC verification</span>
             </label>
-          </div>
+          </div> */}
         </div>
       </div>
     </div>

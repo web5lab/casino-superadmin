@@ -90,35 +90,11 @@ const seedCurrencies = async () => {
   console.log('Seeding currencies...');
   const currencies = [
     {
-      code: 'BTC',
-      name: 'Bitcoin',
-      symbol: '₿',
-      enabled: true,
-      icon:'',
-      exchangeRate: 0.000023
-    },
-    {
-      code: 'ETH',
-      name: 'Ethereum',
-      symbol: 'Ξ',
-      enabled: true,
-      icon:'',
-      exchangeRate: 0.00034
-    },
-    {
-      code: 'SOL',
-      name: 'Solana',
-      symbol: 'SOL',
-      enabled: true,
-      icon:'',
-      exchangeRate: 0.0125
-    },
-    {
       code: 'USDT',
       name: 'Tether',
       symbol: '₮',
       enabled: true,
-      icon:'',
+      icon:'https://cryptologos.cc/logos/tether-usdt-logo.svg?v=040',
       exchangeRate: 1.0
     }
   ];
