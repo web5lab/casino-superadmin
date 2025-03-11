@@ -21,12 +21,12 @@ const clearCollections = async () => {
 
 const seedUsers = async () => {
   console.log('Seeding users...');
-  const password = await bcrypt.hash('admin123', 10);
+  const password = await bcrypt.hash('admin', 10);
   
   const users = [
     {
       name: 'Super Admin',
-      email: 'admin@cryptopay.com',
+      email: 'admin@example.com',
       password,
       role: 'SUPER_ADMIN',
       isActive: true,
@@ -94,6 +94,7 @@ const seedCurrencies = async () => {
       name: 'Bitcoin',
       symbol: '₿',
       enabled: true,
+      icon:'',
       exchangeRate: 0.000023
     },
     {
@@ -101,6 +102,7 @@ const seedCurrencies = async () => {
       name: 'Ethereum',
       symbol: 'Ξ',
       enabled: true,
+      icon:'',
       exchangeRate: 0.00034
     },
     {
@@ -108,6 +110,7 @@ const seedCurrencies = async () => {
       name: 'Solana',
       symbol: 'SOL',
       enabled: true,
+      icon:'',
       exchangeRate: 0.0125
     },
     {
@@ -115,6 +118,7 @@ const seedCurrencies = async () => {
       name: 'Tether',
       symbol: '₮',
       enabled: true,
+      icon:'',
       exchangeRate: 1.0
     }
   ];

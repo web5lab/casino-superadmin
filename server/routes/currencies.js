@@ -1,12 +1,12 @@
 import express from 'express';
 import { body, validationResult } from 'express-validator';
-import { auth, requireRole } from '../middleware/auth.js';
+import { authenticateToken, requireRole } from '../middleware/auth.js';
 import Currency from '../models/Currency.js';
 
 const router = express.Router();
 
 // Get all currencies
-router.get('/', auth, async (req, res) => {
+router.get('/', authenticateToken, async (req, res) => {
   try {
     const currencies = await Currency.find();
     res.json(currencies);
@@ -16,7 +16,7 @@ router.get('/', auth, async (req, res) => {
 });
 
 // Get currency by code
-router.get('/:code', auth, async (req, res) => {
+router.get('/:code', authenticateToken, async (req, res) => {
   try {
     const currency = await Currency.findOne({ code: req.params.code.toUpperCase() });
     if (!currency) {
@@ -30,7 +30,7 @@ router.get('/:code', auth, async (req, res) => {
 
 // Create new currency
 router.post('/', [
-  auth,
+  authenticateToken,
   requireRole(['SUPER_ADMIN']),
   body('code').isLength({ min: 2, max: 5 }),
   body('name').notEmpty(),
@@ -66,7 +66,7 @@ router.post('/', [
 
 // Update currency
 router.put('/:code', [
-  auth,
+  authenticateToken,
   requireRole(['SUPER_ADMIN']),
   body('name').optional().notEmpty(),
   body('symbol').optional().notEmpty(),
@@ -96,7 +96,7 @@ router.put('/:code', [
 });
 
 // Toggle currency status
-router.patch('/:code/toggle', auth, requireRole(['SUPER_ADMIN']), async (req, res) => {
+router.patch('/:code/toggle', authenticateToken, requireRole(['SUPER_ADMIN']), async (req, res) => {
   try {
     const currency = await Currency.findOne({ code: req.params.code.toUpperCase() });
     if (!currency) {

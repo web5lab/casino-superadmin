@@ -1,12 +1,12 @@
 import express from 'express';
 import { body, validationResult } from 'express-validator';
-import { auth, requireRole } from '../middleware/auth.js';
+import { authenticateToken, requireRole } from '../middleware/auth.js';
 import User from '../models/User.js';
 
 const router = express.Router();
 
 // Get all users (Super Admin only)
-router.get('/', auth, requireRole(['SUPER_ADMIN']), async (req, res) => {
+router.get('/', authenticateToken, requireRole(['SUPER_ADMIN']), async (req, res) => {
   try {
     const users = await User.find().select('-password');
     res.json(users);
@@ -17,7 +17,7 @@ router.get('/', auth, requireRole(['SUPER_ADMIN']), async (req, res) => {
 
 // Create new user (Super Admin only)
 router.post('/', [
-  auth,
+  authenticateToken,
   requireRole(['SUPER_ADMIN']),
   body('name').notEmpty(),
   body('email').isEmail(),
@@ -54,7 +54,7 @@ router.post('/', [
 
 // Update user
 router.put('/:id', [
-  auth,
+  authenticateToken,
   requireRole(['SUPER_ADMIN']),
   body('name').optional().notEmpty(),
   body('email').optional().isEmail(),
@@ -93,7 +93,7 @@ router.put('/:id', [
 });
 
 // Deactivate user
-router.delete('/:id', auth, requireRole(['SUPER_ADMIN']), async (req, res) => {
+router.delete('/:id', authenticateToken, requireRole(['SUPER_ADMIN']), async (req, res) => {
   try {
     const user = await User.findById(req.params.id);
     if (!user) {

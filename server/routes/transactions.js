@@ -1,12 +1,12 @@
 import express from 'express';
 import { body, validationResult } from 'express-validator';
-import { auth } from '../middleware/auth.js';
+import { authenticateToken } from '../middleware/auth.js';
 import Transaction from '../models/Transaction.js';
 
 const router = express.Router();
 
 // Get all transactions
-router.get('/', auth, async (req, res) => {
+router.get('/', authenticateToken, async (req, res) => {
   try {
     const transactions = await Transaction.find()
       .populate('casinoId', 'name')
@@ -18,7 +18,7 @@ router.get('/', auth, async (req, res) => {
 });
 
 // Get transaction by ID
-router.get('/:id', auth, async (req, res) => {
+router.get('/:id', authenticateToken, async (req, res) => {
   try {
     const transaction = await Transaction.findById(req.params.id)
       .populate('casinoId', 'name');
@@ -35,7 +35,7 @@ router.get('/:id', auth, async (req, res) => {
 
 // Create new transaction
 router.post('/', [
-  auth,
+  authenticateToken,
   body('amount').isNumeric(),
   body('currency').notEmpty(),
   body('casinoId').notEmpty(),
@@ -59,7 +59,7 @@ router.post('/', [
 
 // Update transaction status
 router.patch('/:id/status', [
-  auth,
+  authenticateToken,
   body('status').isIn(['pending', 'completed', 'failed'])
 ], async (req, res) => {
   try {

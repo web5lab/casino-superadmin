@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
 import { Lock, User } from 'lucide-react';
+import { useDispatch } from 'react-redux';
+import { logInApi } from '../store/global.Action';
 
 
 export function Login({ onLogin }) {
@@ -7,34 +9,13 @@ export function Login({ onLogin }) {
   const [password, setPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
-
+  const dispatch = useDispatch()
   const handleSubmit = async (e) => {
     e.preventDefault();
     setIsLoading(true);
     setError('');
-
     try {
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 1000));
-
-      // Mock authentication logic
-      if (email === 'admin@example.com' && password === 'admin') {
-        onLogin({
-          id: '1',
-          email,
-          role: 'SUPER_ADMIN',
-          name: 'Super Admin'
-        });
-      } else if (email === 'panel@example.com' && password === 'admin') {
-        onLogin({
-          id: '2',
-          email,
-          role: 'PANEL_ADMIN',
-          name: 'Panel Admin'
-        });
-      } else {
-        throw new Error('Invalid credentials');
-      }
+      dispatch(logInApi({ email, password }))
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Login failed');
     } finally {

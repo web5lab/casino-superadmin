@@ -12,7 +12,6 @@ const currencySchema = new mongoose.Schema({
   },
   icon: {
     type: String,
-    required: true
   },
   symbol: {
     type: String,

@@ -2,11 +2,14 @@ import { useState } from 'react';
 import { BrowserRouter } from 'react-router-dom';
 import { Layout } from './components/Layout';
 import { Login } from './components/Login';
+import { useDispatch, useSelector } from 'react-redux';
+import { userSelector } from './store/global.Selctor';
 
 
 function App() {
-  const [user, setUser] = useState(null);
-
+  const [users, setUser] = useState(null);
+  const dispatch = useDispatch()
+  const user = useSelector(userSelector)
   const handleLogin = (loggedInUser) => {
     setUser(loggedInUser);
   };

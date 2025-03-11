@@ -1,6 +1,6 @@
 import express from 'express';
 import { body, validationResult } from 'express-validator';
-import { auth, requireRole } from '../middleware/auth.js';
+import { authenticateToken, requireRole } from '../middleware/auth.js';
 import Wallet from '../models/Wallet.js';
 import { blockchainUtils, monitorAddress, walletGenerator, keystore } from '../utils/blockchain/index.js';
 import { sendTransactionAlert } from '../utils/mailer.js';
@@ -8,7 +8,7 @@ import { sendTransactionAlert } from '../utils/mailer.js';
 const router = express.Router();
 
 // Get all wallets
-router.get('/', auth, async (req, res) => {
+router.get('/', authenticateToken, async (req, res) => {
   try {
     const wallets = await Wallet.find();
     res.json(wallets);
@@ -18,7 +18,7 @@ router.get('/', auth, async (req, res) => {
 });
 
 // Get wallet by network and type
-router.get('/:network/:type', auth, async (req, res) => {
+router.get('/:network/:type', authenticateToken, async (req, res) => {
   try {
     const { network, type } = req.params;
     const wallet = await Wallet.findOne({ network, type });
@@ -35,7 +35,7 @@ router.get('/:network/:type', auth, async (req, res) => {
 
 // Create or update wallet
 router.post('/', [
-  auth,
+  authenticateToken,
   requireRole(['SUPER_ADMIN']),
   body('network').isIn(['ethereum', 'solana', 'bitcoin', 'tron']),
   body('type').isIn(['adminWallet', 'fundingWallet']),
@@ -91,7 +91,7 @@ router.post('/', [
 
 // Generate new wallet
 router.post('/generate', [
-  auth,
+  authenticateToken,
   requireRole(['SUPER_ADMIN']),
   body('network').isIn(['ethereum', 'solana', 'bitcoin']),
   body('type').isIn(['adminWallet', 'fundingWallet'])
@@ -148,7 +148,7 @@ router.post('/generate', [
 
 // Import existing wallet
 router.post('/import', [
-  auth,
+  authenticateToken,
   requireRole(['SUPER_ADMIN']),
   body('network').isIn(['ethereum', 'solana', 'bitcoin']),
   body('type').isIn(['adminWallet', 'fundingWallet']),
@@ -204,7 +204,7 @@ router.post('/import', [
 
 // Update wallet balance
 router.patch('/:network/:type/balance', [
-  auth,
+  authenticateToken,
   requireRole(['SUPER_ADMIN']),
   body('balance').isNumeric()
 ], async (req, res) => {

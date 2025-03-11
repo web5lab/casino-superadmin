@@ -1,12 +1,12 @@
 import express from 'express';
 import { body, validationResult } from 'express-validator';
-import { auth, requireRole } from '../middleware/auth.js';
+import { authenticateToken, requireRole } from '../middleware/auth.js';
 import Casino from '../models/Casino.js';
 
 const router = express.Router();
 
 // Get all casinos
-router.get('/', auth, async (req, res) => {
+router.get('/', authenticateToken, async (req, res) => {
   try {
     const casinos = await Casino.find();
     res.json(casinos);
@@ -15,7 +15,7 @@ router.get('/', auth, async (req, res) => {
   }
 });
 
-router.post('/create-user', auth, async (req, res) => {
+router.post('/create-user', authenticateToken, async (req, res) => {
   try {
     const casinos = await Casino.find();
     res.json(casinos);
@@ -25,7 +25,7 @@ router.post('/create-user', auth, async (req, res) => {
 });
 
 // Get casino by ID
-router.get('/:id', auth, async (req, res) => {
+router.get('/:id', authenticateToken, async (req, res) => {
   try {
     const casino = await Casino.findById(req.params.id);
     if (!casino) {
@@ -39,7 +39,7 @@ router.get('/:id', auth, async (req, res) => {
 
 // Create new casino
 router.post('/', [
-  auth,
+  authenticateToken,
   requireRole(['SUPER_ADMIN']),
   body('name').notEmpty(),
   body('apiConfig').isObject(),
@@ -61,7 +61,7 @@ router.post('/', [
 
 // Update casino
 router.put('/:id', [
-  auth,
+  authenticateToken,
   requireRole(['SUPER_ADMIN']),
   body('name').optional().notEmpty(),
   body('status').optional().isIn(['active', 'inactive']),
@@ -91,7 +91,7 @@ router.put('/:id', [
 });
 
 // Delete casino
-router.delete('/:id', auth, requireRole(['SUPER_ADMIN']), async (req, res) => {
+router.delete('/:id', authenticateToken, requireRole(['SUPER_ADMIN']), async (req, res) => {
   try {
     const casino = await Casino.findByIdAndDelete(req.params.id);
     if (!casino) {

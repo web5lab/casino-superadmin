@@ -4,7 +4,7 @@ const walletSchema = new mongoose.Schema({
   network: {
     type: String,
     required: true,
-    enum: ['ethereum', 'tron', 'bitcoin']
+    enum: ['ethereum', 'tron', 'bitcoin', 'solana']
   },
   type: {
     type: String,
@@ -20,9 +20,9 @@ const walletSchema = new mongoose.Schema({
     required: true
   },
   Currency: {
-    id: { type: String, required: true },
-    balance: { type: String, required: true },
-    network: { type: String, required: true }
+    id: { type: String },
+    balance: { type: String},
+    network: { type: String }
   },
   extraInfo: {
     type: Map,

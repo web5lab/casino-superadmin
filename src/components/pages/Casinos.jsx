@@ -2,10 +2,11 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Building2, Check, X, Plus, Palette } from 'lucide-react';
 
-const mockCasinos= [
+const mockCasinos = [
   {
     id: 'casino1',
     name: 'Royal Casino',
+    email: 'admin@royalcasino.com',
     status: 'active',
     balance: 125000.00,
     transactions: 1234,
@@ -55,10 +56,10 @@ export function Casinos() {
         <h1 className="text-2xl font-bold text-white">Casinos</h1>
         <button 
           onClick={() => setIsModalOpen(true)}
-          className="px-4 py-2 bg-gradient-to-r from-blue-400 to-white 400 rounded-lg text-white hover:from-blue-500 hover:to-white 500 transition-all flex items-center space-x-2"
+          className="px-4 py-2 bg-gradient-to-r from-blue-400 to-blue-600 rounded-lg text-white hover:from-blue-500 hover:to-blue-700 transition-all flex items-center space-x-2"
         >
           <Plus className="w-5 h-5" />
-          Add New Casino
+          <span>Add New Casino</span>
         </button>
       </div>
 
@@ -76,7 +77,7 @@ export function Casinos() {
                 </div>
               </div>
               <span className={`px-2 py-1 rounded-full text-xs ${
-                casino.status === 'active' ? 'bg-white 500/20 text-white 500' : 'bg-red-500/20 text-red-500'
+                casino.status === 'active' ? 'bg-green-500/20 text-green-500' : 'bg-red-500/20 text-red-500'
               }`}>
                 {casino.status.toUpperCase()}
               </span>
@@ -107,7 +108,7 @@ export function Casinos() {
               >
                 View Details
               </button>
-              <button className="px-4 py-2 bg-white 500/20 text-white 500 rounded-lg hover:bg-white 500/30 transition-colors">
+              <button className="px-4 py-2 bg-green-500/20 text-green-500 rounded-lg hover:bg-green-500/30 transition-colors">
                 <Check className="w-5 h-5" />
               </button>
               <button className="px-4 py-2 bg-red-500/20 text-red-500 rounded-lg hover:bg-red-500/30 transition-colors">
@@ -163,6 +164,45 @@ export function Casinos() {
                       onChange={(e) => setNewCasino({ ...newCasino, name: e.target.value })}
                       className="w-full px-4 py-2 bg-gray-900 border border-gray-700 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-blue-300"
                       placeholder="Enter casino name"
+                    />
+                  </div>
+                  
+                  {/* Added Email field */}
+                  <div>
+                    <label className="block text-gray-400 mb-2">Gmail Address</label>
+                    <input
+                      type="email"
+                      required
+                      value={newCasino.email || ''}
+                      onChange={(e) => setNewCasino({ ...newCasino, email: e.target.value })}
+                      className="w-full px-4 py-2 bg-gray-900 border border-gray-700 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-blue-300"
+                      placeholder="example@gmail.com"
+                    />
+                  </div>
+                  
+                  {/* Added Password field */}
+                  <div>
+                    <label className="block text-gray-400 mb-2">Password</label>
+                    <input
+                      type="password"
+                      required
+                      value={newCasino.password || ''}
+                      onChange={(e) => setNewCasino({ ...newCasino, password: e.target.value })}
+                      className="w-full px-4 py-2 bg-gray-900 border border-gray-700 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-blue-300"
+                      placeholder="Enter password"
+                    />
+                  </div>
+                  
+                  {/* Added Confirm Password field for better user experience */}
+                  <div>
+                    <label className="block text-gray-400 mb-2">Confirm Password</label>
+                    <input
+                      type="password"
+                      required
+                      value={newCasino.confirmPassword || ''}
+                      onChange={(e) => setNewCasino({ ...newCasino, confirmPassword: e.target.value })}
+                      className="w-full px-4 py-2 bg-gray-900 border border-gray-700 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-blue-300"
+                      placeholder="Confirm password"
                     />
                   </div>
                 </div>
@@ -324,7 +364,7 @@ export function Casinos() {
                 <button
                   type={currentStep === 3 ? 'submit' : 'button'}
                   onClick={() => currentStep < 3 && setCurrentStep(currentStep + 1)}
-                  className="px-4 py-2 bg-gradient-to-r from-blue-400 to-white 400 text-white rounded-lg hover:from-blue-500 hover:to-white 500 transition-all ml-auto"
+                  className="px-4 py-2 bg-gradient-to-r from-blue-400 to-blue-600 text-white rounded-lg hover:from-blue-500 hover:to-blue-700 transition-all ml-auto"
                 >
                   {currentStep === 3 ? 'Create Casino' : 'Next'}
                 </button>
