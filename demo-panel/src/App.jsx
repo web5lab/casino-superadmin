@@ -9,9 +9,9 @@ import { GetUserData } from './store/global.Action';
 
 function App() {
   const dispatch = useDispatch()
+  
   useEffect(() => {
     dispatch(GetUserData())
-    
   }, [])
   
   return (

@@ -49,14 +49,14 @@ const seedCasinos = async () => {
   console.log('Seeding casinos...');
   const casinos = [
     {
-      name: 'Royal Casino',
+      name: 'Demo',
       status: 'active',
-      balance: 1250000.00,
-      transactions: 1234,
+      balance: 1,
+      transactions: 1,
       apiConfig: {
-        balanceApi: 'https://api.royalcasino.com/balance',
-        depositApi: 'https://api.royalcasino.com/deposit',
-        deductionApi: 'https://api.royalcasino.com/deduct',
+        balanceApi: 'https://api.demo.com/balance',
+        depositApi: 'https://api.demo.com/deposit',
+        deductionApi: 'https://api.demo.com/deduct',
         secretKey: 'sk_live_123456789'
       },
       theme: {
@@ -64,25 +64,8 @@ const seedCasinos = async () => {
         secondaryColor: '#90EE90',
         logo: 'https://example.com/royal-casino-logo.png'
       }
-    },
-    {
-      name: 'Lucky Strike',
-      status: 'active',
-      balance: 750000.00,
-      transactions: 856,
-      apiConfig: {
-        balanceApi: 'https://api.luckystrike.com/balance',
-        depositApi: 'https://api.luckystrike.com/deposit',
-        deductionApi: 'https://api.luckystrike.com/deduct',
-        secretKey: 'sk_live_987654321'
-      },
-      theme: {
-        primaryColor: '#4169E1',
-        secondaryColor: '#FFD700'
-      }
     }
   ];
-
   await Casino.insertMany(casinos);
 };
 

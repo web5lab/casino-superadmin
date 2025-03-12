@@ -15,8 +15,6 @@ const cryptoOptions = [
   }
 ];
 
-
-
 export default function CryptoInterface() {
   const [mode, setMode] = useState('deposit');
   const [selectedCrypto, setSelectedCrypto] = useState(cryptoOptions[0]);
@@ -70,9 +68,7 @@ export default function CryptoInterface() {
   // Casino coin state
   const [casinoCoins, setCasinoCoins] = useState(1000); // Starting balance
   const conversionRate = 100; // 1 USDT = 100 casino coins
-
   const dummyAddress = '0xb285007A2306FCf0786b18DBFB23DFC52B8174a4';
-
   const handleCopy = () => {
     navigator.clipboard.writeText(dummyAddress);
   };
@@ -80,7 +76,6 @@ export default function CryptoInterface() {
   const handleConvertToCasinoCoins = () => {
     const usdValue = selectedCrypto.balance * selectedCrypto.price;
     const newCoins = Math.floor(usdValue * conversionRate);
-
     // Add transaction record
     setTransactions(prev => [{
       id: Date.now().toString(),
@@ -91,14 +86,11 @@ export default function CryptoInterface() {
       timestamp: new Date(),
       coins: newCoins
     }, ...prev]);
-
     setCasinoCoins(prev => prev + newCoins);
   };
 
   const handleWithdrawCasinoCoins = (amount) => {
     if (amount <= casinoCoins) {
-      const usdValue = amount / conversionRate;
-
       // Add transaction record
       setTransactions(prev => [{
         id: Date.now().toString(),
@@ -204,9 +196,8 @@ export default function CryptoInterface() {
                 Withdraw
               </button>
             </div>
-
-
             {/* Balance Display */}
+
             {/* <div className="bg-gray-700/30 p-6 rounded-2xl mb-8 backdrop-blur-sm border border-gray-600/20">
           <div className="flex justify-between items-center mb-2">
             <span className="text-gray-400">Available Balance</span>
