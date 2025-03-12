@@ -9,11 +9,11 @@ app.use(bodyParser.json());
 app.use(cors());
 
 let users = [
-  { userId: 'user1', balance: 1999 },
-  { userId: 'user2', balance: 1000 },
-  { userId: 'user3', balance: 1000 },
-  { userId: 'user4', balance: 1000 },
-  { userId: 'user5', balance: 1000 },
+  { userId: 'user1', balance: 1999 , id:1},
+  { userId: 'user2', balance: 1000 , id:2},
+  { userId: 'user3', balance: 1000 , id:3},
+  { userId: 'user4', balance: 1000 , id:4},
+  { userId: 'user5', balance: 1000 , id:5},
 ];
 
 let transactionHistory = {

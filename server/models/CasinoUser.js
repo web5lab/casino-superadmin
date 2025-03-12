@@ -12,7 +12,7 @@ const casinoUserSchema = new mongoose.Schema({
         required: true,
         index: true
     },
-    address: [{
+    wallet: [{
         walletType: {
             type: String,
             required: true
@@ -21,6 +21,14 @@ const casinoUserSchema = new mongoose.Schema({
             type: String,
             required: true
         },
+        balance: {
+            type: Number,
+            required: true
+        },
+        currency: {
+            type: String,
+            required: true
+        }
     }],
     transactions: [{
         hash: {

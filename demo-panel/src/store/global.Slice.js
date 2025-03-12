@@ -1,5 +1,5 @@
 import { createSlice, current } from '@reduxjs/toolkit'
-import { GetCurrencies, GetUserData } from './global.Action'
+import { GetCurrencies, GetUserData, GetWallet } from './global.Action'
 
 
 const initialState = {
@@ -7,6 +7,7 @@ const initialState = {
   currentUser: null,
   currentUserBalance: null,
   currenecies: null,
+  userWallet: null,
 }
 
 export const globalSlice = createSlice({
@@ -47,6 +48,16 @@ export const globalSlice = createSlice({
       })
       .addCase(GetCurrencies.fulfilled, (state, action) => {
         state.currenecies = action.payload;
+      });
+    builder
+      .addCase(GetWallet.pending, (state) => {
+        state.userWallet = [];
+      })
+      .addCase(GetWallet.rejected, (state, action) => {
+        state.userWallet = [];
+      })
+      .addCase(GetWallet.fulfilled, (state, action) => {
+        state.userWallet = action.payload;
       });
   }
 })

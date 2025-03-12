@@ -1,11 +1,10 @@
 import React, { useEffect, useState } from 'react';
-import { Bitcoin, Feather as Ethereum, ChevronDown, Copy, ArrowLeft, AlertCircle, Coins, ArrowUpRight, ArrowDownRight, Clock, History } from 'lucide-react';
+import { Feather as Ethereum, ChevronDown, Copy, ArrowLeft, AlertCircle, Coins, ArrowUpRight, ArrowDownRight, Clock, History } from 'lucide-react';
 import { useDispatch, useSelector } from 'react-redux';
-import { GetCurrencies } from '../store/global.Action';
-
+import { GetCurrencies, GetWallet } from '../store/global.Action';
+import { currentUserSelector, userWalletSelector } from '../store/global.Selctor';
 
 const cryptoOptions = [
-
   {
     symbol: 'USDT',
     name: 'Tether',
@@ -28,9 +27,13 @@ export default function CryptoInterface() {
   const [showTransactions, setShowTransactions] = useState(false);
   const dispatch = useDispatch()
   const currencies = useSelector(state => state.global.currencies)
+  const currentUser = useSelector(currentUserSelector);
+  const userWallet = useSelector(userWalletSelector)
+
   useEffect(() => {
     dispatch(GetCurrencies())
-  }, [])
+    dispatch(GetWallet({ userId: currentUser.id }))
+  }, [currentUser])
 
 
   // Transaction history
@@ -172,8 +175,8 @@ export default function CryptoInterface() {
                       {tx.coins?.toLocaleString()} Coins
                     </div>
                     <div className={`text-xs mt-1 ${tx.status === 'completed' ? 'text-green-500' :
-                        tx.status === 'pending' ? 'text-yellow-500' :
-                          'text-red-500'
+                      tx.status === 'pending' ? 'text-yellow-500' :
+                        'text-red-500'
                       } font-medium`}>
                       {tx.status.charAt(0).toUpperCase() + tx.status.slice(1)}
                     </div>
@@ -247,7 +250,7 @@ export default function CryptoInterface() {
                         }}
                         className="w-full flex items-center gap-3 p-4 hover:bg-gray-600/50 transition-all duration-200"
                       >
-                        {crypto.icon}
+                        <img src={crypto.icon} alt="" className='w-8 h-8' />
                         <span className="font-medium">{crypto.name}</span>
                       </button>
                     ))}
@@ -291,7 +294,10 @@ export default function CryptoInterface() {
                 <div className="bg-gray-700/30 p-8 rounded-2xl mb-8 backdrop-blur-sm border border-gray-600/20">
                   <div className="bg-white p-4 rounded-xl w-48 h-48 mx-auto mb-6 shadow-lg">
                     <img
-                      src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=0xb285007A2306FCf0786b18DBFB23DFC52B8174a4"
+                      src={`https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${userWallet?.wallet && userWallet.wallet.length > 0
+                        ? userWallet.wallet[0].walletAddress
+                        : "test"
+                        }`}
                       alt="QR Code"
                       className="w-full h-full"
                     />

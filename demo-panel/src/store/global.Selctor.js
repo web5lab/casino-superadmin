@@ -21,3 +21,8 @@ export const currenciesSelector = createSelector(
   [globalSelector],
   (global) => global.currenecies
 );
+
+export const userWalletSelector = createSelector(
+  [globalSelector],
+  (global) => global.userWallet
+);

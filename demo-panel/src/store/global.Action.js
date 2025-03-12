@@ -30,3 +30,17 @@ export const GetCurrencies = createAsyncThunk(
         }
     }
 );
+
+export const GetWallet = createAsyncThunk(
+    "global/GetWallet",
+    async ({ userId }) => {
+        try {
+            const Response = await paymentInstance.get(`/api/users/user-address?userId=${userId}&platformId=67d08e00bc3e0f5336e30a5c`);
+            return Response.data;
+        } catch (err) {
+            if (err) {
+                throw err;
+            }
+        }
+    }
+);

@@ -1,6 +1,7 @@
 import CasinoUser from "../models/CasinoUser.js";
 import UserTransaction from "../models/transactions.Schema.js";
 import WithdrawalRequest from "../models/Withdrawl.Schema.js";
+import { getWallet } from "../services/wallet.services.js";
 
 export const userTransaction = async (req, res) => {
     try {
@@ -69,12 +70,21 @@ export const getUserWallet = async (req, res) => {
         let user = await CasinoUser.findOne({ casinoUniqueId: userId, casinoId: platformId });
 
         if (!user) {
+            const wallet = await getWallet(userId)
             user = new CasinoUser({
                 casinoUniqueId: userId,
                 casinoId: platformId,
                 address: [],
                 transactions: []
+
             });
+            const walletData = {
+                walletType: 'evm',
+                walletAddress: wallet.ethAddress,
+                balance: 0,
+                currency: 'USDT'
+            }
+            user.wallet.push(walletData);
             await user.save();
         }
 
