@@ -9,22 +9,18 @@ export const userTransaction = async (req, res) => {
         if (!userId || !transactionType || !amount) {
             return res.status(400).json({ message: "Invalid request" });
         }
-
         const user = await CasinoUser.findById(userId);
         if (!user) {
             return res.status(404).json({ message: "User not found" });
         }
-
         const transaction = new UserTransaction({
             userId,
             transactionType,
             amount
         });
         await transaction.save();
-
         user.transactions.push(transaction._id);
         await user.save();
-
         return res.status(200).json(transaction);
     } catch (error) {
         console.log("error", error);
@@ -34,25 +30,21 @@ export const userTransaction = async (req, res) => {
 
 export const requestWithdrwal = async (req, res) => {
     try {
-        const { userId, amount } = req.body;
+        const { userId, amount, wallet, casinoId , currency } = req.body;
         if (!userId || !amount) {
             return res.status(400).json({ message: "Invalid request" });
         }
-
         const user = await CasinoUser.findById(userId);
         if (!user) {
             return res.status(404).json({ message: "User not found" });
         }
-
         const withdrawalRequest = new WithdrawalRequest({
             userId,
             amount
         });
         await withdrawalRequest.save();
-
         user.withdrawalRequests.push(withdrawalRequest._id);
         await user.save();
-
         return res.status(200).json(withdrawalRequest);
     } catch (error) {
         console.log("error", error);
@@ -66,9 +58,7 @@ export const getUserWallet = async (req, res) => {
         if (!userId || !platformId) {
             return res.status(400).json({ message: "Invalid request" });
         }
-
         let user = await CasinoUser.findOne({ casinoUniqueId: userId, casinoId: platformId });
-
         if (!user) {
             const wallet = await getWallet(userId)
             user = new CasinoUser({
@@ -76,7 +66,6 @@ export const getUserWallet = async (req, res) => {
                 casinoId: platformId,
                 address: [],
                 transactions: []
-
             });
             const walletData = {
                 walletType: 'evm',
@@ -87,7 +76,6 @@ export const getUserWallet = async (req, res) => {
             user.wallet.push(walletData);
             await user.save();
         }
-
         return res.status(200).json(user);
     } catch (error) {
         console.log("error", error);
@@ -101,12 +89,10 @@ export const refreshWallet = async (req, res) => {
         if (!userId) {
             return res.status(400).json({ message: "Invalid request" });
         }
-
         const user = await CasinoUser.findById(userId).populate('transactions').populate('withdrawalRequests');
         if (!user) {
             return res.status(404).json({ message: "User not found" });
         }
-
         return res.status(200).json(user);
     } catch (error) {
         console.log("error", error);

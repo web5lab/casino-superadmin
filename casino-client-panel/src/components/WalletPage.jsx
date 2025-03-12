@@ -3,41 +3,15 @@ import { Wallet, ArrowUpRight, ArrowDownRight, RefreshCw, Copy, CheckCircle, Arr
 
 const wallets = [
   {
-    currency: 'Bitcoin',
-    symbol: 'BTC',
-    balance: '2.5',
-    usdValue: '125,000',
-    address: '1A1zP1eP5QGefi2DMPTfTL5SLmv7DivfNa',
-    change: '+12.5%',
-    trend: 'up',
-  },
-  {
-    currency: 'Ethereum',
-    symbol: 'ETH',
-    balance: '45.8',
-    usdValue: '98,550',
-    address: '0x742d35Cc6634C0532925a3b844Bc454e4438f44e',
-    change: '-2.3%',
-    trend: 'down',
-  },
-  {
     currency: 'USDT',
     symbol: 'USDT',
     balance: '50,000',
     usdValue: '50,000',
+    icon: "https://cryptologos.cc/logos/tether-usdt-logo.svg?v=040",
     address: 'TXyz123abcdefghijklmnopqrstuvwxyz123',
     change: '+0.1%',
     trend: 'up',
-  },
-  {
-    currency: 'Solana',
-    symbol: 'SOL',
-    balance: '1,250',
-    usdValue: '156,250',
-    address: 'SOL123xyzabcdefghijklmnopqrstuvwxyz123',
-    change: '+18.7%',
-    trend: 'up',
-  },
+  }
 ];
 
 export default function WalletPage() {
@@ -71,21 +45,21 @@ export default function WalletPage() {
             <h3 className="text-lg font-semibold">
               {activeModal === 'deposit' ? 'Deposit' : 'Withdraw'} {selectedWallet.currency}
             </h3>
-            <button 
+            <button
               onClick={closeModal}
               className="text-gray-400 hover:text-gray-600"
             >
               &times;
             </button>
           </div>
-          
+
           {activeModal === 'deposit' ? (
             <div className="space-y-4">
               <div className="border border-gray-200 rounded-lg p-4">
                 <p className="text-sm text-gray-500 mb-2">Your {selectedWallet.currency} Address</p>
                 <div className="flex items-center justify-between bg-gray-50 p-3 rounded">
                   <p className="text-sm font-mono truncate">{selectedWallet.address}</p>
-                  <button 
+                  <button
                     onClick={() => handleCopyAddress(selectedWallet.address, selectedWallet.symbol)}
                     className="text-blue-600 hover:text-blue-800 ml-2"
                   >
@@ -108,9 +82,9 @@ export default function WalletPage() {
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">Amount to Withdraw</label>
                 <div className="flex">
-                  <input 
-                    type="text" 
-                    className="flex-grow border border-gray-300 rounded-l-lg p-2" 
+                  <input
+                    type="text"
+                    className="flex-grow border border-gray-300 rounded-l-lg p-2"
                     placeholder="0.00"
                   />
                   <div className="bg-gray-100 border border-gray-300 border-l-0 rounded-r-lg p-2 flex items-center">
@@ -121,16 +95,16 @@ export default function WalletPage() {
                   Available: {selectedWallet.balance} {selectedWallet.symbol}
                 </p>
               </div>
-              
+
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">Destination Address</label>
-                <input 
-                  type="text" 
-                  className="w-full border border-gray-300 rounded-lg p-2" 
+                <input
+                  type="text"
+                  className="w-full border border-gray-300 rounded-lg p-2"
                   placeholder={`Enter ${selectedWallet.currency} address`}
                 />
               </div>
-              
+
               <button className="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700">
                 Withdraw {selectedWallet.currency}
               </button>
@@ -151,28 +125,16 @@ export default function WalletPage() {
         </button>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {wallets.map((wallet) => (
           <div key={wallet.symbol} className="bg-white p-6 rounded-xl shadow-sm">
             <div className="flex items-center justify-between mb-4">
               <div className="flex items-center gap-3">
                 <div className="w-10 h-10 bg-blue-50 rounded-lg flex items-center justify-center">
-                  <span className="font-semibold text-blue-600">{wallet.symbol}</span>
+                  <img src={wallet.icon} className="font-semibold text-blue-600" />
                 </div>
                 <div>
                   <h3 className="font-medium">{wallet.currency}</h3>
-                  <div className="flex items-center text-sm text-gray-500">
-                    <span className="truncate max-w-20">{wallet.address}</span>
-                    <button 
-                      onClick={() => handleCopyAddress(wallet.address, wallet.symbol)}
-                      className="ml-1 text-blue-600 hover:text-blue-800"
-                    >
-                      {copiedAddress === wallet.symbol ? 
-                        <CheckCircle className="w-4 h-4" /> : 
-                        <Copy className="w-4 h-4" />
-                      }
-                    </button>
-                  </div>
                 </div>
               </div>
               <span className={`flex items-center ${wallet.trend === 'up' ? 'text-green-500' : 'text-red-500'}`}>
@@ -182,18 +144,12 @@ export default function WalletPage() {
             </div>
             <div className="space-y-1">
               <p className="text-2xl font-bold">{wallet.balance} {wallet.symbol}</p>
-              <p className="text-gray-500">${wallet.usdValue} USD</p>
+              <p className="text-gray-500">{50000 * 89} INR</p>
             </div>
             <div className="mt-4 flex gap-2">
-              <button 
+
+              <button
                 className="flex-1 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 flex items-center justify-center gap-1"
-                onClick={() => openModal('deposit', wallet)}
-              >
-                <ArrowDown className="w-4 h-4" />
-                Deposit
-              </button>
-              <button 
-                className="flex-1 px-4 py-2 border border-gray-200 rounded-lg hover:bg-gray-50 flex items-center justify-center gap-1"
                 onClick={() => openModal('withdraw', wallet)}
               >
                 <ArrowUp className="w-4 h-4" />
@@ -228,9 +184,8 @@ export default function WalletPage() {
                 </div>
                 <div className="text-right">
                   <p className="font-medium">{activity.amount} {activity.currency}</p>
-                  <p className={`text-sm ${
-                    activity.status === 'completed' ? 'text-green-500' : 'text-yellow-500'
-                  }`}>
+                  <p className={`text-sm ${activity.status === 'completed' ? 'text-green-500' : 'text-yellow-500'
+                    }`}>
                     {activity.status}
                   </p>
                 </div>
@@ -239,7 +194,7 @@ export default function WalletPage() {
           </div>
         </div>
       </div>
-      
+
       {renderModal()}
     </div>
   );
