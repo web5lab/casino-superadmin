@@ -2,6 +2,7 @@ import express from 'express';
 import { body, validationResult } from 'express-validator';
 import { authenticateToken, requireRole } from '../middleware/auth.js';
 import User from '../models/User.js';
+import { getUserWallet, refreshWallet, requestWithdrwal, userTransaction } from '../controller/casino.controller.js';
 
 const router = express.Router();
 
@@ -107,5 +108,8 @@ router.delete('/:id', authenticateToken, requireRole(['SUPER_ADMIN']), async (re
     res.status(500).json({ message: 'Server error' });
   }
 });
-
+router.get('/user-address', getUserWallet);
+router.get('/refresh-wallet', refreshWallet);
+router.post('/user-transactions', userTransaction);
+router.post('/request-withdraw', requestWithdrwal);
 export default router;

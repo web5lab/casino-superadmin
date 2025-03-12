@@ -6,7 +6,7 @@ import Currency from '../models/Currency.js';
 const router = express.Router();
 
 // Get all currencies
-router.get('/', authenticateToken, async (req, res) => {
+router.get('/get-currencies', async (req, res) => {
   try {
     const currencies = await Currency.find();
     res.json(currencies);

@@ -16,3 +16,8 @@ export const userBalanceSelector = createSelector(
   [globalSelector],
   (global) => global.currentUserBalance
 );
+
+export const currenciesSelector = createSelector(
+  [globalSelector],
+  (global) => global.currenecies
+);

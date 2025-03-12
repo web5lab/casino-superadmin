@@ -4,6 +4,10 @@ const axiosInstance = axios.create({
   baseURL: "http://localhost:3009",
 });
 
+export const paymentInstance = axios.create({
+  baseURL: "http://localhost:5004",
+});
+
 axiosInstance.interceptors.response.use(
   function (config) {
     successMessage(config);
