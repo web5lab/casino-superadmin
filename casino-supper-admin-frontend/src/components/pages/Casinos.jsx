@@ -41,29 +41,25 @@ export function Casinos() {
   });
   const user = useSelector(userSelector)
   const dispatch = useDispatch();
-  const casinos = useSelector(casinosSelector); 
+  const casinos = useSelector(casinosSelector);
+
   useEffect(() => {
     dispatch(getCasinos(user.token))
-  }, [])
+  }, []);
+
   const handleSubmit = (e) => {
     e.preventDefault();
     // Here you would typically make an API call to create the casino
     console.log('New casino:', newCasino);
     setIsModalOpen(false);
-    setCurrentStep(1);
-    setNewCasino({
-      theme: {
-        primaryColor: '#FFA500',
-        secondaryColor: '#90EE90'
-      }
-    });
+
   };
 
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center">
         <h1 className="text-2xl font-bold text-white">Casinos</h1>
-        <button 
+        <button
           onClick={() => setIsModalOpen(true)}
           className="px-4 py-2 bg-gradient-to-r from-blue-400 to-blue-600 rounded-lg text-white hover:from-blue-500 hover:to-blue-700 transition-all flex items-center space-x-2"
         >
@@ -85,9 +81,8 @@ export function Casinos() {
                   <p className="text-sm text-gray-400">ID: {casino.id}</p>
                 </div>
               </div>
-              <span className={`px-2 py-1 rounded-full text-xs ${
-                casino.status === 'active' ? 'bg-green-500/20 text-green-500' : 'bg-red-500/20 text-red-500'
-              }`}>
+              <span className={`px-2 py-1 rounded-full text-xs ${casino.status === 'active' ? 'bg-green-500/20 text-green-500' : 'bg-red-500/20 text-red-500'
+                }`}>
                 {casino?.status?.toUpperCase() === 'ACTIVE' ? 'Active' : 'Inactive'}
               </span>
             </div>
@@ -111,7 +106,7 @@ export function Casinos() {
             </div>
 
             <div className="flex space-x-2">
-              <button 
+              <button
                 onClick={() => navigate(`/casinos/${casino.id}`)}
                 className="flex-1 px-4 py-2 bg-gray-700 rounded-lg text-white hover:bg-gray-600 transition-colors"
               >
@@ -133,7 +128,7 @@ export function Casinos() {
           <div className="bg-gray-800 rounded-lg p-6 w-full max-w-2xl">
             <div className="flex justify-between items-center mb-6">
               <h2 className="text-xl font-bold text-white">Add New Casino</h2>
-              <button 
+              <button
                 onClick={() => setIsModalOpen(false)}
                 className="text-gray-400 hover:text-white"
               >
@@ -146,17 +141,16 @@ export function Casinos() {
                 {[1, 2, 3].map((step) => (
                   <div
                     key={step}
-                    className={`flex-1 h-2 rounded-full ${
-                      step <= currentStep ? 'bg-blue-400' : 'bg-gray-700'
-                    }`}
+                    className={`flex-1 h-2 rounded-full ${step <= currentStep ? 'bg-blue-400' : 'bg-gray-700'
+                      }`}
                   />
                 ))}
               </div>
               <p className="text-gray-400 text-sm text-center">
                 Step {currentStep} of 3: {
                   currentStep === 1 ? 'Basic Information' :
-                  currentStep === 2 ? 'API Configuration' :
-                  'Theme Settings'
+                    currentStep === 2 ? 'API Configuration' :
+                      'Theme Settings'
                 }
               </p>
             </div>
@@ -175,7 +169,7 @@ export function Casinos() {
                       placeholder="Enter casino name"
                     />
                   </div>
-                  
+
                   {/* Added Email field */}
                   <div>
                     <label className="block text-gray-400 mb-2">Gmail Address</label>
@@ -188,7 +182,7 @@ export function Casinos() {
                       placeholder="example@gmail.com"
                     />
                   </div>
-                  
+
                   {/* Added Password field */}
                   <div>
                     <label className="block text-gray-400 mb-2">Password</label>
@@ -201,7 +195,7 @@ export function Casinos() {
                       placeholder="Enter password"
                     />
                   </div>
-                  
+
                   {/* Added Confirm Password field for better user experience */}
                   <div>
                     <label className="block text-gray-400 mb-2">Confirm Password</label>

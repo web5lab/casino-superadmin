@@ -39,6 +39,25 @@ export const getCasinos = createAsyncThunk(
     }
 );
 
+export const createCasino = createAsyncThunk(
+    "global/createCasino",
+    async ({token,data}) => {
+        try {
+            const Response = await axiosInstance.get(`/api/casinos`,data, {
+                headers: {
+                    Authorization: `Bearer ${token}` // Add the token to the request headers
+                }
+            });
+            console.log("api data", Response);
+            return Response.data;
+        } catch (err) {
+            if (err) {
+                throw err;
+            }
+        }
+    }
+);
+
 export const logInApi = createAsyncThunk(
     "global/logInApi",
     async (data) => {
