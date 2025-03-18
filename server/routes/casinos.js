@@ -1,7 +1,7 @@
 import express from 'express';
 import { body, validationResult } from 'express-validator';
 import { authenticateToken, requireRole } from '../middleware/auth.js';
-import Casino from '../models/Casino.js';
+import Casino from '../models/Casino.Schema.js';
 
 const router = express.Router();
 

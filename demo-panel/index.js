@@ -73,7 +73,7 @@ app.get('/transaction/:userId', (req, res) => {
 // Route to credit user balance
 app.post('/credit', (req, res) => {
   const { userId, amount } = req.body;
-  const user = users.find(u => u.userId === userId);
+  const user = users.find(u => u.id === userId);
   if (!user) {
     return res.status(404).send({ message: 'User not found' });
   }
@@ -82,6 +82,21 @@ app.post('/credit', (req, res) => {
     transactionHistory[userId] = [];
   }
   transactionHistory[userId].push({ type: 'credit', amount, timestamp: new Date().toISOString() });
+  res.status(200).send({ message: 'Amount credited successfully', balance: user.balance });
+});
+
+app.post('/credit-server', (req, res) => {
+  const { userId, valueInInr } = req.body;
+  console.log(req.body);
+  const user = users.find(u => u.id === userId);
+  if (!user) {
+    return res.status(404).send({ message: 'User not found' });
+  }
+  user.balance += valueInInr;
+  if (!transactionHistory[userId]) {
+    transactionHistory[userId] = [];
+  }
+  transactionHistory[userId].push({ type: 'credit', valueInInr, timestamp: new Date().toISOString() });
   res.status(200).send({ message: 'Amount credited successfully', balance: user.balance });
 });
 

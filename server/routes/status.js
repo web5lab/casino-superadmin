@@ -1,8 +1,8 @@
 import express from 'express';
 import mongoose from 'mongoose';
-import Casino from '../models/Casino.js';
-import Transaction from '../models/Transaction.js';
-import Wallet from '../models/Wallet.js';
+import Casino from '../models/Casino.Schema.js';
+import Transaction from '../models/Transaction.Schema.js';
+import Wallet from '../models/Wallet.Schema.js';
 import { blockchainUtils } from '../utils/blockchain/index.js';
 
 const router = express.Router();

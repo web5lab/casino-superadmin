@@ -37,8 +37,6 @@ export default function SubAdminsPage() {
     { value: 'transactions', label: 'Transactions' },
     { value: 'users', label: 'Users' },
     { value: 'withdrawals', label: 'Withdrawals' },
-    { value: 'analytics', label: 'Analytics' },
-    { value: 'compliance', label: 'Compliance' },
     { value: 'settings', label: 'Settings' },
   ];
 

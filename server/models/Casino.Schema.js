@@ -28,6 +28,22 @@ const casinoSchema = new mongoose.Schema({
     primaryColor: String,
     secondaryColor: String,
     logo: String
+  },
+  minimumWithdrawlAmount: {
+    type: Number,
+    default: 0
+  },
+  maximumDailyWithdrawlAmount: {
+    type: Number,
+    default: 100
+  },
+  autoWithdrawl: {
+    type: Boolean,
+    default: false
+  },
+  autoWithdrawlAmount: {
+    type: Number,
+    default: 10
   }
 }, {
   timestamps: true

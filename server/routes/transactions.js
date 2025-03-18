@@ -1,7 +1,7 @@
 import express from 'express';
 import { body, validationResult } from 'express-validator';
 import { authenticateToken } from '../middleware/auth.js';
-import Transaction from '../models/Transaction.js';
+import Transaction from '../models/Transaction.Schema.js';
 
 const router = express.Router();
 

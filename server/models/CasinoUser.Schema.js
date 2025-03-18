@@ -1,3 +1,4 @@
+import { networks } from 'bitcoinjs-lib';
 import mongoose from 'mongoose';
 
 const casinoUserSchema = new mongoose.Schema({
@@ -28,6 +29,14 @@ const casinoUserSchema = new mongoose.Schema({
         currency: {
             type: String,
             required: true
+        },
+        lastUpdatedBlockNumber: {
+            type: Number,
+            default: 0,
+        },
+        network:{
+            type: String,
+            default: 'amoy-testnet'
         }
     }],
     transactions: [{

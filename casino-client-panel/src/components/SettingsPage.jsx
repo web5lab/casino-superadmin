@@ -148,18 +148,25 @@ export default function SettingsPage() {
               defaultValue="10000"
             />
           </div>
-          {/* <div>
-            <label className="flex items-center gap-2">
-              <input type="checkbox" className="rounded text-blue-600" defaultChecked />
-              <span className="text-sm text-gray-700">Require 2FA for withdrawals</span>
-            </label>
+          <div className="space-y-4">
+            <div>
+              <label className="flex items-center gap-2">
+                <input type="checkbox" className="rounded text-blue-600" defaultChecked />
+                <span className="text-sm text-gray-700">Auto Withdrawal</span>
+              </label>
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Auto Withdrawal Limit (USD)
+              </label>
+              <input
+                type="number"
+                className="w-full px-3 py-2 border border-gray-200 rounded-lg focus:outline-none focus:border-blue-500"
+                defaultValue="1000"
+              />
+              <p className="mt-1 text-sm text-gray-500">Maximum amount for automatic withdrawals</p>
+            </div>
           </div>
-          <div>
-            <label className="flex items-center gap-2">
-              <input type="checkbox" className="rounded text-blue-600" defaultChecked />
-              <span className="text-sm text-gray-700">Enable KYC verification</span>
-            </label>
-          </div> */}
         </div>
       </div>
     </div>

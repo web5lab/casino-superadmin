@@ -1,7 +1,11 @@
-import CasinoUser from "../models/CasinoUser.js";
+import axios from "axios";
+import Casino from "../models/Casino.Schema.js";
+import CasinoUser from "../models/CasinoUser.Schema.js";
 import UserTransaction from "../models/transactions.Schema.js";
 import WithdrawalRequest from "../models/Withdrawl.Schema.js";
+import { getERC20Balance } from "../services/balance.services.js";
 import { getWallet } from "../services/wallet.services.js";
+import Transaction from "../models/Transaction.Schema.js";
 
 export const userTransaction = async (req, res) => {
     try {
@@ -30,7 +34,7 @@ export const userTransaction = async (req, res) => {
 
 export const requestWithdrwal = async (req, res) => {
     try {
-        const { userId, amount, wallet, casinoId , currency } = req.body;
+        const { userId, amount, wallet, casinoId, currency } = req.body;
         if (!userId || !amount) {
             return res.status(400).json({ message: "Invalid request" });
         }
@@ -85,17 +89,89 @@ export const getUserWallet = async (req, res) => {
 
 export const refreshWallet = async (req, res) => {
     try {
-        const { userId } = req.body;
-        if (!userId) {
+        const { casinoUniqueId, casinoId } = req.body;
+
+        if (!casinoUniqueId || !casinoId) {
             return res.status(400).json({ message: "Invalid request" });
         }
-        const user = await CasinoUser.findById(userId).populate('transactions').populate('withdrawalRequests');
+
+        const user = await CasinoUser.findOne({ casinoUniqueId, casinoId }).populate('transactions');
         if (!user) {
             return res.status(404).json({ message: "User not found" });
         }
-        return res.status(200).json(user);
+
+        const casino = await Casino.findById(casinoId);
+        if (!casino) {
+            return res.status(404).json({ message: "Casino not found" });
+        }
+
+        for (let wallet of user.wallet) {
+            if (wallet.walletType === "evm" && wallet.network === "amoy-testnet") {
+                const { balanceFormatted } = await getERC20Balance(wallet.walletAddress, "0x16B59e2d8274f2031c0eF4C9C460526Ada40BeDa", "amoyTestnet");
+
+                const currentBalance = Number(wallet.balance);
+                const newBalance = Number(balanceFormatted);
+
+                if (currentBalance !== newBalance) {
+                    const balanceDiff = newBalance - currentBalance;
+
+                    // Update user balance
+                    wallet.balance = newBalance;
+
+                    // Calculate deposit values
+                    const valueInInr = 87 * balanceDiff;
+                    const valueInUsdt = balanceDiff;
+
+                    try {
+                        const creditResponse = await axios.post(casino.apiConfig.depositApi, {
+                            userId: Number(casinoUniqueId),
+                            valueInInr,
+                            valueInUsdt,
+                        });
+
+                        // Handle transaction success
+                        if (creditResponse.status === 200) {
+                            await new Transaction({
+                                amount: balanceDiff,
+                                currency: 'USDT',
+                                status: 'completed',
+                                casinoId,
+                                walletAddress: wallet.walletAddress,
+                                network: wallet.network
+                            }).save();
+                        } else {
+                            // Handle failed transaction
+                            await new Transaction({
+                                amount: balanceDiff,
+                                currency: 'USDT',
+                                status: 'failed',
+                                casinoId,
+                                walletAddress: wallet.walletAddress,
+                                network: wallet.network
+                            }).save();
+                        }
+                    } catch (error) {
+                        console.error("Transaction error:", error);
+
+                        // Handle transaction error
+                        await new Transaction({
+                            amount: balanceDiff,
+                            currency: 'USDT',
+                            status: 'failed',
+                            casinoId,
+                            walletAddress: wallet.walletAddress,
+                            network: wallet.network
+                        }).save();;
+                    }
+                }
+            }
+        }
+
+        await user.save();
+
+        return res.status(200).json({ message: "Wallet refreshed successfully", user });
     } catch (error) {
-        console.log("error", error);
+        console.error("Error:", error);
         return res.status(500).json({ message: "Internal server error" });
     }
 };

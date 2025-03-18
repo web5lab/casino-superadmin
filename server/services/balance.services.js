@@ -33,7 +33,8 @@ const RPC_URLS = {
   polygon: 'https://polygon-rpc.com',
   arbitrum: 'https://arb1.arbitrum.io/rpc',
   optimism: 'https://mainnet.optimism.io',
-  avalanche: 'https://api.avax.network/ext/bc/C/rpc'
+  avalanche: 'https://api.avax.network/ext/bc/C/rpc',
+  amoyTestnet:"https://polygon-amoy-bor-rpc.publicnode.com"
 };
 
 // API keys for various services (replace with your own)
@@ -266,27 +267,6 @@ async function getCompleteBalances(walletInfo, networks = ['ethereum', 'bsc', 'p
     throw new Error(`Failed to get complete balance information: ${error.message}`);
   }
 }
-
-// Example usage
-async function checkBalanceExample() {
-  const walletInfo = {
-    userId: 1,
-    btcAddress: 'bc1qxy2kgdygjrsqtzq2n0yrf2493p83kkfjhx0wlh', // Example address
-    btcTestnet: false,
-    ethAddress: '0x742d35Cc6634C0532925a3b844Bc454e4438f44e'  // Example address (Vitalik)
-  };
-  
-  try {
-    console.log('Fetching balances...');
-    const balances = await getCompleteBalances(walletInfo, ['ethereum', 'polygon']);
-    console.log(JSON.stringify(balances, null, 2));
-  } catch (error) {
-    console.error('Balance check failed:', error.message);
-  }
-}
-
-// Uncomment to run the example
-checkBalanceExample();
 
 export {
   getBitcoinBalance,

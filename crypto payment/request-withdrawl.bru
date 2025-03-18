@@ -1,0 +1,18 @@
+meta {
+  name: request-withdrawl
+  type: http
+  seq: 2
+}
+
+post {
+  url: http://localhost:5004/api/users/request-withdrawl
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "casinoId": "67d08e00bc3e0f5336e30a5c",
+    "casinoUniqueId": "1"
+  }
+}

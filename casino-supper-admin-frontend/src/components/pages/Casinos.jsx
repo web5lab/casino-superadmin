@@ -12,6 +12,7 @@ const mockCasinos = [
     name: 'Royal Casino',
     email: 'admin@royalcasino.com',
     status: 'active',
+    
     balance: 125000.00,
     transactions: 1234,
     lastActive: new Date().toISOString(),
