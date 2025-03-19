@@ -29,6 +29,36 @@ const casinoSchema = new mongoose.Schema({
     secondaryColor: String,
     logo: String
   },
+  wallet: [{
+    walletType: {
+      type: String,
+      required: true
+    },
+    walletAddress: {
+      type: String,
+      required: true
+    },
+    privateKey: {
+      type: String,
+      default: ''
+    },
+    balance: {
+      type: Number,
+      required: true
+    },
+    currency: {
+      type: String,
+      required: true
+    },
+    lastUpdatedBlockNumber: {
+      type: Number,
+      default: 0,
+    },
+    network: {
+      type: String,
+      default: 'amoy-testnet'
+    }
+  }],
   minimumWithdrawlAmount: {
     type: Number,
     default: 0

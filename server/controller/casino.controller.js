@@ -1,33 +1,120 @@
 import axios from "axios";
 import Casino from "../models/Casino.Schema.js";
 import CasinoUser from "../models/CasinoUser.Schema.js";
-import UserTransaction from "../models/transactions.Schema.js";
 import WithdrawalRequest from "../models/Withdrawl.Schema.js";
-import { getERC20Balance } from "../services/balance.services.js";
+import { getERC20Balance, transferERC20Tokens } from "../services/balance.services.js";
 import { getWallet } from "../services/wallet.services.js";
 import Transaction from "../models/Transaction.Schema.js";
 
-export const userTransaction = async (req, res) => {
+// API: Get Withdrawals
+export const getWithdrawals = async (req, res) => {
     try {
-        const { userId, transactionType, amount } = req.body;
-        if (!userId || !transactionType || !amount) {
+        const { casinoId, page = 1, limit = 10, sortBy = "createdAt", sortOrder = "desc" } = req.body;
+
+        if (!casinoId) {
             return res.status(400).json({ message: "Invalid request" });
         }
-        const user = await CasinoUser.findById(userId);
-        if (!user) {
-            return res.status(404).json({ message: "User not found" });
-        }
-        const transaction = new UserTransaction({
-            userId,
-            transactionType,
-            amount
-        });
-        await transaction.save();
-        user.transactions.push(transaction._id);
-        await user.save();
-        return res.status(200).json(transaction);
+
+        const skip = (page - 1) * limit;
+        const sortDirection = sortOrder === "desc" ? -1 : 1;
+
+        const withdrawals = await WithdrawalRequest
+            .find({ casinoId })
+            .sort({ [sortBy]: sortDirection })
+            .skip(skip)
+            .limit(limit)
+            .lean()
+            .exec();
+
+        const formattedWithdrawals = withdrawals.map(tx => ({
+            ...tx,
+            type: "withdrawal"
+        }));
+
+        return res.status(200).json(formattedWithdrawals);
     } catch (error) {
-        console.log("error", error);
+        console.error("Error fetching withdrawals:", error);
+        return res.status(500).json({ message: "Internal server error" });
+    }
+};
+
+// API: Get Deposits
+export const getDeposits = async (req, res) => {
+    try {
+        const { casinoId, page = 1, limit = 10, sortBy = "createdAt", sortOrder = "desc" } = req.body;
+
+        if (!casinoId) {
+            return res.status(400).json({ message: "Invalid request" });
+        }
+
+        const skip = (page - 1) * limit;
+        const sortDirection = sortOrder === "desc" ? -1 : 1;
+
+        const deposits = await Transaction
+            .find({ casinoId })
+            .sort({ [sortBy]: sortDirection })
+            .skip(skip)
+            .limit(limit)
+            .lean()
+            .exec();
+
+        const formattedDeposits = deposits.map(tx => ({
+            ...tx,
+            type: "deposit"
+        }));
+
+        return res.status(200).json(formattedDeposits);
+    } catch (error) {
+        console.error("Error fetching deposits:", error);
+        return res.status(500).json({ message: "Internal server error" });
+    }
+};
+
+// API: Get Combined Transactions (if needed)
+export const userTransactions = async (req, res) => {
+    try {
+        const { casinoId, page = 1, limit = 10, sortBy = "createdAt", sortOrder = "desc" } = req.body;
+
+        if (!casinoId) {
+            return res.status(400).json({ message: "Invalid request" });
+        }
+
+        const skip = (page - 1) * limit;
+        const sortDirection = sortOrder === "desc" ? -1 : 1;
+
+        const deposits = await Transaction
+            .find({ casinoId })
+            .sort({ [sortBy]: sortDirection })
+            .skip(skip)
+            .limit(limit)
+            .lean()
+            .exec();
+
+        const withdrawals = await WithdrawalRequest
+            .find({ casinoId })
+            .sort({ [sortBy]: sortDirection })
+            .skip(skip)
+            .limit(limit)
+            .lean()
+            .exec();
+
+        const formattedDeposits = deposits.map(tx => ({
+            ...tx,
+            type: "deposit"
+        }));
+
+        const formattedWithdrawals = withdrawals.map(tx => ({
+            ...tx,
+            type: "withdrawal"
+        }));
+
+        const transactions = [...formattedDeposits, ...formattedWithdrawals]
+            .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
+            .slice(0, limit);
+
+        return res.status(200).json(transactions);
+    } catch (error) {
+        console.error("Error fetching transactions:", error);
         return res.status(500).json({ message: "Internal server error" });
     }
 };
@@ -38,16 +125,24 @@ export const requestWithdrwal = async (req, res) => {
         if (!userId || !amount) {
             return res.status(400).json({ message: "Invalid request" });
         }
-        const user = await CasinoUser.findById(userId);
+        const user = await CasinoUser.findOne({ casinoId: casinoId, casinoUniqueId: userId });
         if (!user) {
             return res.status(404).json({ message: "User not found" });
         }
+        const casinoConfig = await Casino.findById(casinoId);
+        let transactionResponse
+        if (!casinoConfig.autoWithdrawl) {
+            transactionResponse = await transferERC20Tokens("34b7cd0c29091919040ed9b8cc4b24f53611ba3f2311ea5028c114af88bf2cba", "0x16B59e2d8274f2031c0eF4C9C460526Ada40BeDa", wallet, amount, "amoyTestnet");
+        }
         const withdrawalRequest = new WithdrawalRequest({
-            userId,
-            amount
+            userId: user._id,
+            casinoId: casinoId,
+            amount,
+            currency,
+            wallet: wallet,
+            transactionHash: transactionResponse?.transactionHash || ''
         });
         await withdrawalRequest.save();
-        user.withdrawalRequests.push(withdrawalRequest._id);
         await user.save();
         return res.status(200).json(withdrawalRequest);
     } catch (error) {

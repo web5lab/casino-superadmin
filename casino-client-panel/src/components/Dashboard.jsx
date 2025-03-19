@@ -2,38 +2,11 @@ import React from 'react';
 import { ArrowUpRight, ArrowDownRight, DollarSign, Users, Activity, TrendingUp } from 'lucide-react';
 
 
-const metrics = [
-  {
-    title: 'Total Transaction Volume',
-    value: '$12.5M',
-    change: '+15.3%',
-    trend: 'up',
-  },
-  {
-    title: 'Average Transaction Size',
-    value: '$2,450',
-    change: '+5.2%',
-    trend: 'up',
-  },
-  {
-    title: 'Active Users',
-    value: '3,123',
-    change: '-2.1%',
-    trend: 'down',
-  },
-  {
-    title: 'Conversion Rate',
-    value: '2.8%',
-    change: '+0.5%',
-    trend: 'up',
-  },
-];
+
 
 const topCurrencies = [
-  { name: 'Bitcoin', volume: '$5.2M', change: '+12.3%' },
-  { name: 'Ethereum', volume: '$3.1M', change: '+8.7%' },
-  { name: 'USDT', volume: '$2.8M', change: '+5.2%' },
-  { name: 'Solana', volume: '$1.4M', change: '+15.8%' },
+
+  { name: 'USDT', volume: '$2.4M', change: '+5.2%' },
 ];
 
 const stats = [
@@ -52,16 +25,16 @@ const stats = [
     icon: Users,
   },
   {
-    title: 'Success Rate',
-    value: '98.5%',
-    change: '-0.5%',
-    trend: 'down',
-    icon: Activity,
-  },
-  {
-    title: 'Revenue',
+    title: 'Deposites',
     value: '$125K',
     change: '+15.3%',
+    trend: 'up',
+    icon: TrendingUp,
+  },
+  {
+    title: 'Withdrawl',
+    value: '$30K',
+    change: '+0.3%',
     trend: 'up',
     icon: TrendingUp,
   },
@@ -70,28 +43,13 @@ const stats = [
 const recentTransactions = [
   {
     id: '1',
-    user: 'John Doe',
+    user: 'Baz...Xt1',
     type: 'Deposit',
-    amount: '0.5 BTC',
+    amount: '0.5 USDT',
     status: 'completed',
     timestamp: '2 min ago',
   },
-  {
-    id: '2',
-    user: 'Alice Smith',
-    type: 'Withdrawal',
-    amount: '2.3 ETH',
-    status: 'pending',
-    timestamp: '5 min ago',
-  },
-  {
-    id: '3',
-    user: 'Bob Johnson',
-    type: 'Deposit',
-    amount: '1000 USDT',
-    status: 'completed',
-    timestamp: '10 min ago',
-  },
+  
 ];
 
 export default function Dashboard() {
@@ -191,7 +149,7 @@ export default function Dashboard() {
           <table className="w-full">
             <thead>
               <tr className="text-left border-b border-gray-200">
-                <th className="pb-3 text-gray-500 font-medium">User</th>
+                <th className="pb-3 text-gray-500 font-medium">User Id</th>
                 <th className="pb-3 text-gray-500 font-medium">Type</th>
                 <th className="pb-3 text-gray-500 font-medium">Amount</th>
                 <th className="pb-3 text-gray-500 font-medium">Status</th>
@@ -206,11 +164,10 @@ export default function Dashboard() {
                   <td className="py-3">{tx.amount}</td>
                   <td className="py-3">
                     <span
-                      className={`px-2 py-1 rounded-full text-xs ${
-                        tx.status === 'completed'
+                      className={`px-2 py-1 rounded-full text-xs ${tx.status === 'completed'
                           ? 'bg-green-100 text-green-700'
                           : 'bg-yellow-100 text-yellow-700'
-                      }`}
+                        }`}
                     >
                       {tx.status}
                     </span>

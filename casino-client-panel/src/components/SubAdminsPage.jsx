@@ -4,22 +4,13 @@ import { UserPlus, Shield, X, Edit2 } from 'lucide-react';
 const subAdmins = [
   {
     id: 'SA1',
-    name: 'Sarah Wilson',
-    email: 'sarah@example.com',
-    role: 'Finance Manager',
-    permissions: ['transactions', 'withdrawals', 'analytics'],
+    name: 'shiva',
+    email: 'helloshiva0801@gmail.com',
+    role: 'admin',
+    permissions: ['transactions', 'withdrawals'],
     status: 'active',
     lastLogin: '2024-03-15 10:30',
-  },
-  {
-    id: 'SA2',
-    name: 'Mike Brown',
-    email: 'mike@example.com',
-    role: 'Compliance Officer',
-    permissions: ['users', 'compliance'],
-    status: 'active',
-    lastLogin: '2024-03-15 09:45',
-  },
+  }
 ];
 
 export default function SubAdminsPage() {

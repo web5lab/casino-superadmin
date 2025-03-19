@@ -2,7 +2,7 @@ import express from 'express';
 import { body, validationResult } from 'express-validator';
 import { authenticateToken, requireRole } from '../middleware/auth.js';
 import User from '../models/User.Schema.js';
-import { getUserWallet, refreshWallet, requestWithdrwal, userTransaction } from '../controller/casino.controller.js';
+import { getUserWallet, refreshWallet, requestWithdrwal,  userTransactions } from '../controller/casino.controller.js';
 
 const router = express.Router();
 
@@ -110,6 +110,6 @@ router.delete('/:id', authenticateToken, requireRole(['SUPER_ADMIN']), async (re
 });
 router.get('/user-address', getUserWallet);
 router.post('/refresh-wallet', refreshWallet);
-router.post('/user-transactions', userTransaction);
+router.post('/user-transactions', userTransactions);
 router.post('/request-withdrawl', requestWithdrwal);
 export default router;

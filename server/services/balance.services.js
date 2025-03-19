@@ -268,10 +268,106 @@ async function getCompleteBalances(walletInfo, networks = ['ethereum', 'bsc', 'p
   }
 }
 
+/**
+ * Transfer ERC20 tokens from one wallet to another
+ * @param {string} privateKey - Private key of the sender's wallet
+ * @param {string} tokenAddress - Contract address of the ERC20 token
+ * @param {string} recipientAddress - Recipient wallet address
+ * @param {string|number} amount - Amount of tokens to send (in token units, not wei)
+ * @param {string} network - Network name (ethereum, bsc, polygon, etc.)
+ * @param {Object} options - Additional options like gas price, gas limit
+ * @returns {Promise<Object>} Transaction receipt
+ */
+async function transferERC20Tokens(privateKey, tokenAddress, recipientAddress, amount, network = 'ethereum', options = {}) {
+  try {
+    if (!RPC_URLS[network]) {
+      throw new Error(`Unsupported network: ${network}`);
+    }
+    
+    // Connect to the network with the private key
+    const provider = new ethers.JsonRpcProvider(RPC_URLS[network]);
+    const wallet = new ethers.Wallet(privateKey, provider);
+    
+    // Get the token contract interface
+    const tokenContract = new ethers.Contract(tokenAddress, [
+      ...ERC20_ABI,
+      {
+        "constant": false,
+        "inputs": [
+          {"name": "_to", "type": "address"},
+          {"name": "_value", "type": "uint256"}
+        ],
+        "name": "transfer",
+        "outputs": [{"name": "success", "type": "bool"}],
+        "type": "function"
+      }
+    ], wallet);
+    
+    // Get token decimals to format the amount correctly
+    const decimals = await tokenContract.decimals();
+    
+    // Format amount with the correct number of decimals
+    const amountInWei = ethers.parseUnits(amount.toString(), decimals);
+    
+    // Check if the sender has sufficient balance
+    const senderAddress = wallet.address;
+    const balance = await tokenContract.balanceOf(senderAddress);
+    
+    if (balance < amountInWei) {
+      throw new Error(`Insufficient token balance. Available: ${ethers.formatUnits(balance, decimals)}`);
+    }
+    
+    // Prepare transaction options
+    const txOptions = {};
+    
+    if (options.gasLimit) {
+      txOptions.gasLimit = ethers.getBigInt(options.gasLimit);
+    }
+    
+    if (options.gasPrice) {
+      txOptions.gasPrice = ethers.parseUnits(options.gasPrice.toString(), 'gwei');
+    } else {
+      // For networks that use EIP-1559, we can use maxFeePerGas and maxPriorityFeePerGas
+      if (network === 'ethereum' || network === 'polygon' || network === 'arbitrum' || network === 'optimism') {
+        const feeData = await provider.getFeeData();
+        if (feeData.maxFeePerGas && feeData.maxPriorityFeePerGas) {
+          txOptions.maxFeePerGas = feeData.maxFeePerGas;
+          txOptions.maxPriorityFeePerGas = feeData.maxPriorityFeePerGas;
+        }
+      }
+    }
+    
+    // Send the transaction
+    const tx = await tokenContract.transfer(recipientAddress, amountInWei, txOptions);
+    
+    // Get transaction receipt
+    const receipt = await tx.wait();
+    
+    // Format the response
+    return {
+      tokenAddress,
+      senderAddress,
+      recipientAddress,
+      amount: amount.toString(),
+      amountInWei: amountInWei.toString(),
+      network,
+      transactionHash: receipt.hash,
+      blockNumber: receipt.blockNumber,
+      status: receipt.status === 1 ? 'success' : 'failed',
+      gasUsed: receipt.gasUsed.toString(),
+      timestamp: new Date().toISOString()
+    };
+  } catch (error) {
+    console.error(`Error transferring ERC20 tokens: ${error.message}`);
+    throw new Error(`Failed to transfer tokens: ${error.message}`);
+  }
+}
+
 export {
   getBitcoinBalance,
   getEVMNativeBalance,
   getERC20Balance,
   getAllERC20Balances,
-  getCompleteBalances
+  getCompleteBalances,
+  transferERC20Tokens
 };

@@ -1,0 +1,17 @@
+meta {
+  name: user-transactions
+  type: http
+  seq: 2
+}
+
+post {
+  url: http://localhost:5004/api/users/user-transactions
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "casinoId": "67d08e00bc3e0f5336e30a5c"
+  }
+}

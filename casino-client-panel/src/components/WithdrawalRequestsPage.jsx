@@ -5,34 +5,14 @@ import FilterDialog from './FilterDialog';
 const withdrawalRequests = [
   {
     id: 'W123',
-    user: 'John Doe',
-    amount: '2.5 BTC',
+    user: 'Ba..F1z',
+    amount: '2.5 USDT',
     fiatValue: '$125,000',
-    wallet: '1A1zP1eP5QGefi2DMPTfTL5SLmv7DivfNa',
+    wallet: '0x0e170E7Efe1458fe9049ACeC8B4433b79a0A7DBB',
     status: 'pending',
     timestamp: '2024-03-15 14:30',
     priority: 'high',
-  },
-  {
-    id: 'W124',
-    user: 'Alice Smith',
-    amount: '45 ETH',
-    fiatValue: '$98,550',
-    wallet: '0x742d35Cc6634C0532925a3b844Bc454e4438f44e',
-    status: 'approved',
-    timestamp: '2024-03-15 14:25',
-    priority: 'medium',
-  },
-  {
-    id: 'W125',
-    user: 'Bob Johnson',
-    amount: '50,000 USDT',
-    fiatValue: '$50,000',
-    wallet: 'TXyz123abc...',
-    status: 'rejected',
-    timestamp: '2024-03-15 14:20',
-    priority: 'low',
-  },
+  }
 ];
 
 export default function WithdrawalRequestsPage() {
@@ -43,7 +23,7 @@ export default function WithdrawalRequestsPage() {
     {
       name: 'status',
       label: 'Status',
-      type: 'select' ,
+      type: 'select',
       options: [
         { value: 'pending', label: 'Pending' },
         { value: 'approved', label: 'Approved' },
@@ -53,7 +33,7 @@ export default function WithdrawalRequestsPage() {
     {
       name: 'priority',
       label: 'Priority',
-      type: 'select' ,
+      type: 'select',
       options: [
         { value: 'high', label: 'High' },
         { value: 'medium', label: 'Medium' },
@@ -117,7 +97,7 @@ export default function WithdrawalRequestsPage() {
               <CheckCircle className="w-6 h-6 text-green-600" />
             </div>
             <div>
-              <p className="text-sm text-gray-500">Approved Today</p>
+              <p className="text-sm text-gray-500">Approved</p>
               <p className="text-xl font-semibold">12</p>
             </div>
           </div>
@@ -128,7 +108,7 @@ export default function WithdrawalRequestsPage() {
               <XCircle className="w-6 h-6 text-red-600" />
             </div>
             <div>
-              <p className="text-sm text-gray-500">Rejected Today</p>
+              <p className="text-sm text-gray-500">Rejected</p>
               <p className="text-xl font-semibold">3</p>
             </div>
           </div>
@@ -141,7 +121,7 @@ export default function WithdrawalRequestsPage() {
             <thead>
               <tr className="text-left border-b border-gray-200">
                 <th className="px-6 py-3 text-gray-500 font-medium">Request ID</th>
-                <th className="px-6 py-3 text-gray-500 font-medium">User</th>
+                <th className="px-6 py-3 text-gray-500 font-medium">User Id</th>
                 <th className="px-6 py-3 text-gray-500 font-medium">Amount</th>
                 <th className="px-6 py-3 text-gray-500 font-medium">Fiat Value</th>
                 <th className="px-6 py-3 text-gray-500 font-medium">Wallet Address</th>
@@ -163,26 +143,24 @@ export default function WithdrawalRequestsPage() {
                   </td>
                   <td className="px-6 py-4">
                     <span
-                      className={`px-2 py-1 rounded-full text-xs ${
-                        request.priority === 'high'
+                      className={`px-2 py-1 rounded-full text-xs ${request.priority === 'high'
                           ? 'bg-red-100 text-red-700'
                           : request.priority === 'medium'
-                          ? 'bg-yellow-100 text-yellow-700'
-                          : 'bg-blue-100 text-blue-700'
-                      }`}
+                            ? 'bg-yellow-100 text-yellow-700'
+                            : 'bg-blue-100 text-blue-700'
+                        }`}
                     >
                       {request.priority}
                     </span>
                   </td>
                   <td className="px-6 py-4">
                     <span
-                      className={`px-2 py-1 rounded-full text-xs ${
-                        request.status === 'approved'
+                      className={`px-2 py-1 rounded-full text-xs ${request.status === 'approved'
                           ? 'bg-green-100 text-green-700'
                           : request.status === 'pending'
-                          ? 'bg-yellow-100 text-yellow-700'
-                          : 'bg-red-100 text-red-700'
-                      }`}
+                            ? 'bg-yellow-100 text-yellow-700'
+                            : 'bg-red-100 text-red-700'
+                        }`}
                     >
                       {request.status}
                     </span>
@@ -190,13 +168,13 @@ export default function WithdrawalRequestsPage() {
                   <td className="px-6 py-4 text-gray-500">{request.timestamp}</td>
                   <td className="px-6 py-4">
                     <div className="flex gap-2">
-                      <button 
+                      <button
                         className="px-3 py-1 text-sm text-green-600 hover:bg-green-50 rounded"
                         disabled={request.status !== 'pending'}
                       >
                         Approve
                       </button>
-                      <button 
+                      <button
                         className="px-3 py-1 text-sm text-red-600 hover:bg-red-50 rounded"
                         disabled={request.status !== 'pending'}
                       >

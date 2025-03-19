@@ -5,10 +5,10 @@ import FilterDialog from './FilterDialog';
 const transactions = [
   {
     id: '1',
-    user: 'John Doe',
+    user: 'Baz...Xt1',
     userId: 'U123',
     type: 'Deposit',
-    amount: '0.5 BTC',
+    amount: '0.5 usdt',
     fee: '$12.50',
     status: 'completed',
     timestamp: '2024-03-15 14:30',
@@ -16,44 +16,7 @@ const transactions = [
     txHash: '0x742d35Cc6634C0532925a3b844Bc454e4438f44e',
     network: 'Bitcoin',
     notes: 'Regular deposit',
-  },
-  {
-    id: '2',
-    user: 'Alice Smith',
-    userId: 'U124',
-    type: 'Withdrawal',
-    amount: '2.3 ETH',
-    fee: '$8.75',
-    status: 'pending',
-    timestamp: '2024-03-15 14:25',
-    walletAddress: '0x742d35Cc6634C0532925a3b844Bc454e4438f44e',
-    txHash: '0x123abc...',
-    network: 'Ethereum',
-    notes: 'Large withdrawal - needs review',
-  },
-  {
-    id: '3',
-    user: 'Bob Johnson',
-    userId: 'U125',
-    type: 'Deposit',
-    amount: '1000 USDT',
-    fee: '$5.00',
-    status: 'completed',
-    timestamp: '2024-03-15 14:20',
-    walletAddress: 'TXyz123abc...',
-    txHash: '0x456def...',
-    network: 'Tron',
-    notes: 'USDT deposit via TRC20',
-  },
-  {
-    id: '4',
-    user: 'Emma Wilson',
-    type: 'Withdrawal',
-    amount: '0.8 BTC',
-    fee: '$15.00',
-    status: 'failed',
-    timestamp: '2024-03-15 14:15',
-  },
+  }
 ];
 
 export default function TransactionsPage() {
@@ -133,7 +96,6 @@ export default function TransactionsPage() {
                 <th className="px-6 py-3 text-gray-500 font-medium">User</th>
                 <th className="px-6 py-3 text-gray-500 font-medium">Type</th>
                 <th className="px-6 py-3 text-gray-500 font-medium">Amount</th>
-                <th className="px-6 py-3 text-gray-500 font-medium">Fee</th>
                 <th className="px-6 py-3 text-gray-500 font-medium">Status</th>
                 <th className="px-6 py-3 text-gray-500 font-medium">Timestamp</th>
               </tr>
@@ -149,7 +111,6 @@ export default function TransactionsPage() {
                   <td className="px-6 py-4">{tx.user}</td>
                   <td className="px-6 py-4">{tx.type}</td>
                   <td className="px-6 py-4">{tx.amount}</td>
-                  <td className="px-6 py-4">{tx.fee}</td>
                   <td className="px-6 py-4">
                     <span
                       className={`px-2 py-1 rounded-full text-xs ${

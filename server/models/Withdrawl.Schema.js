@@ -6,6 +6,11 @@ const withdrawalRequestSchema = new mongoose.Schema({
         ref: 'CasinoUser',
         required: true
     },
+    casinoId: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Casino',
+        required: true
+      },
     amount: {
         type: Number,
         required: true
@@ -14,6 +19,22 @@ const withdrawalRequestSchema = new mongoose.Schema({
         type: String,
         enum: ['pending', 'approved', 'rejected'],
         default: 'pending'
+    },
+    currency: {
+        type: String,
+        default: 'USDT',
+    },
+    wallet: {
+        type: String,
+        default: '',
+    },
+    transactionHash: {
+        type: String,
+        default: '',
+    },
+    network: {
+        type: String,
+        default: 'amoyTestnet',
     },
     createdAt: {
         type: Date,

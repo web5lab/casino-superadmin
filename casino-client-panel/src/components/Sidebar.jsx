@@ -16,7 +16,7 @@ import {
 const menuItems = [
   { icon: LayoutDashboard, label: 'Dashboard', path: '/' },
   { icon: CreditCard, label: 'Wallet', path: '/wallet' },
-  { icon: Wallet, label: 'Transactions', path: '/transactions' },
+  { icon: Wallet, label: 'Deposites', path: '/transactions' },
   { icon: ArrowDownLeft, label: 'Withdrawals', path: '/withdrawals' },
   { icon: Settings, label: 'Settings', path: '/settings' },
   { icon: UserCog, label: 'Sub-Admins', path: '/sub-admins' },
