@@ -23,18 +23,9 @@ let transactionHistory = {
 };
 
 // Route to store user balance
-app.post('/balance', (req, res) => {
-  const { userId, balance } = req.body;
-  const user = users.find(u => u.userId === userId);
-  if (user) {
-    user.balance = balance;
-    res.status(200).send({ message: 'Balance updated successfully' });
-  } else {
-    res.status(404).send({ message: 'User not found' });
-  }
-});
 
-app.get('/user', (req, res) => {
+
+app.post('/user', (req, res) => {
   res.status(200).send({ users });
 });
 
@@ -49,6 +40,16 @@ app.get('/balance/:userId', (req, res) => {
   }
 });
 
+app.post('/balance', (req, res) => {
+  const { userId } = req.body;
+  console.log("user Id: " + Number(userId));
+  const user = users.find(u => u.id === Number(userId));
+  if (user) {
+    res.status(200).send({ userId, balance: user.balance });
+  } else {
+    res.status(404).send({ message: 'User not found' });
+  }
+});
 // Route to store transaction history
 app.post('/transaction', (req, res) => {
   const { userId, transaction } = req.body;

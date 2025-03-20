@@ -18,8 +18,8 @@ function App() {
     <BrowserRouter>
       <Routes>
         <Route path="/" element={<Layout />}>
-          <Route index element={<Home />} />
-          <Route path="wallet" element={<CryptoInterface />} />
+          <Route index element={<CryptoInterface />} />
+          <Route path="wallet" element={<Home />} />
           <Route path="game/:id" element={<CasinoGame />} />
         </Route>
       </Routes>

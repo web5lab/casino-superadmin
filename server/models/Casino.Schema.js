@@ -22,7 +22,8 @@ const casinoSchema = new mongoose.Schema({
     balanceApi: String,
     depositApi: String,
     deductionApi: String,
-    secretKey: String
+    secretKey: String,
+    userAuthApi: String
   },
   theme: {
     primaryColor: String,

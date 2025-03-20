@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const axiosInstance = axios.create({
-  baseURL: "http://localhost:3009",
+  baseURL: "http://localhost:5004",
 });
 
 export const paymentInstance = axios.create({

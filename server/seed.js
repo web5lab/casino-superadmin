@@ -1,11 +1,11 @@
 import mongoose from 'mongoose';
 import dotenv from 'dotenv';
 import bcrypt from 'bcryptjs';
-import User from './models/User.js';
-import Casino from './models/Casino.js';
-import Currency from './models/Currency.js';
-import Transaction from './models/Transaction.js';
-import Wallet from './models/Wallet.js';
+import User from './models/User.Schema.js';
+import Casino from './models/Casino.Schema.js';
+import Currency from './models/Currency.Schema.js';
+import Transaction from './models/Transaction.Schema.js';
+import Wallet from './models/Wallet.Schema.js';
 import { keystore } from './utils/blockchain/keystore.js';
 
 dotenv.config();
@@ -54,9 +54,10 @@ const seedCasinos = async () => {
       balance: 1,
       transactions: 1,
       apiConfig: {
-        balanceApi: 'https://api.demo.com/balance',
-        depositApi: 'https://api.demo.com/deposit',
-        deductionApi: 'https://api.demo.com/deduct',
+        balanceApi: 'http://localhost:3009/balance',
+        userAuthApi: 'http://localhost:3009/user',
+        depositApi: 'http://localhost:3009/credit-server',
+        deductionApi: 'http://localhost:3009/deduction-server',
         secretKey: 'sk_live_123456789'
       },
       theme: {

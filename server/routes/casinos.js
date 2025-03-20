@@ -37,6 +37,19 @@ router.get('/:id', authenticateToken, async (req, res) => {
   }
 });
 
+router.get('/casino/:id',  async (req, res) => {
+  try {
+    const casino = await Casino.findById(req.params.id).select('apiConfig.balanceApi'); // Fetch only balanceApi
+    if (!casino) {
+      return res.status(404).json({ message: 'Casino not found' });
+    }
+    res.json({ balanceApi: casino.apiConfig?.balanceApi });
+  } catch (error) {
+    res.status(500).json({ message: 'Server error' });
+  }
+});
+
+
 // Create new casino
 router.post('/', [
   authenticateToken,

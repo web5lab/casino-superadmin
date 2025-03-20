@@ -3,13 +3,14 @@ import { ChevronDown, Copy, ArrowLeft, AlertCircle, Coins, ArrowUpRight, ArrowDo
 import { useDispatch, useSelector } from 'react-redux';
 import { GetCurrencies, GetWallet } from '../store/global.Action';
 import { currentUserSelector, userWalletSelector } from '../store/global.Selctor';
+import { getBalance, getCasinoData, getERC20Balance, GetUserEvmWallet } from '../utils/utils';
 
 const cryptoOptions = [
   {
     symbol: 'USDT',
     name: 'Tether',
     icon: <img src='https://cryptologos.cc/logos/tether-usdt-logo.svg' className="w-6 h-6 bg-green-500 rounded-full flex items-center justify-center text-white font-bold text-sm" />,
-    networks: ['ERC20',"BEP20"],
+    networks: ['ERC20', "BEP20"],
     balance: 1250.00,
     price: 1.00,
   }
@@ -27,13 +28,47 @@ export default function CryptoInterface() {
   const dispatch = useDispatch();
   const currencies = useSelector(state => state.global.currencies);
   const currentUser = useSelector(currentUserSelector);
-  const userWallet = useSelector(userWalletSelector);
+  const [jwtToken, setJwtToken] = useState(null);
+  const [userId, setUserId] = useState(null);
+  const [platformId, setPlatformId] = useState('');
+  const [cryptoBalance, setcryptoBalance] = useState(0);
+  const [casinoBalance, setcasinoBalance] = useState()
+  const [casinoConfig, setcasinoConfig] = useState()
+  const [userWallet, setuserWallet] = useState()
+
 
   useEffect(() => {
     dispatch(GetCurrencies());
     dispatch(GetWallet({ userId: currentUser.id }));
+    extractFromUrl()
   }, [currentUser, dispatch]);
 
+  useEffect(() => {
+    if (platformId) {
+      const fa = async () => {
+        const data = await getCasinoData(platformId);
+        const bal = await getBalance({ apiUrl: data.balanceApi, userId: userId, secretToken: jwtToken });
+        const userWalletData = await GetUserEvmWallet({ userId: userId, platformId: platformId });
+        const cryptoBalanceData = await getERC20Balance({address:userWalletData.wallet[0].walletAddress, tokenAddress:"0x16B59e2d8274f2031c0eF4C9C460526Ada40BeDa"})
+        setcryptoBalance(Number(cryptoBalanceData.balanceFormatted));
+        setuserWallet(userWalletData);
+        setcasinoBalance(bal.balance)
+        setcasinoConfig(data)
+      }
+      fa();
+    }
+  }, [platformId]);
+
+  const extractFromUrl = () => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const token = urlParams.get('token'); // Example: ?token=your_jwt_here
+    const id = urlParams.get('userId');   // Example: ?userId=
+    const platform = urlParams.get('platformId'); // Example: ?platform=
+    console.log("data =>", token, id, platform);
+    if (token) setJwtToken(token);
+    if (id) setUserId(id);
+    if (platform) setPlatformId(platform);
+  };
   // Transaction history
   const [transactions, setTransactions] = useState([
     {
@@ -69,21 +104,21 @@ export default function CryptoInterface() {
   const [casinoCoins, setCasinoCoins] = useState(1000);
   const conversionRate = 100; // 1 USDT = 100 casino coins
   const dummyAddress = '0xb285007A2306FCf0786b18DBFB23DFC52B8174a4';
-  
+
   const handleCopy = () => {
-    navigator.clipboard.writeText(dummyAddress);
+    navigator.clipboard.writeText(userWallet.wallet[0].walletAddress || dummyAddress);
   };
 
   const handleConvert = () => {
     if (!amount || parseFloat(amount) <= 0) return;
-    
+
     if (conversionType === 'cryptoToCoins') {
       const cryptoAmount = parseFloat(amount);
       if (cryptoAmount > selectedCrypto.balance) return;
-      
+
       const usdValue = cryptoAmount * selectedCrypto.price;
       const newCoins = Math.floor(usdValue * conversionRate);
-      
+
       setTransactions(prev => [{
         id: Date.now().toString(),
         type: 'conversion',
@@ -93,14 +128,14 @@ export default function CryptoInterface() {
         timestamp: new Date(),
         coins: newCoins
       }, ...prev]);
-      
+
       setCasinoCoins(prev => prev + newCoins);
     } else {
       const coinsAmount = parseFloat(amount);
       if (coinsAmount > casinoCoins) return;
-      
+
       const cryptoValue = coinsAmount / conversionRate / selectedCrypto.price;
-      
+
       setTransactions(prev => [{
         id: Date.now().toString(),
         type: 'conversion',
@@ -110,16 +145,16 @@ export default function CryptoInterface() {
         timestamp: new Date(),
         coins: -coinsAmount
       }, ...prev]);
-      
+
       setCasinoCoins(prev => prev - coinsAmount);
     }
-    
+
     setAmount('');
   };
 
   const calculateConversionPreview = () => {
     if (!amount || parseFloat(amount) <= 0) return '0';
-    
+
     if (conversionType === 'cryptoToCoins') {
       const cryptoAmount = parseFloat(amount);
       return `${Math.floor(cryptoAmount * selectedCrypto.price * conversionRate).toLocaleString()} Coins`;
@@ -139,12 +174,12 @@ export default function CryptoInterface() {
   };
 
   return (
-    <div className="m-h-screen bg-gradient-to-b from-gray-900 via-gray-800 to-gray-900 text-white max-w-xl mx-auto">
+    <div className="m-h-screen bg-gradient-to-b from-gray-900 via-gray-800 to-gray-900 text-white max-w-lg mx-auto">
       <div className="backdrop-blur-xl bg-gray-800/70 rounded-2xl p-6 shadow-2xl border border-gray-700/50">
         {/* Header */}
         <div className="flex items-center mb-6">
           <button
-            onClick={() => {}}
+            onClick={() => { }}
             className="p-2 hover:bg-gray-700/50 rounded-full transition-all duration-200 hover:scale-105"
           >
             <ArrowLeft className="w-6 h-6" />
@@ -239,7 +274,7 @@ export default function CryptoInterface() {
               <div className="flex justify-between items-center">
                 <div>
                   <span className="text-gray-400 text-sm">Crypto Balance</span>
-                  <div className="font-bold">{selectedCrypto.balance.toFixed(4)} {selectedCrypto.symbol}</div>
+                  <div className="font-bold">{cryptoBalance} {selectedCrypto.symbol}</div>
                 </div>
                 <div className="text-right">
                   <span className="text-gray-400 text-sm">Casino Coins</span>
@@ -260,9 +295,8 @@ export default function CryptoInterface() {
                         setConversionType('cryptoToCoins');
                         setAmount(''); // Clear amount when switching
                       }}
-                      className={`flex-1 py-2 rounded-lg transition-colors text-sm font-medium ${
-                        conversionType === 'cryptoToCoins' ? 'bg-green-500 shadow-lg' : 'hover:bg-gray-600/50'
-                      }`}
+                      className={`flex-1 py-2 rounded-lg transition-colors text-sm font-medium ${conversionType === 'cryptoToCoins' ? 'bg-green-500 shadow-lg' : 'hover:bg-gray-600/50'
+                        }`}
                     >
                       {selectedCrypto.symbol} → Coins
                     </button>
@@ -271,21 +305,20 @@ export default function CryptoInterface() {
                         setConversionType('coinsToCrypto');
                         setAmount(''); // Clear amount when switching
                       }}
-                      className={`flex-1 py-2 rounded-lg transition-colors text-sm font-medium ${
-                        conversionType === 'coinsToCrypto' ? 'bg-blue-500 shadow-lg' : 'hover:bg-gray-600/50'
-                      }`}
+                      className={`flex-1 py-2 rounded-lg transition-colors text-sm font-medium ${conversionType === 'coinsToCrypto' ? 'bg-blue-500 shadow-lg' : 'hover:bg-gray-600/50'
+                        }`}
                     >
                       Coins → {selectedCrypto.symbol}
                     </button>
                   </div>
                 </div>
-                
+
                 {/* Input Section with Clear Direction Indicators */}
                 <div className="bg-gray-700/30 rounded-xl p-4 border border-gray-600/20">
                   <div className="flex items-center justify-between mb-3">
                     <label className="text-sm text-gray-400">
-                      {conversionType === 'cryptoToCoins' 
-                        ? `Enter ${selectedCrypto.symbol} Amount` 
+                      {conversionType === 'cryptoToCoins'
+                        ? `Enter ${selectedCrypto.symbol} Amount`
                         : 'Enter Coins Amount'}
                     </label>
                     <button
@@ -295,7 +328,7 @@ export default function CryptoInterface() {
                       MAX
                     </button>
                   </div>
-                  
+
                   <input
                     type="text"
                     value={amount}
@@ -308,14 +341,14 @@ export default function CryptoInterface() {
                     placeholder="0.00"
                     className="w-full bg-gray-700/50 rounded-lg p-3 text-lg font-bold focus:outline-none focus:ring-1 focus:ring-purple-500 border border-gray-600/30 mb-2"
                   />
-                  
+
                   <div className="text-right text-xs text-gray-400">
-                    Available: {conversionType === 'cryptoToCoins' 
+                    Available: {conversionType === 'cryptoToCoins'
                       ? `${selectedCrypto.balance.toFixed(4)} ${selectedCrypto.symbol}`
                       : `${casinoCoins.toLocaleString()} Coins`}
                   </div>
                 </div>
-                
+
                 {/* Conversion Preview */}
                 {amount && parseFloat(amount) > 0 && (
                   <div className="bg-gray-700/30 rounded-xl p-4 border border-gray-600/20">
@@ -324,16 +357,16 @@ export default function CryptoInterface() {
                         <div className="text-center">
                           <span className="text-sm text-gray-400">From</span>
                           <div className="font-bold">
-                            {conversionType === 'cryptoToCoins' 
-                              ? `${amount} ${selectedCrypto.symbol}` 
+                            {conversionType === 'cryptoToCoins'
+                              ? `${amount} ${selectedCrypto.symbol}`
                               : `${amount} Coins`}
                           </div>
                         </div>
-                        
+
                         <div className="flex-shrink-0 mx-4">
                           <ArrowRight className="w-5 h-5 text-purple-400" />
                         </div>
-                        
+
                         <div className="text-center">
                           <span className="text-sm text-gray-400">To (You'll Receive)</span>
                           <div className="font-bold text-green-400">
@@ -341,23 +374,22 @@ export default function CryptoInterface() {
                           </div>
                         </div>
                       </div>
-                      
+
                       <button
                         onClick={handleConvert}
                         disabled={
-                          !amount || 
-                          parseFloat(amount) <= 0 || 
+                          !amount ||
+                          parseFloat(amount) <= 0 ||
                           (conversionType === 'cryptoToCoins' && parseFloat(amount) > selectedCrypto.balance) ||
                           (conversionType === 'coinsToCrypto' && parseFloat(amount) > casinoCoins)
                         }
-                        className={`w-full py-3 rounded-lg transition-all flex items-center justify-center gap-2 text-sm font-bold ${
-                          !amount || 
-                          parseFloat(amount) <= 0 || 
+                        className={`w-full py-3 rounded-lg transition-all flex items-center justify-center gap-2 text-sm font-bold ${!amount ||
+                          parseFloat(amount) <= 0 ||
                           (conversionType === 'cryptoToCoins' && parseFloat(amount) > selectedCrypto.balance) ||
                           (conversionType === 'coinsToCrypto' && parseFloat(amount) > casinoCoins)
-                            ? 'bg-gray-600/50 cursor-not-allowed'
-                            : 'bg-gradient-to-r from-purple-500 to-purple-600 hover:from-purple-600 hover:to-purple-700'
-                        }`}
+                          ? 'bg-gray-600/50 cursor-not-allowed'
+                          : 'bg-gradient-to-r from-purple-500 to-purple-600 hover:from-purple-600 hover:to-purple-700'
+                          }`}
                       >
                         <Repeat className="w-4 h-4" />
                         Convert Now
@@ -365,7 +397,7 @@ export default function CryptoInterface() {
                     </div>
                   </div>
                 )}
-                
+
                 <div className="bg-gray-700/30 rounded-xl p-4 border border-gray-600/20">
                   <h3 className="font-medium mb-3 text-sm">Conversion Rates</h3>
                   <div className="flex justify-between text-sm mb-2">
@@ -397,7 +429,7 @@ export default function CryptoInterface() {
                       <ChevronDown className={`w-4 h-4 transition-transform ${showCryptoDropdown ? 'rotate-180' : ''}`} />
                     </button>
                   </div>
-                  
+
                   {showCryptoDropdown && (
                     <div className="bg-gray-700/90 rounded-lg overflow-hidden z-10 border border-gray-600/20 shadow-lg mb-4">
                       {currencies?.map((crypto) => (
@@ -416,7 +448,7 @@ export default function CryptoInterface() {
                       ))}
                     </div>
                   )}
-                  
+
                   <div className="flex items-center justify-between">
                     <span className="text-sm text-gray-400">Network</span>
                     <button
@@ -427,7 +459,7 @@ export default function CryptoInterface() {
                       <ChevronDown className={`w-4 h-4 transition-transform ${showNetworkDropdown ? 'rotate-180' : ''}`} />
                     </button>
                   </div>
-                  
+
                   {showNetworkDropdown && (
                     <div className="bg-gray-700/90 rounded-lg overflow-hidden z-10 border border-gray-600/20 shadow-lg mt-2">
                       {selectedCrypto.networks.map((network) => (
@@ -452,7 +484,7 @@ export default function CryptoInterface() {
                       src={`https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${userWallet?.wallet && userWallet.wallet.length > 0
                         ? userWallet.wallet[0].walletAddress
                         : dummyAddress
-                      }`}
+                        }`}
                       alt="QR Code"
                       className="w-full h-full"
                     />
@@ -461,7 +493,7 @@ export default function CryptoInterface() {
                   <div className="space-y-2">
                     <p className="text-gray-400 text-sm">Deposit address</p>
                     <div className="bg-gray-800/50 p-3 rounded-lg break-all font-mono text-xs border border-gray-700/50">
-                      {dummyAddress}
+                      {userWallet?.wallet[0]?.walletAddress || dummyAddress}
                     </div>
                     <button
                       onClick={handleCopy}
@@ -499,7 +531,7 @@ export default function CryptoInterface() {
                       <ChevronDown className={`w-4 h-4 transition-transform ${showCryptoDropdown ? 'rotate-180' : ''}`} />
                     </button>
                   </div>
-                  
+
                   {showCryptoDropdown && (
                     <div className="bg-gray-700/90 rounded-lg overflow-hidden z-10 border border-gray-600/20 shadow-lg mb-4">
                       {currencies?.map((crypto) => (
@@ -518,7 +550,7 @@ export default function CryptoInterface() {
                       ))}
                     </div>
                   )}
-                  
+
                   <label className="block text-sm text-gray-400 mb-2">Withdrawal Amount</label>
                   <input
                     type="text"
@@ -532,7 +564,7 @@ export default function CryptoInterface() {
                     placeholder="0.00"
                     className="w-full bg-gray-700/50 rounded-lg p-3 text-lg font-bold focus:outline-none focus:ring-1 focus:ring-blue-500 border border-gray-600/30"
                   />
-                  
+
                   <div className="flex justify-between mt-2">
                     {[0.25, 0.5, 0.75, 1].map((multiplier) => (
                       <button
@@ -574,11 +606,10 @@ export default function CryptoInterface() {
 
                 <button
                   disabled={!amount || parseFloat(amount) <= 0 || parseFloat(amount) > selectedCrypto.balance}
-                  className={`w-full py-3 ${
-                    !amount || parseFloat(amount) <= 0 || parseFloat(amount) > selectedCrypto.balance
-                      ? 'bg-gray-600/50 cursor-not-allowed'
-                      : 'bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700'
-                  } rounded-lg transition-all font-bold text-sm`}
+                  className={`w-full py-3 ${!amount || parseFloat(amount) <= 0 || parseFloat(amount) > selectedCrypto.balance
+                    ? 'bg-gray-600/50 cursor-not-allowed'
+                    : 'bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700'
+                    } rounded-lg transition-all font-bold text-sm`}
                 >
                   Withdraw {selectedCrypto.symbol}
                 </button>
