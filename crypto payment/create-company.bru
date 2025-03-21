@@ -1,0 +1,22 @@
+meta {
+  name: create-company
+  type: http
+  seq: 5
+}
+
+post {
+  url: http://localhost:7001/api/v1/company/create-company
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "companyName": "test1",
+    "businessRegistrationNumber": "123e44",
+    "country": "india",
+    "address": "india",
+     "email": "helloshiva0801@gmail.com",
+    "walletaddress": "0x57862F5f5DDFcfb8e410ab0e0517F049Af5bE7D1"
+  }
+}

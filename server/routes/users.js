@@ -2,7 +2,7 @@ import express from 'express';
 import { body, validationResult } from 'express-validator';
 import { authenticateToken, requireRole } from '../middleware/auth.js';
 import User from '../models/User.Schema.js';
-import { convertCasinoToCrypto, getUserWallet, refreshWallet, requestWithdrwal,  userTransactions } from '../controller/casino.controller.js';
+import { convertCasinoToCrypto, convertCryptoToCasino, getUserWallet, refreshWallet, requestWithdrwal,  userTransactions } from '../controller/casino.controller.js';
 
 const router = express.Router();
 
@@ -113,4 +113,5 @@ router.post('/refresh-wallet', refreshWallet);
 router.post('/user-transactions', userTransactions);
 router.post('/request-withdrawl', requestWithdrwal);
 router.post('/convert-to-crypto',convertCasinoToCrypto)
+router.post('/convert-to-casino',convertCryptoToCasino)
 export default router;

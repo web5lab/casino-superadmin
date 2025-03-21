@@ -388,53 +388,84 @@ async function sponsoredTransferERC20({
       throw new Error(`Unsupported network: ${network}`);
     }
 
+    // Validate addresses
+    if (!ethers.isAddress(tokenAddress)) {
+      throw new Error(`Invalid token address: ${tokenAddress}`);
+    }
+    
+    console.log("recpients: " + JSON.stringify(recipientAddress));
+    if (!recipientAddress || !ethers.isAddress(recipientAddress)) {
+      throw new Error(`Invalid recipient address: ${recipientAddress}`);
+    }
+
     const provider = new ethers.JsonRpcProvider(RPC_URLS[network]);
 
     // Create sponsor and sender wallets
     const sponsorWallet = new ethers.Wallet(sponsorPrivateKey, provider);
     const senderWallet = new ethers.Wallet(senderPrivateKey, provider);
+    
+    console.log(`Sender address: ${senderWallet.address}`);
+    console.log(`Recipient address: ${recipientAddress}`);
+    console.log(`Token address: ${tokenAddress}`);
+
+    // Define minimal ERC20 ABI using standard ethers.js format
+    const minimalErc20Abi = [
+      "function balanceOf(address) view returns (uint256)",
+      "function decimals() view returns (uint8)",
+      "function transfer(address, uint256) returns (bool)"
+    ];
 
     // Get the token contract interface
-    const tokenContract = new ethers.Contract(tokenAddress, [
-      ...ERC20_ABI,
-      {
-        "constant": false,
-        "inputs": [
-          {"name": "_to", "type": "address"},
-          {"name": "_value", "type": "uint256"}
-        ],
-        "name": "transfer",
-        "outputs": [{"name": "success", "type": "bool"}],
-        "type": "function"
-      }
-    ], senderWallet);
+    const tokenContract = new ethers.Contract(tokenAddress, minimalErc20Abi, senderWallet);
 
-    // Get token decimals to format the amount correctly
-    const decimals = await tokenContract.decimals();
-    const amountInWei = ethers.parseUnits(amount.toString(), decimals);
-
-    // Check sender's ERC20 token balance
-    const senderBalance = await tokenContract.balanceOf(senderWallet.address);
-    if (senderBalance < amountInWei) {
-      throw new Error(`Insufficient token balance in sender's wallet.`);
+    // Get token decimals and format amount
+    let decimals;
+    try {
+      decimals = await tokenContract.decimals();
+      console.log(`Token decimals: ${decimals}`);
+    } catch (error) {
+      console.log("Error getting decimals, defaulting to 18");
+      decimals = 18;
     }
 
-    // Estimate gas for the token transfer
-    const gasLimit = options.gasLimit || 150000;
-    const gasPrice = await provider.getGasPrice();
+    const amountStr = String(amount).replace(',', '.');
+    const amountInWei = ethers.parseUnits(amountStr, decimals);
+    console.log(`Amount in wei: ${amountInWei}`);
 
-    // Calculate gas cost in ETH/MATIC/etc.
-    const gasCost = gasPrice * BigInt(gasLimit);
+    // Check balance
+    const senderBalance = await tokenContract.balanceOf(senderWallet.address);
+    console.log(`Sender balance: ${senderBalance}`);
+    
+    if (senderBalance < amountInWei) {
+      throw new Error(`Insufficient token balance. Available: ${ethers.formatUnits(senderBalance, decimals)}`);
+    }
 
+    // Get fee data
+    const feeData = await provider.getFeeData();
+    const gasLimit = options.gasLimit ? ethers.getBigInt(options.gasLimit) : ethers.getBigInt(150000);
+    
+    let gasPrice;
+    if (options.gasPrice) {
+      gasPrice = ethers.parseUnits(options.gasPrice.toString(), 'gwei');
+    } else {
+      gasPrice = feeData.gasPrice;
+    }
+    
+    if (!gasPrice) {
+      throw new Error("Failed to get gas price");
+    }
+
+    // Calculate gas cost
+    const gasCost = gasPrice * gasLimit;
     console.log(`Estimated Gas Cost: ${ethers.formatEther(gasCost)} ETH`);
 
-    // Ensure sponsor wallet has sufficient balance
+    // Check sponsor balance
     const sponsorBalance = await provider.getBalance(sponsorWallet.address);
     if (sponsorBalance < gasCost) {
       throw new Error(`Insufficient balance in sponsor's wallet for gas.`);
     }
 
-    // Sponsor sends gas to sender
+    // Send gas from sponsor to sender
     const sponsorTx = await sponsorWallet.sendTransaction({
       to: senderWallet.address,
       value: gasCost
@@ -443,13 +474,15 @@ async function sponsoredTransferERC20({
     console.log(`Gas sponsorship transaction sent: ${sponsorTx.hash}`);
     await sponsorTx.wait();
 
-    // Send the token transfer transaction
-    const txOptions = {
+    // Send the token transfer
+    console.log(`Sending ${amountStr} tokens to ${recipientAddress}...`);
+    
+    const tx = await tokenContract.transfer(recipientAddress, amountInWei, {
       gasLimit,
       gasPrice
-    };
-
-    const tx = await tokenContract.transfer(recipientAddress, amountInWei, txOptions);
+    });
+    
+    console.log(`Transaction sent: ${tx.hash}`);
     const receipt = await tx.wait();
 
     console.log(`Token transfer transaction hash: ${receipt.hash}`);
@@ -460,7 +493,7 @@ async function sponsoredTransferERC20({
       senderAddress: senderWallet.address,
       sponsorAddress: sponsorWallet.address,
       recipientAddress,
-      amount: amount.toString(),
+      amount: amountStr,
       amountInWei: amountInWei.toString(),
       network,
       sponsorTxHash: sponsorTx.hash,

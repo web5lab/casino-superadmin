@@ -122,7 +122,7 @@ export const userTransactions = async (req, res) => {
 
 export const requestWithdrwal = async (req, res) => {
     try {
-        const { userId, amount, wallet, casinoId, currency } = req.body;
+        const { userId, amount, wallet, casinoId, currency, recipientAddress } = req.body;
         if (!userId || !amount) {
             return res.status(400).json({ message: "Invalid request" });
         }
@@ -133,7 +133,11 @@ export const requestWithdrwal = async (req, res) => {
         const casinoConfig = await Casino.findById(casinoId);
         let transactionResponse
         if (!casinoConfig.autoWithdrawl) {
-            transactionResponse = await transferERC20Tokens("34b7cd0c29091919040ed9b8cc4b24f53611ba3f2311ea5028c114af88bf2cba", "0x16B59e2d8274f2031c0eF4C9C460526Ada40BeDa", wallet, amount, "amoyTestnet");
+            const userPrivateKey = await PrivateKeySchema.findOne({ address: wallet });
+            transactionResponse = await sponsoredTransferERC20({
+                sponsorPrivateKey: process.env.FUNDINGWALLETPRIVETKEY, senderPrivateKey: userPrivateKey.privateKey, tokenAddress: process.env.USDTCONTRACTADDRESS, recipientAddress: recipientAddress,
+                amount: amount,
+            });
         }
         const withdrawalRequest = new WithdrawalRequest({
             userId: user._id,
@@ -141,6 +145,7 @@ export const requestWithdrwal = async (req, res) => {
             amount,
             currency,
             wallet: wallet,
+            status: 'completed',
             transactionHash: transactionResponse?.transactionHash || ''
         });
         await withdrawalRequest.save();
@@ -321,7 +326,8 @@ export const convertCasinoToCrypto = async (req, res) => {
 
 export const convertCryptoToCasino = async (req, res) => {
     try {
-        const { userId, amount, wallet, casinoId, currency, casinoCoinAmount, secretKey } = req.body;
+        const { userId, amount, wallet, casinoId, secretKey } = req.body;
+        console.log("amount", amount);
         if (!userId || !amount) {
             return res.status(400).json({ message: "Invalid request" });
         }
@@ -332,22 +338,24 @@ export const convertCryptoToCasino = async (req, res) => {
         const casinoConfig = await Casino.findById(casinoId);
         let depositBalance;
         try {
-            depositBalance = await axios.post(casinoConfig.apiConfig.depositApi, { amount: casinoCoinAmount, secretKey: secretKey, userId: userId });
-            if (deductBalance.status !== 200) {
-                return res.status(400).json({ message: "Deposited to Wallance" });
+            depositBalance = await axios.post(casinoConfig.apiConfig.depositApi, { amount: amount * 87, secretKey: secretKey, userId: userId });
+            if (depositBalance.status !== 200) {
+                return res.status(400).json({ message: "Deposited to Wallet" });
             }
         } catch (error) {
+            console.log("erorr", error);
             return res.status(400).json({ message: "Depoist Api Not Working" });
         }
-
         let transactionResponse
         let userWallet;
         if (!casinoConfig.autoWithdrawl) {
             userWallet = await PrivateKeySchema.findOne({ address: wallet });
-            transactionResponse = await sponsoredTransferERC20({sponsorPrivateKey:process.env.FUNDINGWALLETPRIVETKEY ,senderPrivateKey: userWallet.privateKey, 
-                tokenAddress: "0x16B59e2d8274f2031c0eF4C9C460526Ada40BeDa", 
-                recipientAddress: userWallet.address, 
-                amount:amount, });
+            transactionResponse = await sponsoredTransferERC20({
+                sponsorPrivateKey: process.env.FUNDINGWALLETPRIVETKEY, senderPrivateKey: userWallet.privateKey,
+                tokenAddress: process.env.USDTCONTRACTADDRESS,
+                recipientAddress: "0x7E8c952215EF7135ea0B1BE7716A4db42904ee14",
+                amount: amount,
+            });
         }
         // const withdrawalRequest = new WithdrawalRequest({
         //     userId: user._id,
@@ -359,7 +367,7 @@ export const convertCryptoToCasino = async (req, res) => {
         // });
         // await withdrawalRequest.save();
         await user.save();
-        return res.status(200).json({ updatedBalance: depositBalance.data , transactionResponse });
+        return res.status(200).json({ updatedBalance: depositBalance.data, transactionResponse });
     } catch (error) {
         console.log("error", error);
         return res.status(500).json({ message: "Internal server error" });

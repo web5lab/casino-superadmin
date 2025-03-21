@@ -1,0 +1,24 @@
+meta {
+  name: invite users
+  type: http
+  seq: 7
+}
+
+post {
+  url: http://localhost:7001/api/v1/company/invite-user
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "companyName": "test1",
+    "businessRegistrationNumber": "1234",
+    "country": "india",
+    "address": "india",
+    "walletaddress": "0xe9EeAf0244Ff2f9e5aD2F282579ACf14406E89C6",
+    "email": "helloshiva0801@gmail.com",
+    "company_id": 6,
+    "role": "admin"
+  }
+}

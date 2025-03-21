@@ -1,0 +1,21 @@
+meta {
+  name: user companies
+  type: http
+  seq: 6
+}
+
+get {
+  url: http://localhost:7001/api/v1/company/get-user-companies
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "companyName": "test1",
+    "businessRegistrationNumber": "1234",
+    "country": "india",
+    "address": "india",
+    "walletaddress": "0x57862F5f5DDFcfb8e410ab0e0517F049Af5bE7D1"
+  }
+}

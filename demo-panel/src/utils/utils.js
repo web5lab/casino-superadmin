@@ -111,3 +111,25 @@ export const convertToCrypto = async ({ userId, amount, wallet, casinoId, curren
     console.log("error in get balance", error);
   }
 }
+
+export const convertToCasino = async ({ userId, amount, wallet, casinoId, secretKey  }) => {
+  try {
+    const response = await axiosInstance.post('/api/users/convert-to-casino', {
+      userId, amount, wallet, casinoId, secretKey 
+    })
+    return response?.data;
+  } catch (error) {
+    console.log("error in get balance", error);
+  }
+}
+
+export const withdrawCryptoToWallet = async ({  userId, amount, wallet, casinoId, currency, recipientAddress   }) => {
+  try {
+    const response = await axiosInstance.post('/api/users/request-withdrawl', {
+      userId, amount, wallet, casinoId, currency ,recipientAddress
+    })
+    return response?.data;
+  } catch (error) {
+    console.log("error in get balance", error);
+  }
+}

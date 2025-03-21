@@ -3,7 +3,7 @@ import { ChevronDown, Copy, ArrowLeft, AlertCircle, Coins, ArrowUpRight, ArrowDo
 import { useDispatch, useSelector } from 'react-redux';
 import { GetCurrencies, GetWallet } from '../store/global.Action';
 import { currentUserSelector, userWalletSelector } from '../store/global.Selctor';
-import { convertToCrypto, getBalance, getCasinoData, getERC20Balance, GetUserEvmWallet } from '../utils/utils';
+import { convertToCasino, convertToCrypto, getBalance, getCasinoData, getERC20Balance, GetUserEvmWallet, withdrawCryptoToWallet } from '../utils/utils';
 
 
 
@@ -29,6 +29,7 @@ export default function CryptoInterface() {
   const [cryptoSymbol, setcryptoSymbol] = useState("usdt");
   const [cryptoIcon, setcryptoIcon] = useState(<img src='https://cryptologos.cc/logos/tether-usdt-logo.svg' className="w-6 h-6 bg-green-500 rounded-full flex items-center justify-center text-white font-bold text-sm" />)
   const [cryptoName, setcryptoName] = useState("Tether")
+  const [recipientAddress, setrecipientAddress] = useState()
 
   useEffect(() => {
     dispatch(GetCurrencies());
@@ -104,14 +105,12 @@ export default function CryptoInterface() {
 
   const handleConvert = async () => {
     if (!amount || parseFloat(amount) <= 0) return;
-
     if (conversionType === 'cryptoToCoins') {
       const cryptoAmount = parseFloat(amount);
       if (cryptoAmount > cryptoBalance) return;
-
       const usdValue = cryptoAmount * cryptoPrice;
       const newCoins = Math.floor(usdValue * conversionRate);
-
+      await convertToCasino({ userId: userId, amount: cryptoAmount, wallet: userWallet.wallet[0].walletAddress, casinoId: platformId, secretKey: jwtToken });
       setTransactions(prev => [{
         id: Date.now().toString(),
         type: 'conversion',
@@ -141,13 +140,11 @@ export default function CryptoInterface() {
 
       setCasinoCoins(prev => prev - coinsAmount);
     }
-
     setAmount('');
   };
 
   const calculateConversionPreview = () => {
     if (!amount || parseFloat(amount) <= 0) return '0';
-
     if (conversionType === 'cryptoToCoins') {
       const cryptoAmount = parseFloat(amount);
       return `${Math.floor(cryptoAmount * cryptoPrice * conversionRate).toLocaleString()} Coins`;
@@ -165,6 +162,25 @@ export default function CryptoInterface() {
       setAmount(casinoCoins.toString());
     }
   };
+
+  const withdrawFn = async () => {
+    if (!amount || parseFloat(amount) <= 0) return;
+    await withdrawCryptoToWallet({ amount: parseFloat(amount), userId: userId, casinoId: platformId, secretToken: jwtToken, wallet: userWallet.wallet[0].walletAddress, recipientAddress: recipientAddress });
+    setTransactions(prev => [{
+      id: Date.now().toString(),
+      type: 'withdrawal',
+      amount: parseFloat(amount),
+      symbol: cryptoSymbol,
+      status: 'completed',
+      timestamp: new Date(),
+      coins: -parseInt(amount * conversionRate)
+    }, ...prev]);
+    setCasinoCoins(prev => prev + parseInt(amount * conversionRate));
+    setAmount('');
+  };
+
+
+
 
   return (
     <div className="m-h-screen bg-gradient-to-b from-gray-900 via-gray-800 to-gray-900 text-white max-w-lg mx-auto">
@@ -577,6 +593,9 @@ export default function CryptoInterface() {
                     type="text"
                     placeholder={`Enter ${cryptoSymbol} address`}
                     className="w-full bg-gray-700/50 rounded-lg p-3 font-mono text-xs focus:outline-none focus:ring-1 focus:ring-blue-500 border border-gray-600/30"
+                    onClick={(e) => {
+                      setrecipientAddress(e.target.value);
+                    }}
                   />
                 </div>
 
@@ -603,6 +622,7 @@ export default function CryptoInterface() {
                     ? 'bg-gray-600/50 cursor-not-allowed'
                     : 'bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700'
                     } rounded-lg transition-all font-bold text-sm`}
+                  onClick={withdrawFn}
                 >
                   Withdraw {cryptoSymbol}
                 </button>

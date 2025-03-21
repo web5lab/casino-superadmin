@@ -87,17 +87,18 @@ app.post('/credit', (req, res) => {
 });
 
 app.post('/credit-server', (req, res) => {
-  const { userId, valueInInr } = req.body;
+  const { userId, amount } = req.body;
   console.log(req.body);
-  const user = users.find(u => u.id === userId);
+  const user = users.find(u => u.id === Number(userId));
+  console.log("user", user);
   if (!user) {
     return res.status(404).send({ message: 'User not found' });
   }
-  user.balance += valueInInr;
+  user.balance += amount;
   if (!transactionHistory[userId]) {
     transactionHistory[userId] = [];
   }
-  transactionHistory[userId].push({ type: 'credit', valueInInr, timestamp: new Date().toISOString() });
+  transactionHistory[userId].push({ type: 'credit', amount, timestamp: new Date().toISOString() });
   res.status(200).send({ message: 'Amount credited successfully', balance: user.balance });
 });
 
