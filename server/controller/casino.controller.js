@@ -2,9 +2,10 @@ import axios from "axios";
 import Casino from "../models/Casino.Schema.js";
 import CasinoUser from "../models/CasinoUser.Schema.js";
 import WithdrawalRequest from "../models/Withdrawl.Schema.js";
-import { getERC20Balance, transferERC20Tokens } from "../services/balance.services.js";
+import { getERC20Balance, sponsoredTransferERC20, transferERC20Tokens } from "../services/balance.services.js";
 import { getWallet } from "../services/wallet.services.js";
 import Transaction from "../models/Transaction.Schema.js";
+import PrivateKeySchema from "../models/PrivateKey.Schema.js";
 
 // API: Get Withdrawals
 export const getWithdrawals = async (req, res) => {
@@ -159,7 +160,12 @@ export const getUserWallet = async (req, res) => {
         }
         let user = await CasinoUser.findOne({ casinoUniqueId: userId, casinoId: platformId });
         if (!user) {
-            const wallet = await getWallet(userId)
+            const casinoConfig = await Casino.findById(platformId);
+            const wallet = await getWallet(userId, casinoConfig.masterPhrase)
+            await PrivateKeySchema.create({
+                address: wallet.ethAddress,
+                privateKey: wallet.ethPrivatekey
+            })
             user = new CasinoUser({
                 casinoUniqueId: userId,
                 casinoId: platformId,
@@ -267,6 +273,95 @@ export const refreshWallet = async (req, res) => {
         return res.status(200).json({ message: "Wallet refreshed successfully", user });
     } catch (error) {
         console.error("Error:", error);
+        return res.status(500).json({ message: "Internal server error" });
+    }
+};
+
+export const convertCasinoToCrypto = async (req, res) => {
+    try {
+        const { userId, amount, wallet, casinoId, currency, casinoCoinAmount, secretKey } = req.body;
+        if (!userId || !amount) {
+            return res.status(400).json({ message: "Invalid request" });
+        }
+        const user = await CasinoUser.findOne({ casinoId: casinoId, casinoUniqueId: userId });
+        if (!user) {
+            return res.status(404).json({ message: "User not found" });
+        }
+        const casinoConfig = await Casino.findById(casinoId);
+        let deductBalance;
+        try {
+            deductBalance = await axios.post(casinoConfig.apiConfig.deductionApi, { amount: amount * 87, secretKey: secretKey, userId: userId });
+            if (deductBalance.status !== 200) {
+                return res.status(400).json({ message: "Insufficient balance" });
+            }
+        } catch (error) {
+            return res.status(400).json({ message: "Insufficient balance" });
+        }
+
+        let transactionResponse
+        if (!casinoConfig.autoWithdrawl) {
+            transactionResponse = await transferERC20Tokens(process.env.FUNDINGWALLETPRIVETKEY, "0x16B59e2d8274f2031c0eF4C9C460526Ada40BeDa", wallet, amount, "amoyTestnet");
+        }
+        // const withdrawalRequest = new WithdrawalRequest({
+        //     userId: user._id,
+        //     casinoId: casinoId,
+        //     amount,
+        //     currency,
+        //     wallet: wallet,
+        //     transactionHash: transactionResponse?.transactionHash || ''
+        // });
+        // await withdrawalRequest.save();
+        await user.save();
+        return res.status(200).json({ updatedBalance: deductBalance.data });
+    } catch (error) {
+        console.log("error", error);
+        return res.status(500).json({ message: "Internal server error" });
+    }
+};
+
+export const convertCryptoToCasino = async (req, res) => {
+    try {
+        const { userId, amount, wallet, casinoId, currency, casinoCoinAmount, secretKey } = req.body;
+        if (!userId || !amount) {
+            return res.status(400).json({ message: "Invalid request" });
+        }
+        const user = await CasinoUser.findOne({ casinoId: casinoId, casinoUniqueId: userId });
+        if (!user) {
+            return res.status(404).json({ message: "User not found" });
+        }
+        const casinoConfig = await Casino.findById(casinoId);
+        let depositBalance;
+        try {
+            depositBalance = await axios.post(casinoConfig.apiConfig.depositApi, { amount: casinoCoinAmount, secretKey: secretKey, userId: userId });
+            if (deductBalance.status !== 200) {
+                return res.status(400).json({ message: "Deposited to Wallance" });
+            }
+        } catch (error) {
+            return res.status(400).json({ message: "Depoist Api Not Working" });
+        }
+
+        let transactionResponse
+        let userWallet;
+        if (!casinoConfig.autoWithdrawl) {
+            userWallet = await PrivateKeySchema.findOne({ address: wallet });
+            transactionResponse = await sponsoredTransferERC20({sponsorPrivateKey:process.env.FUNDINGWALLETPRIVETKEY ,senderPrivateKey: userWallet.privateKey, 
+                tokenAddress: "0x16B59e2d8274f2031c0eF4C9C460526Ada40BeDa", 
+                recipientAddress: userWallet.address, 
+                amount:amount, });
+        }
+        // const withdrawalRequest = new WithdrawalRequest({
+        //     userId: user._id,
+        //     casinoId: casinoId,
+        //     amount,
+        //     currency,
+        //     wallet: wallet,
+        //     transactionHash: transactionResponse?.transactionHash || ''
+        // });
+        // await withdrawalRequest.save();
+        await user.save();
+        return res.status(200).json({ updatedBalance: depositBalance.data , transactionResponse });
+    } catch (error) {
+        console.log("error", error);
         return res.status(500).json({ message: "Internal server error" });
     }
 };

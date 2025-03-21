@@ -1,4 +1,3 @@
-import { networks } from 'bitcoinjs-lib';
 import mongoose from 'mongoose';
 
 const casinoUserSchema = new mongoose.Schema({

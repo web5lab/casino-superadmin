@@ -75,6 +75,9 @@ const casinoSchema = new mongoose.Schema({
   autoWithdrawlAmount: {
     type: Number,
     default: 10
+  },masterPhrase: {
+    type: String,
+    required: true
   }
 }, {
   timestamps: true

@@ -363,11 +363,126 @@ async function transferERC20Tokens(privateKey, tokenAddress, recipientAddress, a
   }
 }
 
+/**
+ * Transfer ERC20 tokens with sponsored gas
+ * @param {string} sponsorPrivateKey - Private key of the sponsor wallet
+ * @param {string} senderPrivateKey - Private key of the sender wallet
+ * @param {string} tokenAddress - Contract address of the ERC20 token
+ * @param {string} recipientAddress - Recipient wallet address
+ * @param {string|number} amount - Amount of tokens to send (in token units, not wei)
+ * @param {string} network - Network name (ethereum, bsc, polygon, etc.)
+ * @param {Object} options - Additional options like gas price, gas limit
+ * @returns {Promise<Object>} Transaction receipt
+ */
+async function sponsoredTransferERC20({
+  sponsorPrivateKey, 
+  senderPrivateKey, 
+  tokenAddress, 
+  recipientAddress, 
+  amount, 
+  network = 'amoyTestnet', 
+  options = {}}
+) {
+  try {
+    if (!RPC_URLS[network]) {
+      throw new Error(`Unsupported network: ${network}`);
+    }
+
+    const provider = new ethers.JsonRpcProvider(RPC_URLS[network]);
+
+    // Create sponsor and sender wallets
+    const sponsorWallet = new ethers.Wallet(sponsorPrivateKey, provider);
+    const senderWallet = new ethers.Wallet(senderPrivateKey, provider);
+
+    // Get the token contract interface
+    const tokenContract = new ethers.Contract(tokenAddress, [
+      ...ERC20_ABI,
+      {
+        "constant": false,
+        "inputs": [
+          {"name": "_to", "type": "address"},
+          {"name": "_value", "type": "uint256"}
+        ],
+        "name": "transfer",
+        "outputs": [{"name": "success", "type": "bool"}],
+        "type": "function"
+      }
+    ], senderWallet);
+
+    // Get token decimals to format the amount correctly
+    const decimals = await tokenContract.decimals();
+    const amountInWei = ethers.parseUnits(amount.toString(), decimals);
+
+    // Check sender's ERC20 token balance
+    const senderBalance = await tokenContract.balanceOf(senderWallet.address);
+    if (senderBalance < amountInWei) {
+      throw new Error(`Insufficient token balance in sender's wallet.`);
+    }
+
+    // Estimate gas for the token transfer
+    const gasLimit = options.gasLimit || 150000;
+    const gasPrice = await provider.getGasPrice();
+
+    // Calculate gas cost in ETH/MATIC/etc.
+    const gasCost = gasPrice * BigInt(gasLimit);
+
+    console.log(`Estimated Gas Cost: ${ethers.formatEther(gasCost)} ETH`);
+
+    // Ensure sponsor wallet has sufficient balance
+    const sponsorBalance = await provider.getBalance(sponsorWallet.address);
+    if (sponsorBalance < gasCost) {
+      throw new Error(`Insufficient balance in sponsor's wallet for gas.`);
+    }
+
+    // Sponsor sends gas to sender
+    const sponsorTx = await sponsorWallet.sendTransaction({
+      to: senderWallet.address,
+      value: gasCost
+    });
+
+    console.log(`Gas sponsorship transaction sent: ${sponsorTx.hash}`);
+    await sponsorTx.wait();
+
+    // Send the token transfer transaction
+    const txOptions = {
+      gasLimit,
+      gasPrice
+    };
+
+    const tx = await tokenContract.transfer(recipientAddress, amountInWei, txOptions);
+    const receipt = await tx.wait();
+
+    console.log(`Token transfer transaction hash: ${receipt.hash}`);
+
+    // Return the transaction details
+    return {
+      tokenAddress,
+      senderAddress: senderWallet.address,
+      sponsorAddress: sponsorWallet.address,
+      recipientAddress,
+      amount: amount.toString(),
+      amountInWei: amountInWei.toString(),
+      network,
+      sponsorTxHash: sponsorTx.hash,
+      transferTxHash: receipt.hash,
+      blockNumber: receipt.blockNumber,
+      status: receipt.status === 1 ? 'success' : 'failed',
+      gasUsed: receipt.gasUsed.toString(),
+      timestamp: new Date().toISOString()
+    };
+
+  } catch (error) {
+    console.error(`Error in sponsored transfer: ${error.message}`);
+    throw new Error(`Failed to perform sponsored transfer: ${error.message}`);
+  }
+}
+
 export {
   getBitcoinBalance,
   getEVMNativeBalance,
   getERC20Balance,
   getAllERC20Balances,
   getCompleteBalances,
-  transferERC20Tokens
+  transferERC20Tokens,
+  sponsoredTransferERC20
 };

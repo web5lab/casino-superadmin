@@ -6,14 +6,8 @@ import * as ecc from 'tiny-secp256k1';
 import crypto from 'crypto';
 
 // Constants
-const MNEMONIC = 'session dial switch visual distance twelve adjust cotton metal know bring void';
 const BITCOIN_NETWORK = bitcoin.networks.testnet;
 const ENCRYPTION_ALGORITHM = 'aes-256-gcm';
-
-// Initialize wallet instances
-const seed = bitcoin.crypto.sha256(Buffer.from(MNEMONIC));
-const bip32 = BIP32Factory(ecc);
-const bitcoinMasterKey = bip32.fromSeed(seed, BITCOIN_NETWORK);
 
 /**
  * Generates a new random mnemonic phrase for wallet creation
@@ -28,9 +22,9 @@ async function generateMasterPhrase() {
  * @param {number} numberOfWallets - Number of wallet addresses to generate
  * @returns {Array<Object>} Array of wallet objects containing user ID and addresses
  */
-function createMultipleWallets(numberOfWallets) {
+function createMultipleWallets(numberOfWallets,MNEMONIC) {
   const wallets = [];
-  
+
   for (let i = 1; i <= numberOfWallets; i++) {
     const wallet = getWallet(i);
     wallets.push({
@@ -39,7 +33,7 @@ function createMultipleWallets(numberOfWallets) {
       ethAddress: `your ethereum based network wallet address is ${wallet.ethAddress}`
     });
   }
-  
+
   console.log("Generated wallets:", wallets);
   return wallets;
 }
@@ -49,16 +43,19 @@ function createMultipleWallets(numberOfWallets) {
  * @param {number} userId - The user identifier
  * @returns {Object} Object containing the user's Bitcoin and Ethereum addresses
  */
-function getWallet(userId) {
+function getWallet(userId,MNEMONIC) {
+  const seed = bitcoin.crypto.sha256(Buffer.from(MNEMONIC));
+  const bip32 = BIP32Factory(ecc);
+  const bitcoinMasterKey = bip32.fromSeed(seed, BITCOIN_NETWORK);
   // Generate Bitcoin address
   const bitcoinChild = bitcoinMasterKey.derivePath(`m/0/${userId}`);
   const publicKeyBuffer = Buffer.from(bitcoinChild.publicKey);
-  
-  const { address: btcAddress } = bitcoin.payments.p2pkh({ 
-    pubkey: publicKeyBuffer, 
-    network: BITCOIN_NETWORK 
+
+  const { address: btcAddress } = bitcoin.payments.p2pkh({
+    pubkey: publicKeyBuffer,
+    network: BITCOIN_NETWORK
   });
-  
+
   // Generate Ethereum address
   // Using the standard derivation path for Ethereum
   const ethPath = `m/44'/60'/0'/0/${userId}`;
@@ -66,11 +63,12 @@ function getWallet(userId) {
     ethers.Mnemonic.fromPhrase(MNEMONIC),
     ethPath
   );
-  
+
   return {
     userId,
     btcAddress,
-    ethAddress: ethWallet.address
+    ethAddress: ethWallet.address,
+    ethPrivatekey: ethWallet.privateKey
   };
 }
 
@@ -79,17 +77,19 @@ function getWallet(userId) {
  * @param {number} userId - The user identifier
  * @returns {Object} Object containing the user's Bitcoin and Ethereum private keys
  */
-function getPrivateKeys(userId) {
+function getPrivateKeys(userId,MNEMONIC) {
   // For Ethereum
   const ethPath = `m/44'/60'/0'/0/${userId}`;
   const ethWallet = ethers.HDNodeWallet.fromMnemonic(
     ethers.Mnemonic.fromPhrase(MNEMONIC),
     ethPath
   );
-  
+  const seed = bitcoin.crypto.sha256(Buffer.from(MNEMONIC));
+  const bip32 = BIP32Factory(ecc);
+  const bitcoinMasterKey = bip32.fromSeed(seed, BITCOIN_NETWORK);
   // For Bitcoin
   const bitcoinChild = bitcoinMasterKey.derivePath(`m/0/${userId}`);
-  
+
   return {
     ethereumPrivateKey: ethWallet.privateKey,
     bitcoinPrivateKey: bitcoinChild.toWIF()
@@ -106,21 +106,21 @@ function encryptWalletData(data, password) {
   // Generate a key from the password
   const salt = crypto.randomBytes(16);
   const key = crypto.pbkdf2Sync(password, salt, 100000, 32, 'sha512');
-  
+
   // Generate a random initialization vector
   const iv = crypto.randomBytes(16);
-  
+
   // Create cipher
   const cipher = crypto.createCipheriv(ENCRYPTION_ALGORITHM, key, iv);
-  
+
   // Encrypt the data
   const dataStr = JSON.stringify(data);
   let encrypted = cipher.update(dataStr, 'utf8', 'hex');
   encrypted += cipher.final('hex');
-  
+
   // Get the auth tag for GCM mode
   const authTag = cipher.getAuthTag();
-  
+
   return {
     encrypted,
     iv: iv.toString('hex'),
@@ -141,18 +141,18 @@ function decryptWalletData(encryptedData, password) {
     const iv = Buffer.from(encryptedData.iv, 'hex');
     const salt = Buffer.from(encryptedData.salt, 'hex');
     const authTag = Buffer.from(encryptedData.authTag, 'hex');
-    
+
     // Derive the key using the same parameters
     const key = crypto.pbkdf2Sync(password, salt, 100000, 32, 'sha512');
-    
+
     // Create decipher
     const decipher = crypto.createDecipheriv(ENCRYPTION_ALGORITHM, key, iv);
     decipher.setAuthTag(authTag);
-    
+
     // Decrypt the data
     let decrypted = decipher.update(encryptedData.encrypted, 'hex', 'utf8');
     decrypted += decipher.final('utf8');
-    
+
     return JSON.parse(decrypted);
   } catch (error) {
     console.error('Decryption failed:', error.message);

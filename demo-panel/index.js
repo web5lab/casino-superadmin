@@ -101,7 +101,26 @@ app.post('/credit-server', (req, res) => {
   res.status(200).send({ message: 'Amount credited successfully', balance: user.balance });
 });
 
-// Route to withdraw user balance
+app.post('/deduction-server', (req, res) => {
+  try {
+    const { amount, secretKey, userId } = req.body;
+    console.log(req.body);
+    const user = users.find(u => u.id === Number(userId));
+    if (!user) {
+      return res.status(404).send({ message: 'User not found' });
+    }
+    user.balance -= amount;
+    if (!transactionHistory[userId]) {
+      transactionHistory[userId] = [];
+    }
+    transactionHistory[userId].push({ type: 'credit', amount, timestamp: new Date().toISOString() });
+    res.status(200).send({ message: 'Amount credited successfully', balance: user.balance });
+  } catch (error) {
+    res.status(500).send({ message: 'Internal Server Error', error: error});
+  }
+});
+
+//Route to withdraw user balance
 app.post('/withdraw', (req, res) => {
   const { userId, amount } = req.body;
   const user = users.find(u => u.userId === userId);

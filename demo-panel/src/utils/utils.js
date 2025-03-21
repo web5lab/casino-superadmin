@@ -36,7 +36,7 @@ const RPC_URLS = {
   avalanche: 'https://api.avax.network/ext/bc/C/rpc',
   amoyTestnet: "https://polygon-amoy-bor-rpc.publicnode.com"
 };
-export async function getERC20Balance({address, tokenAddress, network = 'amoyTestnet'}) {
+export async function getERC20Balance({ address, tokenAddress, network = 'amoyTestnet' }) {
   try {
     if (!RPC_URLS[network]) {
       throw new Error(`Unsupported network: ${network}`);
@@ -90,13 +90,24 @@ export const getBalance = async ({ apiUrl, secretToken, userId }) => {
   }
 }
 
-export const GetUserEvmWallet = async ({ userId , platformId }) => {
-    try {
-      const Response = await axiosInstance.get(`/api/users/user-address?userId=${userId}&platformId=${platformId}`);
-      return Response.data;
-    } catch (err) {
-      if (err) {
-        throw err;
-      }
+export const GetUserEvmWallet = async ({ userId, platformId }) => {
+  try {
+    const Response = await axiosInstance.get(`/api/users/user-address?userId=${userId}&platformId=${platformId}`);
+    return Response.data;
+  } catch (err) {
+    if (err) {
+      throw err;
     }
   }
+}
+
+export const convertToCrypto = async ({ userId, amount, wallet, casinoId, currency , casinoCoinAmount  , secretKey  }) => {
+  try {
+    const response = await axiosInstance.post('/api/users/convert-to-crypto', {
+      userId, amount, wallet, casinoId, currency , casinoCoinAmount  , secretKey
+    })
+    return response?.data;
+  } catch (error) {
+    console.log("error in get balance", error);
+  }
+}

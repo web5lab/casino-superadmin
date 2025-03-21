@@ -7,6 +7,7 @@ import Currency from './models/Currency.Schema.js';
 import Transaction from './models/Transaction.Schema.js';
 import Wallet from './models/Wallet.Schema.js';
 import { keystore } from './utils/blockchain/keystore.js';
+import { generateMasterPhrase } from './services/wallet.services.js';
 
 dotenv.config();
 
@@ -64,7 +65,8 @@ const seedCasinos = async () => {
         primaryColor: '#FFA500',
         secondaryColor: '#90EE90',
         logo: 'https://example.com/royal-casino-logo.png'
-      }
+      },
+      masterPhrase:await generateMasterPhrase()
     }
   ];
   await Casino.insertMany(casinos);
