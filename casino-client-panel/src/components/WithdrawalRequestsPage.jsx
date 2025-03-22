@@ -1,6 +1,8 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Download, Filter, CheckCircle, XCircle, Clock } from 'lucide-react';
 import FilterDialog from './FilterDialog';
+import { useDispatch, useSelector } from 'react-redux';
+import { withdrawalsApi } from '../store/global.Action';
 
 const withdrawalRequests = [
   {
@@ -18,7 +20,9 @@ const withdrawalRequests = [
 export default function WithdrawalRequestsPage() {
   const [isFilterOpen, setIsFilterOpen] = useState(false);
   const [activeFilters, setActiveFilters] = useState({});
-
+  const token = useSelector(state => state.global.profile.token)
+  const casinoId = useSelector(state => state.global.profile.user.casinoId)
+  const withdrawals = useSelector(state => state.global.withdrawals);
   const filterFields = [
     {
       name: 'status',
@@ -51,14 +55,18 @@ export default function WithdrawalRequestsPage() {
       type: 'number',
     },
   ];
-
-  const filteredRequests = withdrawalRequests.filter((request) => {
+  const filteredRequests = withdrawals.filter((request) => {
     if (activeFilters.status && request.status !== activeFilters.status) return false;
     if (activeFilters.priority && request.priority !== activeFilters.priority) return false;
     if (activeFilters.date && request.timestamp.split(' ')[0] !== activeFilters.date) return false;
     if (activeFilters.amount && parseFloat(request.fiatValue.replace('$', '').replace(',', '')) < activeFilters.amount) return false;
     return true;
   });
+  const dispatch = useDispatch();
+  useEffect(() => {
+    dispatch(withdrawalsApi({ token: token, casinoId: casinoId }))
+  }, [])
+
 
   return (
     <div className="p-6 space-y-6">
@@ -144,10 +152,10 @@ export default function WithdrawalRequestsPage() {
                   <td className="px-6 py-4">
                     <span
                       className={`px-2 py-1 rounded-full text-xs ${request.priority === 'high'
-                          ? 'bg-red-100 text-red-700'
-                          : request.priority === 'medium'
-                            ? 'bg-yellow-100 text-yellow-700'
-                            : 'bg-blue-100 text-blue-700'
+                        ? 'bg-red-100 text-red-700'
+                        : request.priority === 'medium'
+                          ? 'bg-yellow-100 text-yellow-700'
+                          : 'bg-blue-100 text-blue-700'
                         }`}
                     >
                       {request.priority}
@@ -156,10 +164,10 @@ export default function WithdrawalRequestsPage() {
                   <td className="px-6 py-4">
                     <span
                       className={`px-2 py-1 rounded-full text-xs ${request.status === 'approved'
-                          ? 'bg-green-100 text-green-700'
-                          : request.status === 'pending'
-                            ? 'bg-yellow-100 text-yellow-700'
-                            : 'bg-red-100 text-red-700'
+                        ? 'bg-green-100 text-green-700'
+                        : request.status === 'pending'
+                          ? 'bg-yellow-100 text-yellow-700'
+                          : 'bg-red-100 text-red-700'
                         }`}
                     >
                       {request.status}

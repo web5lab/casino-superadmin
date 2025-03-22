@@ -2,10 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { ChevronDown, Copy, ArrowLeft, AlertCircle, Coins, ArrowUpRight, ArrowDownRight, Clock, History, Repeat, ArrowRight } from 'lucide-react';
 import { useDispatch, useSelector } from 'react-redux';
 import { GetCurrencies, GetWallet } from '../store/global.Action';
-import { currentUserSelector, userWalletSelector } from '../store/global.Selctor';
 import { convertToCasino, convertToCrypto, getBalance, getCasinoData, getERC20Balance, GetUserEvmWallet, withdrawCryptoToWallet } from '../utils/utils';
-
-
 
 export default function CryptoInterface() {
   const [mode, setMode] = useState('deposit');
@@ -25,7 +22,7 @@ export default function CryptoInterface() {
   const [casinoBalance, setcasinoBalance] = useState(0)
   const [casinoConfig, setcasinoConfig] = useState()
   const [userWallet, setuserWallet] = useState()
-  const [cryptoPrice, setcryptoPrice] = useState(8.7)
+  const [cryptoPrice, setcryptoPrice] = useState(0.87)
   const [cryptoSymbol, setcryptoSymbol] = useState("usdt");
   const [cryptoIcon, setcryptoIcon] = useState(<img src='https://cryptologos.cc/logos/tether-usdt-logo.svg' className="w-6 h-6 bg-green-500 rounded-full flex items-center justify-center text-white font-bold text-sm" />)
   const [cryptoName, setcryptoName] = useState("Tether")
@@ -95,7 +92,6 @@ export default function CryptoInterface() {
   ]);
 
   // Casino coin state
-  const [casinoCoins, setCasinoCoins] = useState(1000);
   const conversionRate = 100; // 1 USDT = 100 casino coins
   const dummyAddress = '0xb285007A2306FCf0786b18DBFB23DFC52B8174a4';
 
@@ -121,10 +117,9 @@ export default function CryptoInterface() {
         coins: newCoins
       }, ...prev]);
 
-      setCasinoCoins(prev => prev + newCoins);
     } else {
       const coinsAmount = parseFloat(amount);
-      if (coinsAmount > casinoCoins) return;
+      if (coinsAmount > casinoBalance) return;
 
       const cryptoValue = coinsAmount / conversionRate / cryptoPrice;
       await convertToCrypto({ amount: cryptoValue, userId: userId, casinoId: platformId, secretToken: jwtToken, casinoCoinAmount: coinsAmount, wallet: userWallet.wallet[0].walletAddress });
@@ -137,8 +132,6 @@ export default function CryptoInterface() {
         timestamp: new Date(),
         coins: -coinsAmount
       }, ...prev]);
-
-      setCasinoCoins(prev => prev - coinsAmount);
     }
     setAmount('');
   };
@@ -159,7 +152,7 @@ export default function CryptoInterface() {
     if (conversionType === 'cryptoToCoins') {
       setAmount(cryptoBalance.toFixed(4));
     } else {
-      setAmount(casinoCoins.toString());
+      setAmount(casinoBalance.toString());
     }
   };
 
@@ -175,7 +168,6 @@ export default function CryptoInterface() {
       timestamp: new Date(),
       coins: -parseInt(amount * conversionRate)
     }, ...prev]);
-    setCasinoCoins(prev => prev + parseInt(amount * conversionRate));
     setAmount('');
   };
 
@@ -354,7 +346,7 @@ export default function CryptoInterface() {
                   <div className="text-right text-xs text-gray-400">
                     Available: {conversionType === 'cryptoToCoins'
                       ? `${cryptoBalance.toFixed(4)} ${cryptoSymbol}`
-                      : `${casinoCoins.toLocaleString()} Coins`}
+                      : `${casinoBalance.toLocaleString()} Coins`}
                   </div>
                 </div>
 
@@ -386,16 +378,16 @@ export default function CryptoInterface() {
 
                       <button
                         onClick={handleConvert}
-                        disabled={
-                          !amount ||
-                          parseFloat(amount) <= 0 ||
-                          (conversionType === 'cryptoToCoins' && parseFloat(amount) > cryptoBalance) ||
-                          (conversionType === 'coinsToCrypto' && parseFloat(amount) > casinoCoins)
-                        }
+                        // disabled={
+                        //   !amount ||
+                        //   parseFloat(amount) <= 0 ||
+                        //   (conversionType === 'cryptoToCoins' && parseFloat(amount) > cryptoBalance) ||
+                        //   (conversionType === 'coinsToCrypto' && parseFloat(amount) > casinoBalance)
+                        // }
                         className={`w-full py-3 rounded-lg transition-all flex items-center justify-center gap-2 text-sm font-bold ${!amount ||
                           parseFloat(amount) <= 0 ||
                           (conversionType === 'cryptoToCoins' && parseFloat(amount) > cryptoBalance) ||
-                          (conversionType === 'coinsToCrypto' && parseFloat(amount) > casinoCoins)
+                          (conversionType === 'coinsToCrypto' && parseFloat(amount) > casinoBalance)
                           ? 'bg-gray-600/50 cursor-not-allowed'
                           : 'bg-gradient-to-r from-purple-500 to-purple-600 hover:from-purple-600 hover:to-purple-700'
                           }`}

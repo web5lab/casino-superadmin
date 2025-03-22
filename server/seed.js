@@ -30,6 +30,7 @@ const seedUsers = async () => {
       email: 'admin@example.com',
       password,
       role: 'SUPER_ADMIN',
+      permissions: ['CREATE_USERS'],
       isActive: true,
       lastActive: new Date()
     },
@@ -39,10 +40,11 @@ const seedUsers = async () => {
       password,
       role: 'PANEL_ADMIN',
       isActive: true,
-      lastActive: new Date()
+      lastActive: new Date(),
+      permissions: ['CREATE_USERS'],
+      casinoId: '67dc7758c341ec2e6d553c40'
     }
   ];
-
   await User.insertMany(users);
 };
 
@@ -50,6 +52,7 @@ const seedCasinos = async () => {
   console.log('Seeding casinos...');
   const casinos = [
     {
+      _id:"67dc7758c341ec2e6d553c40",
       name: 'Demo',
       status: 'active',
       balance: 1,
@@ -144,26 +147,6 @@ const seedWallets = async () => {
 
   await Wallet.insertMany(wallets);
   console.log('Wallet password (save this):', password);
-};
-
-const seedTransactions = async () => {
-  console.log('Seeding transactions...');
-  const casinos = await Casino.find();
-  const statuses = ['completed', 'pending', 'failed'];
-  const networks = ['ethereum', 'solana', 'bitcoin'];
-  const currencies = ['BTC', 'ETH', 'SOL', 'USDT'];
-  
-  const transactions = Array.from({ length: 50 }, () => ({
-    amount: Math.random() * 10000,
-    currency: currencies[Math.floor(Math.random() * currencies.length)],
-    status: statuses[Math.floor(Math.random() * statuses.length)],
-    casinoId: casinos[Math.floor(Math.random() * casinos.length)]._id,
-    walletAddress: '0x742d35Cc6634C0532925a3b844Bc454e4438f44e',
-    network: networks[Math.floor(Math.random() * networks.length)],
-    createdAt: new Date(Date.now() - Math.floor(Math.random() * 7 * 24 * 60 * 60 * 1000))
-  }));
-
-  await Transaction.insertMany(transactions);
 };
 
 const seed = async () => {

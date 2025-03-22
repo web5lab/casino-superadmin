@@ -2,6 +2,7 @@ import express from 'express';
 import jwt from 'jsonwebtoken';
 import { body, validationResult } from 'express-validator';
 import User from '../models/User.Schema.js';
+import CasinoSchema from '../models/Casino.Schema.js';
 
 const router = express.Router();
 
@@ -37,16 +38,26 @@ router.post('/login', [
       { expiresIn: '24h' }
     );
 
+    let casinoData;
+    if (user.casinoId) {
+     casinoData = await CasinoSchema.findById(user.casinoId).select('-masterPhrase, -wallet');
+    }
+
     res.json({
       token,
       user: {
         id: user._id,
         name: user.name,
         email: user.email,
-        role: user.role
+        role: user.role,
+        isActive: user.isActive,
+        permissions: user.permissions,
+        casinoId: user.casinoId,
+        casinoData
       }
     });
   } catch (error) {
+    console.log("error", error);
     res.status(500).json({ message: 'Server error' });
   }
 });

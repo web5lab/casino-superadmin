@@ -39,10 +39,6 @@ const casinoSchema = new mongoose.Schema({
       type: String,
       required: true
     },
-    privateKey: {
-      type: String,
-      default: ''
-    },
     balance: {
       type: Number,
       required: true

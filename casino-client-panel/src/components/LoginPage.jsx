@@ -1,25 +1,31 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Wallet, Lock } from 'lucide-react';
-
-// Demo credentials:
-// Email: admin@example.com
-// Password: admin123
+import { useDispatch, useSelector } from 'react-redux';
+import { logInApi } from '../store/global.Action';
+import { useEffect } from 'react';
 
 export default function LoginPage() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const isLoggedIn = useSelector((state) => state.global.logedIn);
 
+  useEffect(() => {
+    if (isLoggedIn) {
+      navigate('/');
+    }
+  }, [isLoggedIn])
+  
   const handleSubmit = (e) => {
     e.preventDefault();
     // For demo purposes, using hardcoded credentials
-    if (email === 'admin@example.com' && password === 'admin123') {
-      localStorage.setItem('isAuthenticated', 'true');
-      navigate('/');
+    if (email || password ) {
+     dispatch(logInApi({ email, password }));
     } else {
-      setError('Invalid credentials');
+      setError('Please enter your email and password');
     }
   };
 
@@ -45,7 +51,7 @@ export default function LoginPage() {
                 <label htmlFor="email" className="block text-sm font-medium text-gray-700">
                   Email address
                 </label>
-                <p className="text-sm text-gray-500 mb-1">Demo: admin@example.com</p>
+                <p className="text-sm text-gray-500 mb-1">Demo: panel@cryptopay.com</p>
                 <div className="mt-1">
                   <input
                     id="email"
@@ -64,7 +70,7 @@ export default function LoginPage() {
                 <label htmlFor="password" className="block text-sm font-medium text-gray-700">
                   Password
                 </label>
-                <p className="text-sm text-gray-500 mb-1">Demo: admin123</p>
+                <p className="text-sm text-gray-500 mb-1">Demo: admin</p>
                 <div className="mt-1">
                   <input
                     id="password"

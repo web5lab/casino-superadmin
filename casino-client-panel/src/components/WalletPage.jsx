@@ -160,7 +160,7 @@ export default function WalletPage() {
         ))}
       </div>
 
-      <div className="bg-white rounded-xl shadow-sm">
+      {/* <div className="bg-white rounded-xl shadow-sm">
         <div className="p-6 border-b border-gray-200">
           <h2 className="text-lg font-semibold">Recent Wallet Activity</h2>
           <p className="text-gray-500 mt-1">Latest transactions and balance changes</p>
@@ -193,7 +193,7 @@ export default function WalletPage() {
             ))}
           </div>
         </div>
-      </div>
+      </div> */}
 
       {renderModal()}
     </div>

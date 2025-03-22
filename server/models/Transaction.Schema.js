@@ -1,31 +1,40 @@
 import mongoose from 'mongoose';
 
 const transactionSchema = new mongoose.Schema({
-  amount: {
-    type: Number,
+  userId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'CasinoUser',
     required: true
-  },
-  currency: {
-    type: String,
-    required: true
-  },
-  status: {
-    type: String,
-    enum: ['pending', 'completed', 'failed'],
-    default: 'pending'
   },
   casinoId: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Casino',
     required: true
   },
-  walletAddress: {
-    type: String,
+  amount: {
+    type: Number,
     required: true
+  },
+  status: {
+    type: String,
+    enum: ['pending', 'approved', 'rejected', 'completed'],
+    default: 'pending'
+  },
+  currency: {
+    type: String,
+    default: 'USDT',
+  },
+  wallet: {
+    type: String,
+    default: '',
+  },
+  transactionHash: {
+    type: String,
+    default: '',
   },
   network: {
     type: String,
-    required: true
+    default: 'amoyTestnet',
   }
 }, {
   timestamps: true

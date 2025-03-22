@@ -9,6 +9,7 @@ import casinoRoutes from './routes/casinos.js';
 import transactionRoutes from './routes/transactions.js';
 import currencyRoutes from './routes/currencies.js';
 import statusRoutes from './routes/status.js';
+import clientRoutes from './routes/clientPanel.routes.js';
 
 dotenv.config();
 
@@ -44,6 +45,7 @@ app.use('/api/casinos', casinoRoutes);
 app.use('/api/transactions', transactionRoutes);
 app.use('/api/currencies', currencyRoutes);
 app.use('/api/status', statusRoutes);
+app.use('/api/client', clientRoutes);
 
 // Error handling middleware
 app.use((err, req, res, next) => {

@@ -12,6 +12,8 @@ import {
   Bot,
   LogOut
 } from 'lucide-react';
+import { useDispatch } from 'react-redux';
+import { logOut } from '../store/global.Slice';
 
 const menuItems = [
   { icon: LayoutDashboard, label: 'Dashboard', path: '/' },
@@ -23,6 +25,7 @@ const menuItems = [
 ];
 
 export default function Sidebar() {
+  const dispatch = useDispatch();
   return (
     <div className="w-64 bg-white border-r border-gray-200 h-screen fixed left-0 top-0 flex flex-col">
       <div className="p-6">
@@ -45,7 +48,9 @@ export default function Sidebar() {
       </nav>
       <div className="border-t border-gray-200 mt-auto">
         <a
-          href="/logout"
+          onClick={() => {
+            dispatch(logOut());
+          }}
           className="flex items-center gap-3 px-6 py-4 text-red-600 hover:bg-red-50 transition-colors"
         >
           <LogOut className="w-5 h-5" />

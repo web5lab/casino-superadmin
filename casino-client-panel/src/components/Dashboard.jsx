@@ -1,11 +1,10 @@
 import React from 'react';
 import { ArrowUpRight, ArrowDownRight, DollarSign, Users, Activity, TrendingUp } from 'lucide-react';
-
-
-
+import { useDispatch, useSelector } from 'react-redux';
+import { useEffect } from 'react';
+import { getAllTransactionApi } from '../store/global.Action';
 
 const topCurrencies = [
-
   { name: 'USDT', volume: '$2.4M', change: '+5.2%' },
 ];
 
@@ -40,19 +39,16 @@ const stats = [
   },
 ];
 
-const recentTransactions = [
-  {
-    id: '1',
-    user: 'Baz...Xt1',
-    type: 'Deposit',
-    amount: '0.5 USDT',
-    status: 'completed',
-    timestamp: '2 min ago',
-  },
-  
-];
 
 export default function Dashboard() {
+  const dispatch = useDispatch();
+  const token = useSelector(state => state.global.profile.token)
+  const casinoId = useSelector(state => state.global.profile.user.casinoId)
+  const recentTransactions = useSelector(state => state.global.allTransactions)
+  useEffect(() => {
+    dispatch(getAllTransactionApi({ token: token, casinoId }))
+  }, [])
+
   return (
     <div className="p-6 space-y-6">
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -151,6 +147,7 @@ export default function Dashboard() {
               <tr className="text-left border-b border-gray-200">
                 <th className="pb-3 text-gray-500 font-medium">User Id</th>
                 <th className="pb-3 text-gray-500 font-medium">Type</th>
+                <th className="pb-3 text-gray-500 font-medium">Currency</th>
                 <th className="pb-3 text-gray-500 font-medium">Amount</th>
                 <th className="pb-3 text-gray-500 font-medium">Status</th>
                 <th className="pb-3 text-gray-500 font-medium">Time</th>
@@ -159,20 +156,27 @@ export default function Dashboard() {
             <tbody>
               {recentTransactions.map((tx) => (
                 <tr key={tx.id} className="border-b border-gray-100">
-                  <td className="py-3">{tx.user}</td>
+                  <td className="py-3">
+                    {tx?.userId?.length > 10
+                      ? `${tx?.userId?.slice(0, 3)}...${tx?.userId?.slice(-3)}`
+                      : tx?.userId}
+                  </td>
                   <td className="py-3">{tx.type}</td>
+                  <td className="py-3">{tx.currency}</td>
                   <td className="py-3">{tx.amount}</td>
                   <td className="py-3">
                     <span
                       className={`px-2 py-1 rounded-full text-xs ${tx.status === 'completed'
-                          ? 'bg-green-100 text-green-700'
-                          : 'bg-yellow-100 text-yellow-700'
+                        ? 'bg-green-100 text-green-700'
+                        : 'bg-yellow-100 text-yellow-700'
                         }`}
                     >
                       {tx.status}
                     </span>
                   </td>
-                  <td className="py-3 text-gray-500">{tx.timestamp}</td>
+                  <td className="py-3 text-gray-500">
+                    {new Date(tx.createdAt).toLocaleString()}
+                  </td>
                 </tr>
               ))}
             </tbody>

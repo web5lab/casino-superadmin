@@ -36,3 +36,152 @@ export const getTransactions = createAsyncThunk(
         }
     }
 );
+
+
+export const logInApi = createAsyncThunk(
+    "global/logInApi",
+    async (data) => {
+        try {
+            const Response = await axiosInstance.post(`/api/auth/login`, data);
+            return Response.data;
+        } catch (err) {
+            console.log("api data", err);
+            if (err) {
+                throw err;
+            }
+        }
+    }
+);
+
+export const getAllTransactionApi = createAsyncThunk(
+    "global/getAllTransactionApi",
+    async ({ token, casinoId }) => {
+        try {
+            const Response = await axiosInstance.post(`/api/client/all-trasactions`, { casinoId }, {
+                headers: {
+                    Authorization: `Bearer ${token}` // Add the token to the request headers
+                }
+            });
+            return Response.data;
+        } catch (err) {
+            console.log("api data", err);
+            if (err) {
+                throw err;
+            }
+        }
+    }
+);
+
+export const depositesApi = createAsyncThunk(
+    "global/depositesApi",
+    async ({ token, casinoId }) => {
+        try {
+            const Response = await axiosInstance.post(`/api/client/all-trasactions`, { casinoId, onlyDeposites: true }, {
+                headers: {
+                    Authorization: `Bearer ${token}` // Add the token to the request headers
+                }
+            });
+            return Response.data;
+        } catch (err) {
+            console.log("api data", err);
+            if (err) {
+                throw err;
+            }
+        }
+    }
+);
+
+export const withdrawalsApi = createAsyncThunk(
+    "global/withdrawalsApi",
+    async ({ token, casinoId }) => {
+        try {
+            const Response = await axiosInstance.post(`/api/client/all-trasactions`, { casinoId, onlyWithdrawls: true }, {
+                headers: {
+                    Authorization: `Bearer ${token}` // Add the token to the request headers
+                }
+            });
+            return Response.data;
+        } catch (err) {
+            console.log("api data", err);
+            if (err) {
+                throw err;
+            }
+        }
+    }
+);
+
+export const getCasinoSettingApi = createAsyncThunk(
+    "global/getCasinoSettingApi",
+    async ({ token, casinoId }) => {
+        try {
+            const Response = await axiosInstance.get(`/api/client/get-casino-setting/${casinoId}`, {
+                headers: {
+                    Authorization: `Bearer ${token}` // Add the token to the request headers
+                }
+            });
+            return Response.data;
+        } catch (err) {
+            console.log("api data", err);
+            if (err) {
+                throw err;
+            }
+        }
+    }
+);
+
+export const getCasinoSubAdmins = createAsyncThunk(
+    "global/getCasinoSubAdmins",
+    async ({ token, casinoId }) => {
+        try {
+            const Response = await axiosInstance.get(`/api/client/get-casino-sub-admins?casinoId=${casinoId}`, {
+                headers: {
+                    Authorization: `Bearer ${token}` 
+                }
+            });
+            return Response.data;
+        } catch (err) {
+            console.log("api data", err);
+            if (err) {
+                throw err;
+            }
+        }
+    }
+);
+
+export const createCasinoSubAdminsApi = createAsyncThunk(
+    "global/createCasinoSubAdminsApi",
+    async ({ token, casinoId }) => {
+        try {
+            const Response = await axiosInstance.post(`/api/client/create-casino-sub-admins?casinoId=${casinoId}`, {
+                headers: {
+                    Authorization: `Bearer ${token}` 
+                }
+            });
+            return Response.data;
+        } catch (err) {
+            console.log("api data", err);
+            if (err) {
+                throw err;
+            }
+        }
+    }
+);
+
+export const updateCasinoSettingApi = createAsyncThunk(
+    "global/updateCasinoSettingApi",
+    async ({ token, setting, casinoId }) => {
+        try {
+            const Response = await axiosInstance.post(`/api/client/update-casino-setting/${casinoId}`, {...setting}, {
+                headers: {
+                    Authorization: `Bearer ${token}` // Add the token to the request headers
+                }
+            });
+            return Response.data;
+        } catch (err) {
+            console.log("api data", err);
+            if (err) {
+                throw err;
+            }
+        }
+    }
+);

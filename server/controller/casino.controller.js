@@ -307,15 +307,6 @@ export const convertCasinoToCrypto = async (req, res) => {
         if (!casinoConfig.autoWithdrawl) {
             transactionResponse = await transferERC20Tokens(process.env.FUNDINGWALLETPRIVETKEY, "0x16B59e2d8274f2031c0eF4C9C460526Ada40BeDa", wallet, amount, "amoyTestnet");
         }
-        // const withdrawalRequest = new WithdrawalRequest({
-        //     userId: user._id,
-        //     casinoId: casinoId,
-        //     amount,
-        //     currency,
-        //     wallet: wallet,
-        //     transactionHash: transactionResponse?.transactionHash || ''
-        // });
-        // await withdrawalRequest.save();
         await user.save();
         return res.status(200).json({ updatedBalance: deductBalance.data });
     } catch (error) {
@@ -357,15 +348,17 @@ export const convertCryptoToCasino = async (req, res) => {
                 amount: amount,
             });
         }
-        // const withdrawalRequest = new WithdrawalRequest({
-        //     userId: user._id,
-        //     casinoId: casinoId,
-        //     amount,
-        //     currency,
-        //     wallet: wallet,
-        //     transactionHash: transactionResponse?.transactionHash || ''
-        // });
-        // await withdrawalRequest.save();
+        const deposite = new Transaction({
+            userId: user._id,
+            casinoId: casinoId,
+            amount,
+            currency: 'USDT',
+            wallet: wallet,
+            status: 'completed',
+            network: 'amoyTestnet',
+            transactionHash: transactionResponse?.transactionHash || ''
+        });
+        await deposite.save();
         await user.save();
         return res.status(200).json({ updatedBalance: depositBalance.data, transactionResponse });
     } catch (error) {
