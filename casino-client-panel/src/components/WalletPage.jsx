@@ -137,10 +137,7 @@ export default function WalletPage() {
                   <h3 className="font-medium">{wallet.currency}</h3>
                 </div>
               </div>
-              <span className={`flex items-center ${wallet.trend === 'up' ? 'text-green-500' : 'text-red-500'}`}>
-                {wallet.change}
-                {wallet.trend === 'up' ? <ArrowUpRight className="w-4 h-4" /> : <ArrowDownRight className="w-4 h-4" />}
-              </span>
+              
             </div>
             <div className="space-y-1">
               <p className="text-2xl font-bold">{wallet.balance} {wallet.symbol}</p>

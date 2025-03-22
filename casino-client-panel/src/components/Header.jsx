@@ -15,7 +15,7 @@ export default function Header() {
   return (
     <header className="h-16 bg-white border-b border-gray-200 fixed top-0 right-0 left-64 z-10">
       <div className="h-full px-6 flex items-center justify-between">
-        <div className="flex items-center gap-4 flex-1">
+        {/* <div className="flex items-center gap-4 flex-1">
           <div className="relative">
             <Search className="w-5 h-5 text-gray-400 absolute left-3 top-1/2 -translate-y-1/2" />
             <input
@@ -46,7 +46,7 @@ export default function Header() {
             <User className="w-5 h-5" />
             <span>Admin</span>
           </button>
-        </div>
+        </div> */}
       </div>
     </header>
   );

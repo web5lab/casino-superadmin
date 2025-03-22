@@ -133,7 +133,6 @@ export default function WithdrawalRequestsPage() {
                 <th className="px-6 py-3 text-gray-500 font-medium">Amount</th>
                 <th className="px-6 py-3 text-gray-500 font-medium">Fiat Value</th>
                 <th className="px-6 py-3 text-gray-500 font-medium">Wallet Address</th>
-                <th className="px-6 py-3 text-gray-500 font-medium">Priority</th>
                 <th className="px-6 py-3 text-gray-500 font-medium">Status</th>
                 <th className="px-6 py-3 text-gray-500 font-medium">Timestamp</th>
                 <th className="px-6 py-3 text-gray-500 font-medium">Actions</th>
@@ -142,28 +141,21 @@ export default function WithdrawalRequestsPage() {
             <tbody>
               {filteredRequests.map((request) => (
                 <tr key={request.id} className="border-b border-gray-100 hover:bg-gray-50">
-                  <td className="px-6 py-4 font-mono text-sm">{request.id}</td>
-                  <td className="px-6 py-4">{request.user}</td>
+                  <td className="px-6 py-4 font-mono text-sm">{request?.
+                  _id?.length > 10
+                      ? `${request?.userId?.slice(0, 3)}...${request?._id?.slice(-3)}`
+                      : request?.userId}</td>
+                  <td className="px-6 py-4">{request?.userId?.length > 10
+                      ? `${request?.userId?.slice(0, 3)}...${request?.userId?.slice(-3)}`
+                      : request?.userId}</td>
                   <td className="px-6 py-4 font-medium">{request.amount}</td>
-                  <td className="px-6 py-4 text-gray-600">{request.fiatValue}</td>
+                  <td className="px-6 py-4 text-gray-600">{request.amount*87}</td>
                   <td className="px-6 py-4">
                     <span className="font-mono text-sm">{request.wallet}</span>
                   </td>
                   <td className="px-6 py-4">
                     <span
-                      className={`px-2 py-1 rounded-full text-xs ${request.priority === 'high'
-                        ? 'bg-red-100 text-red-700'
-                        : request.priority === 'medium'
-                          ? 'bg-yellow-100 text-yellow-700'
-                          : 'bg-blue-100 text-blue-700'
-                        }`}
-                    >
-                      {request.priority}
-                    </span>
-                  </td>
-                  <td className="px-6 py-4">
-                    <span
-                      className={`px-2 py-1 rounded-full text-xs ${request.status === 'approved'
+                      className={`px-2 py-1 rounded-full text-xs ${request.status === 'completed' 
                         ? 'bg-green-100 text-green-700'
                         : request.status === 'pending'
                           ? 'bg-yellow-100 text-yellow-700'
@@ -173,9 +165,9 @@ export default function WithdrawalRequestsPage() {
                       {request.status}
                     </span>
                   </td>
-                  <td className="px-6 py-4 text-gray-500">{request.timestamp}</td>
+                  <td className="px-6 py-4 text-gray-500">{new Date(request.createdAt).toLocaleString()}</td>
                   <td className="px-6 py-4">
-                    <div className="flex gap-2">
+                    {request.status === 'pending' ? <div className="flex gap-2">
                       <button
                         className="px-3 py-1 text-sm text-green-600 hover:bg-green-50 rounded"
                         disabled={request.status !== 'pending'}
@@ -188,7 +180,17 @@ export default function WithdrawalRequestsPage() {
                       >
                         Reject
                       </button>
-                    </div>
+                    </div>:<span
+                      className={`px-2 py-1 rounded-full text-xs ${request.status === 'completed' 
+                        ? 'bg-green-100 text-green-700'
+                        : request.status === 'pending'
+                          ? 'bg-yellow-100 text-yellow-700'
+                          : 'bg-red-100 text-red-700'
+                        }`}
+                    >
+                      {request.status}
+                    </span>}
+                   
                   </td>
                 </tr>
               ))}

@@ -135,7 +135,7 @@ export const getCasinoSubAdmins = createAsyncThunk(
         try {
             const Response = await axiosInstance.get(`/api/client/get-casino-sub-admins?casinoId=${casinoId}`, {
                 headers: {
-                    Authorization: `Bearer ${token}` 
+                    Authorization: `Bearer ${token}`
                 }
             });
             return Response.data;
@@ -150,11 +150,11 @@ export const getCasinoSubAdmins = createAsyncThunk(
 
 export const createCasinoSubAdminsApi = createAsyncThunk(
     "global/createCasinoSubAdminsApi",
-    async ({ token, casinoId }) => {
+    async ({ token, data }) => {
         try {
-            const Response = await axiosInstance.post(`/api/client/create-casino-sub-admins?casinoId=${casinoId}`, {
+            const Response = await axiosInstance.post(`/api/client/create-casino-sub-admins`, data, {
                 headers: {
-                    Authorization: `Bearer ${token}` 
+                    Authorization: `Bearer ${token}`
                 }
             });
             return Response.data;
@@ -171,7 +171,7 @@ export const updateCasinoSettingApi = createAsyncThunk(
     "global/updateCasinoSettingApi",
     async ({ token, setting, casinoId }) => {
         try {
-            const Response = await axiosInstance.post(`/api/client/update-casino-setting/${casinoId}`, {...setting}, {
+            const Response = await axiosInstance.post(`/api/client/update-casino-setting/${casinoId}`, { ...setting }, {
                 headers: {
                     Authorization: `Bearer ${token}` // Add the token to the request headers
                 }

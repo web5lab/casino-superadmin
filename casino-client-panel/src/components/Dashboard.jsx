@@ -58,10 +58,7 @@ export default function Dashboard() {
               <div className="p-2 bg-blue-50 rounded-lg">
                 <stat.icon className="w-6 h-6 text-blue-600" />
               </div>
-              <span className={`flex items-center ${stat.trend === 'up' ? 'text-green-500' : 'text-red-500'}`}>
-                {stat.change}
-                {stat.trend === 'up' ? <ArrowUpRight className="w-4 h-4" /> : <ArrowDownRight className="w-4 h-4" />}
-              </span>
+             
             </div>
             <h3 className="text-2xl font-bold mt-4">{stat.value}</h3>
             <p className="text-gray-500 text-sm">{stat.title}</p>
@@ -87,7 +84,6 @@ export default function Dashboard() {
                 </div>
                 <div className="text-right">
                   <p className="font-medium">{currency.volume}</p>
-                  <p className="text-sm text-green-500">{currency.change}</p>
                 </div>
               </div>
             ))}

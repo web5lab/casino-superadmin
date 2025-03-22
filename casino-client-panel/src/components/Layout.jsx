@@ -8,8 +8,8 @@ export default function Layout({ children }) {
     <div className="min-h-screen bg-gray-50">
       <Sidebar />
       <div className="ml-64">
-        <Header />
-        <main className="pt-16">
+        {/* <Header /> */}
+        <main className="pt-2">
           {children}
         </main>
       </div>

@@ -6,7 +6,6 @@ import Casino from './models/Casino.Schema.js';
 import Currency from './models/Currency.Schema.js';
 import Transaction from './models/Transaction.Schema.js';
 import Wallet from './models/Wallet.Schema.js';
-import { keystore } from './utils/blockchain/keystore.js';
 import { generateMasterPhrase } from './services/wallet.services.js';
 
 dotenv.config();
@@ -91,63 +90,7 @@ const seedCurrencies = async () => {
   await Currency.insertMany(currencies);
 };
 
-const seedWallets = async () => {
-  console.log('Seeding wallets...');
-  const password = keystore.generatePassword();
-  const privateKeys = {
-    ethereum: '0x1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef',
-    solana: '123456789abcdef123456789abcdef123456789abcdef123456789abcdef1234',
-    bitcoin: 'L1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef'
-  };
 
-  const wallets = [
-    {
-      network: 'ethereum',
-      type: 'adminWallet',
-      address: '0x742d35Cc6634C0532925a3b844Bc454e4438f44e',
-      encryptedPrivateKey: keystore.encryptPrivateKey(privateKeys.ethereum, password),
-      balance: 25000.50
-    },
-    {
-      network: 'ethereum',
-      type: 'fundingWallet',
-      address: '0x123f681646d4a755815f9cb19e1acc8565a0c2ac',
-      encryptedPrivateKey: keystore.encryptPrivateKey(privateKeys.ethereum, password),
-      balance: 5000.75
-    },
-    {
-      network: 'solana',
-      type: 'adminWallet',
-      address: '7xKXtg2CW87d97TXJSDpbD5jBkheTqA83TZRuJosgAsU',
-      encryptedPrivateKey: keystore.encryptPrivateKey(privateKeys.solana, password),
-      balance: 15000.25
-    },
-    {
-      network: 'solana',
-      type: 'fundingWallet',
-      address: '3Kz9QYZgSEqXWzbCaEy9thgFd8UJFMkf8QWL6tzeqNT3',
-      encryptedPrivateKey: keystore.encryptPrivateKey(privateKeys.solana, password),
-      balance: 3000.50
-    },
-    {
-      network: 'bitcoin',
-      type: 'adminWallet',
-      address: 'bc1qxy2kgdygjrsqtzq2n0yrf2493p83kkfjhx0wlh',
-      encryptedPrivateKey: keystore.encryptPrivateKey(privateKeys.bitcoin, password),
-      balance: 45000.75
-    },
-    {
-      network: 'bitcoin',
-      type: 'fundingWallet',
-      address: '1A1zP1eP5QGefi2DMPTfTL5SLmv7DivfNa',
-      encryptedPrivateKey: keystore.encryptPrivateKey(privateKeys.bitcoin, password),
-      balance: 8000.25
-    }
-  ];
-
-  await Wallet.insertMany(wallets);
-  console.log('Wallet password (save this):', password);
-};
 
 const seed = async () => {
   try {
@@ -162,8 +105,7 @@ const seed = async () => {
     await seedUsers();
     await seedCasinos();
     await seedCurrencies();
-    await seedWallets();
-    await seedTransactions();
+
 
     console.log('Seeding completed successfully');
     process.exit(0);

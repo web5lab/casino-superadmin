@@ -27,7 +27,6 @@ const userSchema = new mongoose.Schema({
   },
   permissions: {
     type: [String],
-    default: ['VIEW_USERS', 'CREATE_USERS', 'UPDATE_USERS', 'DELETE_USERS', "TRANSACTIONS", "USERS", "WITHDRAWLS", "SETTINGS"]
   },
   lastActive: {
     type: Date,

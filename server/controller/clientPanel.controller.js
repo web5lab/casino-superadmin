@@ -2,6 +2,7 @@ import WithdrawalRequest from "../models/Withdrawl.Schema.js";
 import Transaction from "../models/Transaction.Schema.js";
 import Casino from "../models/Casino.Schema.js";
 import User from "../models/User.Schema.js";
+import bcrypt from 'bcryptjs';
 
 export const userAllTransactions = async (req, res) => {
   try {
@@ -100,7 +101,7 @@ export const userAllTransactions = async (req, res) => {
 
 export const createUser = async (req, res) => {
   try {
-    const { name, email, password, role, casinoId, permissions } = req.body;
+    const { name, email, password, role = "PANEL_ADMIN", casinoId, permissions } = req.body;
 
     if (!name || !email || !password) {
       return res.status(400).json({ message: "Name, email, and password are required." });
@@ -110,11 +111,12 @@ export const createUser = async (req, res) => {
     if (existingUser) {
       return res.status(409).json({ message: "User with this email already exists." });
     }
+    const hashedPassword = await bcrypt.hash(password, 10);
 
     const newUser = new User({
       name,
       email,
-      password,
+      password:hashedPassword,
       role,
       casinoId,
       permissions

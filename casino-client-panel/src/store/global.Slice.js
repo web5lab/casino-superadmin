@@ -101,6 +101,16 @@ export const globalSlice = createSlice({
       .addCase(getCasinoSubAdmins.fulfilled, (state, action) => {
         state.subAdmins = action.payload;
       });
+      builder
+      .addCase(getCasinoSettingApi.pending, (state) => {
+        state.casinoSettings = null;
+      })
+      .addCase(getCasinoSettingApi.rejected, (state, action) => {
+        state.casinoSettings = null;
+      })
+      .addCase(getCasinoSettingApi.fulfilled, (state, action) => {
+        state.casinoSettings = action.payload;
+      });
     builder
       .addCase(updateCasinoSettingApi.fulfilled, (state, action) => {
         state.casinoSettings = action.payload;

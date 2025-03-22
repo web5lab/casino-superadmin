@@ -3,11 +3,11 @@ import { ChevronDown, Copy, ArrowLeft, AlertCircle, Coins, ArrowUpRight, ArrowDo
 import { useDispatch, useSelector } from 'react-redux';
 import { GetCurrencies, GetWallet } from '../store/global.Action';
 import { convertToCasino, convertToCrypto, getBalance, getCasinoData, getERC20Balance, GetUserEvmWallet, withdrawCryptoToWallet } from '../utils/utils';
+import toast from 'react-hot-toast';
 
 export default function CryptoInterface() {
   const [mode, setMode] = useState('deposit');
   const [conversionType, setConversionType] = useState('cryptoToCoins'); // New state for conversion direction
-
   const [selectedNetwork, setSelectedNetwork] = useState('ERC20');
   const [amount, setAmount] = useState('');
   const [showCryptoDropdown, setShowCryptoDropdown] = useState(false);
@@ -26,26 +26,27 @@ export default function CryptoInterface() {
   const [cryptoSymbol, setcryptoSymbol] = useState("usdt");
   const [cryptoIcon, setcryptoIcon] = useState(<img src='https://cryptologos.cc/logos/tether-usdt-logo.svg' className="w-6 h-6 bg-green-500 rounded-full flex items-center justify-center text-white font-bold text-sm" />)
   const [cryptoName, setcryptoName] = useState("Tether")
-  const [recipientAddress, setrecipientAddress] = useState()
+  const [recipientAddress, setrecipientAddress] = useState(null)
+  const [loading, setLoading] = useState()
 
   useEffect(() => {
     dispatch(GetCurrencies());
     extractFromUrl()
   }, [dispatch]);
 
+  const fa = async () => {
+    const data = await getCasinoData(platformId);
+    const bal = await getBalance({ apiUrl: data.balanceApi, userId: userId, secretToken: jwtToken });
+    console.log("data =>", bal);
+    const userWalletData = await GetUserEvmWallet({ userId: userId, platformId: platformId });
+    const cryptoBalanceData = await getERC20Balance({ address: userWalletData.wallet[0].walletAddress, tokenAddress: "0x16B59e2d8274f2031c0eF4C9C460526Ada40BeDa" })
+    setcryptoBalance(Number(cryptoBalanceData.balanceFormatted));
+    setuserWallet(userWalletData);
+    setcasinoBalance(bal)
+    setcasinoConfig(data)
+  }
   useEffect(() => {
     if (platformId) {
-      const fa = async () => {
-        const data = await getCasinoData(platformId);
-        const bal = await getBalance({ apiUrl: data.balanceApi, userId: userId, secretToken: jwtToken });
-        console.log("data =>", bal);
-        const userWalletData = await GetUserEvmWallet({ userId: userId, platformId: platformId });
-        const cryptoBalanceData = await getERC20Balance({ address: userWalletData.wallet[0].walletAddress, tokenAddress: "0x16B59e2d8274f2031c0eF4C9C460526Ada40BeDa" })
-        setcryptoBalance(Number(cryptoBalanceData.balanceFormatted));
-        setuserWallet(userWalletData);
-        setcasinoBalance(bal)
-        setcasinoConfig(data)
-      }
       fa();
     }
   }, [platformId]);
@@ -92,7 +93,7 @@ export default function CryptoInterface() {
   ]);
 
   // Casino coin state
-  const conversionRate = 100; // 1 USDT = 100 casino coins
+  const conversionRate = 87; // 1 USDT = 87 casino coins
   const dummyAddress = '0xb285007A2306FCf0786b18DBFB23DFC52B8174a4';
 
   const handleCopy = () => {
@@ -100,40 +101,50 @@ export default function CryptoInterface() {
   };
 
   const handleConvert = async () => {
-    if (!amount || parseFloat(amount) <= 0) return;
-    if (conversionType === 'cryptoToCoins') {
-      const cryptoAmount = parseFloat(amount);
-      if (cryptoAmount > cryptoBalance) return;
-      const usdValue = cryptoAmount * cryptoPrice;
-      const newCoins = Math.floor(usdValue * conversionRate);
-      await convertToCasino({ userId: userId, amount: cryptoAmount, wallet: userWallet.wallet[0].walletAddress, casinoId: platformId, secretKey: jwtToken });
-      setTransactions(prev => [{
-        id: Date.now().toString(),
-        type: 'conversion',
-        amount: cryptoAmount,
-        symbol: cryptoSymbol,
-        status: 'completed',
-        timestamp: new Date(),
-        coins: newCoins
-      }, ...prev]);
+    try {
+      setLoading(true);
+      if (!amount || parseFloat(amount) <= 0) return;
+      if (conversionType === 'cryptoToCoins') {
+        const cryptoAmount = parseFloat(amount);
+        if (cryptoAmount > cryptoBalance) return;
+        const usdValue = cryptoAmount * cryptoPrice;
+        const newCoins = Math.floor(usdValue * conversionRate);
+        await convertToCasino({ userId: userId, amount: cryptoAmount, wallet: userWallet.wallet[0].walletAddress, casinoId: platformId, secretKey: jwtToken });
+        setTransactions(prev => [{
+          id: Date.now().toString(),
+          type: 'conversion',
+          amount: cryptoAmount,
+          symbol: cryptoSymbol,
+          status: 'completed',
+          timestamp: new Date(),
+          coins: newCoins
+        }, ...prev]);
 
-    } else {
-      const coinsAmount = parseFloat(amount);
-      if (coinsAmount > casinoBalance) return;
+      } else {
+        const coinsAmount = parseFloat(amount);
+        if (coinsAmount > casinoBalance) return;
 
-      const cryptoValue = coinsAmount / conversionRate / cryptoPrice;
-      await convertToCrypto({ amount: cryptoValue, userId: userId, casinoId: platformId, secretToken: jwtToken, casinoCoinAmount: coinsAmount, wallet: userWallet.wallet[0].walletAddress });
-      setTransactions(prev => [{
-        id: Date.now().toString(),
-        type: 'conversion',
-        amount: cryptoValue.toFixed(6),
-        symbol: cryptoSymbol,
-        status: 'completed',
-        timestamp: new Date(),
-        coins: -coinsAmount
-      }, ...prev]);
+        const cryptoValue = coinsAmount / conversionRate / cryptoPrice;
+        await convertToCrypto({ amount: cryptoValue, userId: userId, casinoId: platformId, secretToken: jwtToken, casinoCoinAmount: coinsAmount, wallet: userWallet.wallet[0].walletAddress });
+        setTransactions(prev => [{
+          id: Date.now().toString(),
+          type: 'conversion',
+          amount: cryptoValue.toFixed(6),
+          symbol: cryptoSymbol,
+          status: 'completed',
+          timestamp: new Date(),
+          coins: -coinsAmount
+        }, ...prev]);
+      }
+      await fa();
+      setAmount('');
+      toast.success("Funds converted successfully")
+    } catch (error) {
+      toast.error("Error converting funds")
+    } finally {
+      setLoading(false)
     }
-    setAmount('');
+
   };
 
   const calculateConversionPreview = () => {
@@ -157,23 +168,41 @@ export default function CryptoInterface() {
   };
 
   const withdrawFn = async () => {
-    if (!amount || parseFloat(amount) <= 0) return;
-    await withdrawCryptoToWallet({ amount: parseFloat(amount), userId: userId, casinoId: platformId, secretToken: jwtToken, wallet: userWallet.wallet[0].walletAddress, recipientAddress: recipientAddress });
-    setTransactions(prev => [{
-      id: Date.now().toString(),
-      type: 'withdrawal',
-      amount: parseFloat(amount),
-      symbol: cryptoSymbol,
-      status: 'completed',
-      timestamp: new Date(),
-      coins: -parseInt(amount * conversionRate)
-    }, ...prev]);
-    setAmount('');
+    try {
+      if (!amount || parseFloat(amount) <= 0) return;
+      if (!recipientAddress) {
+        toast.error("Please enter recipient address")
+        return;
+      }
+      setLoading(true);
+      await withdrawCryptoToWallet({ amount: parseFloat(amount), userId: userId, casinoId: platformId, secretToken: jwtToken, wallet: userWallet.wallet[0].walletAddress, recipientAddress: recipientAddress });
+      setTransactions(prev => [{
+        id: Date.now().toString(),
+        type: 'withdrawal',
+        amount: parseFloat(amount),
+        symbol: cryptoSymbol,
+        status: 'completed',
+        timestamp: new Date(),
+        coins: -parseInt(amount * conversionRate)
+      }, ...prev]);
+      setAmount('');
+      await fa();
+      toast.success(`Successfully withdrawn ${amount} ${cryptoSymbol}`);
+    } catch (error) {
+      toast.error("Error withdrawing funds")
+    } finally {
+      setLoading(false);
+    }
+
   };
 
 
 
-
+  const isDisabled =
+    !amount ||
+    parseFloat(amount) <= 0 ||
+    (conversionType === "cryptoToCoins" && parseFloat(amount) > cryptoBalance) ||
+    (conversionType === "coinsToCrypto" && parseFloat(amount) > casinoBalance);
   return (
     <div className="m-h-screen bg-gradient-to-b from-gray-900 via-gray-800 to-gray-900 text-white max-w-lg mx-auto">
       <div className="backdrop-blur-xl bg-gray-800/70 rounded-2xl p-6 shadow-2xl border border-gray-700/50">
@@ -378,22 +407,35 @@ export default function CryptoInterface() {
 
                       <button
                         onClick={handleConvert}
-                        // disabled={
-                        //   !amount ||
-                        //   parseFloat(amount) <= 0 ||
-                        //   (conversionType === 'cryptoToCoins' && parseFloat(amount) > cryptoBalance) ||
-                        //   (conversionType === 'coinsToCrypto' && parseFloat(amount) > casinoBalance)
-                        // }
-                        className={`w-full py-3 rounded-lg transition-all flex items-center justify-center gap-2 text-sm font-bold ${!amount ||
-                          parseFloat(amount) <= 0 ||
-                          (conversionType === 'cryptoToCoins' && parseFloat(amount) > cryptoBalance) ||
-                          (conversionType === 'coinsToCrypto' && parseFloat(amount) > casinoBalance)
-                          ? 'bg-gray-600/50 cursor-not-allowed'
-                          : 'bg-gradient-to-r from-purple-500 to-purple-600 hover:from-purple-600 hover:to-purple-700'
+                        disabled={loading || isDisabled}
+                        className={`w-full py-3 rounded-lg transition-all flex items-center justify-center gap-2 text-sm font-bold ${loading || isDisabled
+                          ? "bg-gray-600/50 cursor-not-allowed"
+                          : "bg-gradient-to-r from-purple-500 to-purple-600 hover:from-purple-600 hover:to-purple-700"
                           }`}
                       >
-                        <Repeat className="w-4 h-4" />
-                        Convert Now
+                        {loading ? (
+                          <>
+                            <svg
+                              className="w-5 h-5 animate-spin"
+                              viewBox="0 0 24 24"
+                              fill="none"
+                              xmlns="http://www.w3.org/2000/svg"
+                            >
+                              <circle cx="12" cy="12" r="10" stroke="white" strokeWidth="4" opacity="0.25" />
+                              <path
+                                fill="white"
+                                d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"
+                                opacity="0.75"
+                              />
+                            </svg>
+                            Converting...
+                          </>
+                        ) : (
+                          <>
+                            <Repeat className="w-4 h-4" />
+                            Convert Now
+                          </>
+                        )}
                       </button>
                     </div>
                   </div>
@@ -609,14 +651,28 @@ export default function CryptoInterface() {
                 </div>
 
                 <button
-                  disabled={!amount || parseFloat(amount) <= 0 || parseFloat(amount) > cryptoBalance}
-                  className={`w-full py-3 ${!amount || parseFloat(amount) <= 0 || parseFloat(amount) > cryptoBalance
+                  disabled={loading || !amount || parseFloat(amount) <= 0 || parseFloat(amount) > cryptoBalance}
+                  className={`w-full py-3 flex justify-center items-center gap-2 ${loading || !amount || parseFloat(amount) <= 0 || parseFloat(amount) > cryptoBalance
                     ? 'bg-gray-600/50 cursor-not-allowed'
                     : 'bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700'
                     } rounded-lg transition-all font-bold text-sm`}
                   onClick={withdrawFn}
                 >
-                  Withdraw {cryptoSymbol}
+                  {loading ? (
+                    <>
+                      <svg className="w-5 h-5 animate-spin" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <circle cx="12" cy="12" r="10" stroke="white" strokeWidth="4" opacity="0.25" />
+                        <path
+                          fill="white"
+                          d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"
+                          opacity="0.75"
+                        />
+                      </svg>
+                      Processing...
+                    </>
+                  ) : (
+                    <>Withdraw {cryptoSymbol}</>
+                  )}
                 </button>
 
                 <div className="flex items-start gap-2 bg-gray-800/30 p-3 rounded-lg border border-gray-700/30">

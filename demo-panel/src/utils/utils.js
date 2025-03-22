@@ -130,6 +130,7 @@ export const withdrawCryptoToWallet = async ({  userId, amount, wallet, casinoId
     })
     return response?.data;
   } catch (error) {
+    throw error
     console.log("error in get balance", error);
   }
 }

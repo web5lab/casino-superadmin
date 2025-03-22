@@ -119,7 +119,7 @@ export default function CasinoSettingsPage() {
                     <label className="block font-medium text-gray-700">Casino Name</label>
                     <input
                       name="name"
-                      value={settings.name}
+                      value={settings?.name}
                       onChange={handleChange}
                       placeholder="Enter casino name"
                       className="w-full mt-2 border border-gray-300 px-4 py-2 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition"
@@ -130,7 +130,7 @@ export default function CasinoSettingsPage() {
                     <label className="block font-medium text-gray-700">Casino Status</label>
                     <select
                       name="status"
-                      value={settings.status}
+                      value={settings?.status}
                       onChange={handleChange}
                       className="w-full mt-2 border border-gray-300 px-4 py-2 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition appearance-none bg-white"
                     >

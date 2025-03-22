@@ -1,21 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { UserPlus, Shield, X, Edit2, AlertTriangle, Eye, EyeOff, MoreVertical, Search } from 'lucide-react';
 import { useDispatch, useSelector } from 'react-redux';
-import { getCasinoSubAdmins } from '../store/global.Action';
+import { createCasinoSubAdminsApi, getCasinoSubAdmins } from '../store/global.Action';
 
 // Mock data
-const initialSubAdmins = [
-  {
-    id: 'SA1',
-    name: 'Shiva',
-    email: 'helloshiva0801@gmail.com',
-    permissions: ['transactions', 'withdrawals'],
-    status: 'active',
-    lastLogin: '2024-03-15 10:30',
-  }
-];
+
 
 export default function SubAdminsPage() {
+  const initialSubAdmins = useSelector(state => state?.global?.subAdmins?.users)
   const [subAdmins, setSubAdmins] = useState(initialSubAdmins);
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
@@ -48,7 +40,7 @@ export default function SubAdminsPage() {
   ];
 
   // Filter sub-admins based on search term
-  const filteredSubAdmins = subAdmins.filter(admin => 
+  const filteredSubAdmins = subAdmins?.filter(admin => 
     admin.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
     admin.email.toLowerCase().includes(searchTerm.toLowerCase())
   );
@@ -144,23 +136,23 @@ export default function SubAdminsPage() {
     }
     
     const newAdminData = {
-      id: `SA${Date.now()}`,
       name: newAdmin.name,
       email: newAdmin.email,
+      password: newAdmin.password, 
       permissions: newAdmin.permissions,
-      status: 'active',
-      lastLogin: 'Never'
+      casinoId:casinoId
     };
     
+    dispatch(createCasinoSubAdminsApi({token:token , data:newAdminData}))
     setSubAdmins(prev => [...prev, newAdminData]);
     setIsAddModalOpen(false);
     resetForm();
   };
   
   const handleDeactivate = (adminId) => {
-    const updatedAdmins = subAdmins.map(admin => 
-      admin.id === adminId 
-        ? { ...admin, status: admin.status === 'active' ? 'inactive' : 'active' } 
+    const updatedAdmins = subAdmins?.map(admin => 
+      admin._id === adminId 
+        ? { ...admin, isActive: !admin.isActive  } 
         : admin
     );
     
@@ -213,7 +205,7 @@ export default function SubAdminsPage() {
           </div>
         </div>
 
-        {filteredSubAdmins.length === 0 ? (
+        {filteredSubAdmins?.length === 0 ? (
           <div className="p-8 text-center">
             <Shield className="w-8 h-8 mx-auto text-gray-300 mb-2" />
             <p className="text-gray-500">
@@ -236,7 +228,7 @@ export default function SubAdminsPage() {
                   </tr>
                 </thead>
                 <tbody>
-                  {filteredSubAdmins.map((admin) => (
+                  {filteredSubAdmins?.map((admin) => (
                     <tr key={admin.id} className="border-b hover:bg-gray-50">
                       <td className="px-4 py-3">{admin.name}</td>
                       <td className="px-4 py-3 text-sm">{admin.email}</td>
@@ -255,15 +247,15 @@ export default function SubAdminsPage() {
                       <td className="px-4 py-3">
                         <span
                           className={`px-2 py-0.5 rounded text-xs ${
-                            admin.status === 'active'
+                            admin.isActive
                               ? 'bg-green-100 text-green-700'
                               : 'bg-red-100 text-red-700'
                           }`}
                         >
-                          {admin.status}
+                          {admin.isActive?"active":"inactive"}
                         </span>
                       </td>
-                      <td className="px-4 py-3 text-sm text-gray-500">{admin.lastLogin}</td>
+                      <td className="px-4 py-3 text-sm text-gray-500">{admin.updatedAt}</td>
                       <td className="px-4 py-3">
                         <div className="flex justify-end gap-2">
                           <button
@@ -273,8 +265,8 @@ export default function SubAdminsPage() {
                             <Edit2 className="w-4 h-4" />
                           </button>
                           <button 
-                            onClick={() => handleDeactivate(admin.id)}
-                            className={admin.status === 'active' 
+                            onClick={() => handleDeactivate(admin._id)}
+                            className={admin.isActive
                               ? 'text-red-600 hover:text-red-800' 
                               : 'text-green-600 hover:text-green-800'}
                           >
@@ -290,7 +282,7 @@ export default function SubAdminsPage() {
 
             {/* Mobile view - Cards */}
             <div className="md:hidden">
-              {filteredSubAdmins.map((admin) => (
+              {filteredSubAdmins?.map((admin) => (
                 <div key={admin.id} className="p-3 border-b">
                   <div className="flex justify-between items-start">
                     <div>
@@ -315,7 +307,7 @@ export default function SubAdminsPage() {
                             Edit
                           </button>
                           <button
-                            onClick={() => handleDeactivate(admin.id)}
+                            onClick={() => handleDeactivate(admin._id)}
                             className={`flex items-center w-full px-3 py-2 text-xs text-left hover:bg-gray-50 ${
                               admin.status === 'active' ? 'text-red-600' : 'text-green-600'
                             }`}

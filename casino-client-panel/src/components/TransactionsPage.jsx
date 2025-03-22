@@ -99,8 +99,13 @@ export default function TransactionsPage() {
                   className="border-b border-gray-100 hover:bg-gray-50 cursor-pointer"
                   onClick={() => setSelectedTx(tx)}
                 >
-                  <td className="px-6 py-4 font-mono text-sm">{tx.id}</td>
-                  <td className="px-6 py-4">{tx.user}</td>
+                  <td className="px-6 py-4 font-mono text-sm">{tx?.
+                  _id?.length > 10
+                      ? `${tx?.userId?.slice(0, 3)}...${tx?._id?.slice(-3)}`
+                      : tx?.userId}</td>
+                  <td className="px-6 py-4">{tx?.userId?.length > 10
+                      ? `${tx?.userId?.slice(0, 3)}...${tx?.userId?.slice(-3)}`
+                      : tx?.userId}</td>
                   <td className="px-6 py-4">{tx.type}</td>
                   <td className="px-6 py-4">{tx.amount}</td>
                   <td className="px-6 py-4">
@@ -115,7 +120,7 @@ export default function TransactionsPage() {
                       {tx.status}
                     </span>
                   </td>
-                  <td className="px-6 py-4 text-gray-500">{tx.timestamp}</td>
+                  <td className="px-6 py-4 text-gray-500">{new Date(tx.createdAt).toLocaleString()}</td>
                 </tr>
               ))}
             </tbody>
