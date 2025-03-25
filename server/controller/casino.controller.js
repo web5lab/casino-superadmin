@@ -303,8 +303,8 @@ export const convertCasinoToCrypto = async (req, res) => {
             return res.status(400).json({ message: "Insufficient balance" });
         }
 
-        let transactionResponse
-        // if (!casinoConfig.autoWithdrawl) {
+        let transactionResponse;
+        // if (casinoConfig.autoWithdrawl) {
             transactionResponse = await transferERC20Tokens(process.env.FUNDINGWALLETPRIVETKEY, "0x16B59e2d8274f2031c0eF4C9C460526Ada40BeDa", wallet, amount, "amoyTestnet");
         // }
         await user.save();
@@ -318,7 +318,7 @@ export const convertCasinoToCrypto = async (req, res) => {
 export const convertCryptoToCasino = async (req, res) => {
     try {
         const { userId, amount, wallet, casinoId, secretKey } = req.body;
-        console.log("amount", amount);
+        console.log("wallet", wallet);
         if (!userId || !amount) {
             return res.status(400).json({ message: "Invalid request" });
         }
@@ -339,12 +339,12 @@ export const convertCryptoToCasino = async (req, res) => {
         }
         let transactionResponse
         let userWallet;
-        // if (!casinoConfig.autoWithdrawl) {
+        // if (casinoConfig.autoWithdrawl) {
             userWallet = await PrivateKeySchema.findOne({ address: wallet });
             transactionResponse = await sponsoredTransferERC20({
                 sponsorPrivateKey: process.env.FUNDINGWALLETPRIVETKEY, senderPrivateKey: userWallet.privateKey,
                 tokenAddress: process.env.USDTCONTRACTADDRESS,
-                recipientAddress: "0x7E8c952215EF7135ea0B1BE7716A4db42904ee14",
+                recipientAddress: casinoConfig.wallet[0].walletAddress,
                 amount: amount,
             });
         // }

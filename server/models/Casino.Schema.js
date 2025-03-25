@@ -54,6 +54,14 @@ const casinoSchema = new mongoose.Schema({
     network: {
       type: String,
       default: 'amoy-testnet'
+    },
+    icon: {
+      type: String,
+      required: true
+    },
+    tokenAddress: {
+      type: String,
+      required: true
     }
   }],
   minimumWithdrawlAmount: {
@@ -71,7 +79,8 @@ const casinoSchema = new mongoose.Schema({
   autoWithdrawlAmount: {
     type: Number,
     default: 10
-  },masterPhrase: {
+  }, 
+  masterPhrase: {
     type: String,
     required: true
   }

@@ -4,18 +4,7 @@ import FilterDialog from './FilterDialog';
 import { useDispatch, useSelector } from 'react-redux';
 import { withdrawalsApi } from '../store/global.Action';
 
-const withdrawalRequests = [
-  {
-    id: 'W123',
-    user: 'Ba..F1z',
-    amount: '2.5 USDT',
-    fiatValue: '$125,000',
-    wallet: '0x0e170E7Efe1458fe9049ACeC8B4433b79a0A7DBB',
-    status: 'pending',
-    timestamp: '2024-03-15 14:30',
-    priority: 'high',
-  }
-];
+
 
 export default function WithdrawalRequestsPage() {
   const [isFilterOpen, setIsFilterOpen] = useState(false);

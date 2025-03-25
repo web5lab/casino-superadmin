@@ -28,7 +28,6 @@ router.post('/login', [
     if (!isMatch) {
       return res.status(401).json({ message: 'Invalid credentials' });
     }
-
     user.lastActive = new Date();
     await user.save();
 
@@ -40,7 +39,7 @@ router.post('/login', [
 
     let casinoData;
     if (user.casinoId) {
-     casinoData = await CasinoSchema.findById(user.casinoId).select('-masterPhrase, -wallet');
+     casinoData = await CasinoSchema.findById(user.casinoId).select('-masterPhrase');
     }
 
     res.json({

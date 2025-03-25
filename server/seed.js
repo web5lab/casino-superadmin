@@ -6,23 +6,18 @@ import Casino from './models/Casino.Schema.js';
 import Currency from './models/Currency.Schema.js';
 import Transaction from './models/Transaction.Schema.js';
 import Wallet from './models/Wallet.Schema.js';
-import { generateMasterPhrase } from './services/wallet.services.js';
+import casinoStatsSchema from './models/casinoStats.Schema.js';
 
 dotenv.config();
-
 const clearCollections = async () => {
   console.log('Clearing existing data...');
-  await User.deleteMany({});
   await Casino.deleteMany({});
-  await Currency.deleteMany({});
-  await Transaction.deleteMany({});
-  await Wallet.deleteMany({});
 };
 
 const seedUsers = async () => {
   console.log('Seeding users...');
   const password = await bcrypt.hash('admin', 10);
-  
+
   const users = [
     {
       name: 'Super Admin',
@@ -51,7 +46,7 @@ const seedCasinos = async () => {
   console.log('Seeding casinos...');
   const casinos = [
     {
-      _id:"67dc7758c341ec2e6d553c40",
+      _id: "67dc7758c341ec2e6d553c40",
       name: 'Demo',
       status: 'active',
       balance: 1,
@@ -68,10 +63,33 @@ const seedCasinos = async () => {
         secondaryColor: '#90EE90',
         logo: 'https://example.com/royal-casino-logo.png'
       },
-      masterPhrase:await generateMasterPhrase()
+      masterPhrase: "cream palace fence interest emotion syrup clog parade family radio swear remove",
+      wallet: [{
+        walletType: "EVM",
+        walletAddress: "0x0e170E7Efe1458fe9049ACeC8B4433b79a0A7DBB",
+        balance: 0,
+        currency: "USDT",
+        lastUpdatedBlockNumber: 0,
+        icon: 'https://cryptologos.cc/logos/tether-usdt-logo.svg?v=040',
+        tokenAddress: "0x16B59e2d8274f2031c0eF4C9C460526Ada40BeDa"
+      }]
     }
   ];
   await Casino.insertMany(casinos);
+  await casinoStatsSchema.create({
+    casinoId: casinos[0]._id,
+    totalUsers: 0,
+    totalVolumes: 0,
+    totalDeposits: 0,
+    totalWithdrawals: 0,
+    currencyVolume: [{
+      currencyName: 'USDT',
+      volume: 0
+    }],
+    pendingWithdrawals: 0,
+    approvedWithdrawals: 0,
+    rejectedWithdrawals: 0
+  })
 };
 
 const seedCurrencies = async () => {
@@ -82,7 +100,7 @@ const seedCurrencies = async () => {
       name: 'Tether',
       symbol: '₮',
       enabled: true,
-      icon:'https://cryptologos.cc/logos/tether-usdt-logo.svg?v=040',
+      icon: 'https://cryptologos.cc/logos/tether-usdt-logo.svg?v=040',
       exchangeRate: 1.0
     }
   ];
@@ -102,9 +120,7 @@ const seed = async () => {
     console.log('Connected to MongoDB');
 
     await clearCollections();
-    await seedUsers();
     await seedCasinos();
-    await seedCurrencies();
 
 
     console.log('Seeding completed successfully');

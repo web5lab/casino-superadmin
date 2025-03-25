@@ -1,5 +1,7 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Wallet, ArrowUpRight, ArrowDownRight, RefreshCw, Copy, CheckCircle, ArrowDown, ArrowUp } from 'lucide-react';
+import { useSelector } from 'react-redux';
+import { getERC20Balance } from '../store/global.Action';
 
 const wallets = [
   {
@@ -18,12 +20,36 @@ export default function WalletPage() {
   const [activeModal, setActiveModal] = useState(null);
   const [copiedAddress, setCopiedAddress] = useState(null);
   const [selectedWallet, setSelectedWallet] = useState(null);
+  const casinoData = useSelector(state => state.global.profile.user.casinoData)
+  const [walletBalance, setwalletBalance] = useState(0)
+  const [loading, setLoading] = useState(false);
 
+  const handleRefresh = async () => {
+    setLoading(true);
+    try {
+      await fetchBalance();
+    } finally {
+      setLoading(false);
+    }
+  };
   const handleCopyAddress = (address, symbol) => {
     navigator.clipboard.writeText(address);
     setCopiedAddress(symbol);
     setTimeout(() => setCopiedAddress(null), 2000);
   };
+
+  useEffect(() => {
+    if (casinoData.wallet.length > 0) {
+      fetchBalance();
+    }
+  }, [])
+
+
+
+  const fetchBalance = async () => {
+    const bal = await getERC20Balance({ address: casinoData.wallet[0].walletAddress, tokenAddress: "0x16B59e2d8274f2031c0eF4C9C460526Ada40BeDa" });
+    setwalletBalance(Number(bal.balanceFormatted));
+  }
 
   const openModal = (type, wallet) => {
     setSelectedWallet(wallet);
@@ -58,9 +84,9 @@ export default function WalletPage() {
               <div className="border border-gray-200 rounded-lg p-4">
                 <p className="text-sm text-gray-500 mb-2">Your {selectedWallet.currency} Address</p>
                 <div className="flex items-center justify-between bg-gray-50 p-3 rounded">
-                  <p className="text-sm font-mono truncate">{selectedWallet.address}</p>
+                  <p className="text-sm font-mono truncate">{selectedWallet.walletAddress}</p>
                   <button
-                    onClick={() => handleCopyAddress(selectedWallet.address, selectedWallet.symbol)}
+                    onClick={() => handleCopyAddress(selectedWallet.walletAddress)}
                     className="text-blue-600 hover:text-blue-800 ml-2"
                   >
                     {copiedAddress === selectedWallet.symbol ? <CheckCircle className="w-5 h-5" /> : <Copy className="w-5 h-5" />}
@@ -88,11 +114,11 @@ export default function WalletPage() {
                     placeholder="0.00"
                   />
                   <div className="bg-gray-100 border border-gray-300 border-l-0 rounded-r-lg p-2 flex items-center">
-                    {selectedWallet.symbol}
+                    USDT
                   </div>
                 </div>
                 <p className="text-sm text-gray-500 mt-1">
-                  Available: {selectedWallet.balance} {selectedWallet.symbol}
+                  Available: {walletBalance} USDT
                 </p>
               </div>
 
@@ -119,14 +145,20 @@ export default function WalletPage() {
     <div className="p-6 space-y-6">
       <div className="flex justify-between items-center">
         <h1 className="text-2xl font-semibold text-gray-800">Wallet</h1>
-        <button className="flex items-center gap-2 px-4 py-2 bg-white border border-gray-200 rounded-lg hover:bg-gray-50">
-          <RefreshCw className="w-4 h-4" />
-          Refresh Balances
+        <button
+          className="flex items-center gap-2 px-4 py-2 bg-white border border-gray-200 rounded-lg hover:bg-gray-50 transition-all"
+          onClick={handleRefresh}
+          disabled={loading}
+        >
+          <RefreshCw
+            className={`w-4 h-4 ${loading ? "animate-spin" : ""}`}
+          />
+          {loading ? "Refreshing..." : "Refresh Balances"}
         </button>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {wallets.map((wallet) => (
+        {casinoData?.wallet?.map((wallet) => (
           <div key={wallet.symbol} className="bg-white p-6 rounded-xl shadow-sm">
             <div className="flex items-center justify-between mb-4">
               <div className="flex items-center gap-3">
@@ -137,13 +169,16 @@ export default function WalletPage() {
                   <h3 className="font-medium">{wallet.currency}</h3>
                 </div>
               </div>
-              
+
             </div>
             <div className="space-y-1">
-              <p className="text-2xl font-bold">{wallet.balance} {wallet.symbol}</p>
-              <p className="text-gray-500">{50000 * 89} INR</p>
+              <p className="text-2xl font-bold">{walletBalance} USDT</p>
+              <p className="text-gray-500">{walletBalance * 89} INR</p>
             </div>
             <div className="mt-4 flex gap-2">
+              <button className="flex-1 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700" onClick={() => openModal('deposit', wallet)}>
+                Deposit
+              </button>
 
               <button
                 className="flex-1 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 flex items-center justify-center gap-1"

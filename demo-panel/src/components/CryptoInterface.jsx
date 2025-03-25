@@ -22,7 +22,7 @@ export default function CryptoInterface() {
   const [casinoBalance, setcasinoBalance] = useState(0)
   const [casinoConfig, setcasinoConfig] = useState()
   const [userWallet, setuserWallet] = useState()
-  const [cryptoPrice, setcryptoPrice] = useState(0.87)
+  const [cryptoPrice, setcryptoPrice] = useState(1)
   const [cryptoSymbol, setcryptoSymbol] = useState("usdt");
   const [cryptoIcon, setcryptoIcon] = useState(<img src='https://cryptologos.cc/logos/tether-usdt-logo.svg' className="w-6 h-6 bg-green-500 rounded-full flex items-center justify-center text-white font-bold text-sm" />)
   const [cryptoName, setcryptoName] = useState("Tether")
@@ -102,6 +102,7 @@ export default function CryptoInterface() {
 
   const handleConvert = async () => {
     try {
+      console.log(conversionType);
       setLoading(true);
       if (!amount || parseFloat(amount) <= 0) return;
       if (conversionType === 'cryptoToCoins') {
