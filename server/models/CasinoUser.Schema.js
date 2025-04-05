@@ -6,6 +6,11 @@ const casinoUserSchema = new mongoose.Schema({
         required: true,
         index: true
     },
+    userId: {
+        type: Number,
+        required: true,
+        index: true
+    },
     casinoId: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Casino',

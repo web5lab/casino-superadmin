@@ -78,10 +78,10 @@ export const getCasinoData = async (platformId) => {
   }
 }
 
-export const getBalance = async ({ apiUrl, secretToken, userId }) => {
+export const getBalance = async ({ apiUrl, secretKey, userId }) => {
   try {
     const response = await axios.post(apiUrl, {
-      secretToken,
+      secretKey,
       userId
     })
     return response?.data?.balance;
@@ -114,6 +114,7 @@ export const convertToCrypto = async ({ userId, amount, wallet, casinoId, curren
 
 export const convertToCasino = async ({ userId, amount, wallet, casinoId, secretKey  }) => {
   try {
+    console.log("convertToCasino", secretKey);
     const response = await axiosInstance.post('/api/users/convert-to-casino', {
       userId, amount, wallet, casinoId, secretKey 
     })

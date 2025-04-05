@@ -45,17 +45,46 @@ const seedUsers = async () => {
 const seedCasinos = async () => {
   console.log('Seeding casinos...');
   const casinos = [
+    // {
+    //   _id: "67dc7758c341ec2e6d553c40",
+    //   name: 'Demo',
+    //   status: 'active',
+    //   balance: 1,
+    //   transactions: 1,
+    //   apiConfig: {
+    //     balanceApi: 'http://localhost:3009/balance',
+    //     userAuthApi: 'http://localhost:3009/user',
+    //     depositApi: 'http://localhost:3009/credit-server',
+    //     deductionApi: 'http://localhost:3009/deduction-server',
+    //     secretKey: 'sk_live_123456789'
+    //   },
+    //   theme: {
+    //     primaryColor: '#FFA500',
+    //     secondaryColor: '#90EE90',
+    //     logo: 'https://example.com/royal-casino-logo.png'
+    //   },
+    //   masterPhrase: "cream palace fence interest emotion syrup clog parade family radio swear remove",
+    //   wallet: [{
+    //     walletType: "EVM",
+    //     walletAddress: "0x0e170E7Efe1458fe9049ACeC8B4433b79a0A7DBB",
+    //     balance: 0,
+    //     currency: "USDT",
+    //     lastUpdatedBlockNumber: 0,
+    //     icon: 'https://cryptologos.cc/logos/tether-usdt-logo.svg?v=040',
+    //     tokenAddress: "0x16B59e2d8274f2031c0eF4C9C460526Ada40BeDa"
+    //   }]
+    // },
     {
-      _id: "67dc7758c341ec2e6d553c40",
-      name: 'Demo',
+      _id: "67dc7758c341ec2e6d553c41",
+      name: 'Royal Casino',
       status: 'active',
       balance: 1,
       transactions: 1,
       apiConfig: {
-        balanceApi: 'http://localhost:3009/balance',
-        userAuthApi: 'http://localhost:3009/user',
-        depositApi: 'http://localhost:3009/credit-server',
-        deductionApi: 'http://localhost:3009/deduction-server',
+        balanceApi: 'http://143.244.138.179:8080/admin-new-apis/crypto/api/get-balance',
+        userAuthApi: 'http://143.244.138.179:8080/admin-new-apis/crypto/api/auth',
+        depositApi: 'http://143.244.138.179:8080/admin-new-apis/crypto/api/credit-balance',
+        deductionApi: 'http://143.244.138.179:8080/admin-new-apis/crypto/api/deduct-balance',
         secretKey: 'sk_live_123456789'
       },
       theme: {
@@ -119,7 +148,7 @@ const seed = async () => {
     });
     console.log('Connected to MongoDB');
 
-    await clearCollections();
+    // await clearCollections();
     await seedCasinos();
 
 

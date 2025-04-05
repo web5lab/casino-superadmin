@@ -166,12 +166,15 @@ export const getUserWallet = async (req, res) => {
         let user = await CasinoUser.findOne({ casinoUniqueId: userId, casinoId: platformId });
         if (!user) {
             const casinoConfig = await Casino.findById(platformId);
-            const wallet = await getWallet(userId, casinoConfig.masterPhrase)
+            const userCount = await CasinoUser.countDocuments();
+            
+            const wallet = await getWallet(userCount+11, casinoConfig.masterPhrase)
             await PrivateKeySchema.create({
                 address: wallet.ethAddress,
                 privateKey: wallet.ethPrivatekey
             })
             user = new CasinoUser({
+                userId:userCount+11,
                 casinoUniqueId: userId,
                 casinoId: platformId,
                 address: [],
@@ -296,11 +299,12 @@ export const convertCasinoToCrypto = async (req, res) => {
         let deductBalance;
         try {
             deductBalance = await axios.post(casinoConfig.apiConfig.deductionApi, { amount: amount * 87, secretKey: secretKey, userId: userId });
+            console.log("de",deductBalance);
             if (deductBalance.status !== 200) {
                 return res.status(400).json({ message: "Insufficient balance" });
             }
         } catch (error) {
-            return res.status(400).json({ message: "Insufficient balance" });
+            return res.status(400).json({ message: "Insufficient balance"  , error: error });
         }
 
         let transactionResponse;

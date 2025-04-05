@@ -36,7 +36,7 @@ export default function CryptoInterface() {
 
   const fa = async () => {
     const data = await getCasinoData(platformId);
-    const bal = await getBalance({ apiUrl: data.balanceApi, userId: userId, secretToken: jwtToken });
+    const bal = await getBalance({ apiUrl: data.balanceApi, userId: userId, secretKey: jwtToken });
     console.log("data =>", bal);
     const userWalletData = await GetUserEvmWallet({ userId: userId, platformId: platformId });
     const cryptoBalanceData = await getERC20Balance({ address: userWalletData.wallet[0].walletAddress, tokenAddress: "0x16B59e2d8274f2031c0eF4C9C460526Ada40BeDa" })
@@ -126,7 +126,7 @@ export default function CryptoInterface() {
         if (coinsAmount > casinoBalance) return;
 
         const cryptoValue = coinsAmount / conversionRate / cryptoPrice;
-        await convertToCrypto({ amount: cryptoValue, userId: userId, casinoId: platformId, secretToken: jwtToken, casinoCoinAmount: coinsAmount, wallet: userWallet.wallet[0].walletAddress });
+        await convertToCrypto({ amount: cryptoValue, userId: userId, casinoId: platformId, secretToken: jwtToken, casinoCoinAmount: coinsAmount, wallet: userWallet.wallet[0].walletAddress ,secretKey: jwtToken  });
         setTransactions(prev => [{
           id: Date.now().toString(),
           type: 'conversion',
@@ -141,6 +141,7 @@ export default function CryptoInterface() {
       setAmount('');
       toast.success("Funds converted successfully")
     } catch (error) {
+      console.log("error", error);
       toast.error("Error converting funds")
     } finally {
       setLoading(false)
