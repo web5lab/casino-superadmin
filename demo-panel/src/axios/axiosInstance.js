@@ -1,11 +1,11 @@
 import axios from "axios";
 
 const axiosInstance = axios.create({
-  baseURL: "http://localhost:5004",
+  baseURL: "https://api.buildonbolt.com",
 });
 
 export const paymentInstance = axios.create({
-  baseURL: "http://localhost:5004",
+  baseURL: "https://api.buildonbolt.com",
 });
 
 axiosInstance.interceptors.response.use(

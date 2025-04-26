@@ -1,20 +1,22 @@
 import React, { useEffect, useState } from 'react';
 import { ChevronDown, Copy, ArrowLeft, AlertCircle, Coins, ArrowUpRight, ArrowDownRight, Clock, History, Repeat, ArrowRight } from 'lucide-react';
 import { useDispatch, useSelector } from 'react-redux';
-import { GetCurrencies, GetWallet } from '../store/global.Action';
+import { GetCurrencies } from '../store/global.Action';
 import { convertToCasino, convertToCrypto, getBalance, getCasinoData, getERC20Balance, GetUserEvmWallet, withdrawCryptoToWallet } from '../utils/utils';
 import toast from 'react-hot-toast';
+import { currenciesSelector } from '../store/global.Selctor';
 
 export default function CryptoInterface() {
   const [mode, setMode] = useState('deposit');
   const [conversionType, setConversionType] = useState('cryptoToCoins'); // New state for conversion direction
   const [selectedNetwork, setSelectedNetwork] = useState('ERC20');
+  const [selectedCrypto, setSelectedCrypto] = useState({})
   const [amount, setAmount] = useState('');
   const [showCryptoDropdown, setShowCryptoDropdown] = useState(false);
   const [showNetworkDropdown, setShowNetworkDropdown] = useState(false);
   const [showTransactions, setShowTransactions] = useState(false);
   const dispatch = useDispatch();
-  const currencies = useSelector(state => state.global.currencies);
+  const currencies = useSelector(currenciesSelector);
   const [jwtToken, setJwtToken] = useState(null);
   const [userId, setUserId] = useState(null);
   const [platformId, setPlatformId] = useState('');
@@ -34,6 +36,12 @@ export default function CryptoInterface() {
     extractFromUrl()
   }, [dispatch]);
 
+  function emitCloseEvent() {
+    window.parent.postMessage(
+      { type: "CUSTOM_IFRAME_CLOSE" },
+      "*" 
+    );
+  }
   const fa = async () => {
     const data = await getCasinoData(platformId);
     const bal = await getBalance({ apiUrl: data.balanceApi, userId: userId, secretKey: jwtToken });
@@ -50,6 +58,13 @@ export default function CryptoInterface() {
       fa();
     }
   }, [platformId]);
+
+  useEffect(() => {
+    if (currencies?.length > 0) {
+      setSelectedCrypto(currencies[0]);
+      setSelectedNetwork(currencies[0].network[0].name);
+    }
+  }, [currencies]);
 
   const extractFromUrl = () => {
     const urlParams = new URLSearchParams(window.location.search);
@@ -126,7 +141,7 @@ export default function CryptoInterface() {
         if (coinsAmount > casinoBalance) return;
 
         const cryptoValue = coinsAmount / conversionRate / cryptoPrice;
-        await convertToCrypto({ amount: cryptoValue, userId: userId, casinoId: platformId, secretToken: jwtToken, casinoCoinAmount: coinsAmount, wallet: userWallet.wallet[0].walletAddress ,secretKey: jwtToken  });
+        await convertToCrypto({ amount: cryptoValue, userId: userId, casinoId: platformId, secretToken: jwtToken, casinoCoinAmount: coinsAmount, wallet: userWallet.wallet[0].walletAddress, secretKey: jwtToken });
         setTransactions(prev => [{
           id: Date.now().toString(),
           type: 'conversion',
@@ -211,7 +226,7 @@ export default function CryptoInterface() {
         {/* Header */}
         <div className="flex items-center mb-6">
           <button
-            onClick={() => { }}
+            onClick={() => { emitCloseEvent() }}
             className="p-2 hover:bg-gray-700/50 rounded-full transition-all duration-200 hover:scale-105"
           >
             <ArrowLeft className="w-6 h-6" />
@@ -476,18 +491,20 @@ export default function CryptoInterface() {
                   </div>
 
                   {showCryptoDropdown && (
-                    <div className="bg-gray-700/90 rounded-lg overflow-hidden z-10 border border-gray-600/20 shadow-lg mb-4">
+                    <div className="bg-grey-700/90 rounded-lg overflow-hidden z-10 border border-gray-600/20 shadow-lg mb-4">
                       {currencies?.map((crypto) => (
                         <button
-                          key={crypto.symbol}
+                          key={crypto._id}
                           onClick={() => {
                             setSelectedCrypto(crypto);
-                            setSelectedNetwork(crypto.networks[0]);
+                            setcryptoSymbol(crypto.code);
+                            setcryptoName(crypto.name);
+                            setSelectedNetwork(crypto.network[0].name);
                             setShowCryptoDropdown(false);
                           }}
                           className="w-full flex items-center gap-3 p-3 hover:bg-gray-600/50 transition-all"
                         >
-                          <img src={crypto.icon} alt="" className="w-6 h-6" />
+                          <img crossorigin="anonymous" src={crypto.icon} alt="" className="w-6 h-6" />
                           <span className="font-medium">{crypto.name}</span>
                         </button>
                       ))}
@@ -507,18 +524,19 @@ export default function CryptoInterface() {
 
                   {showNetworkDropdown && (
                     <div className="bg-gray-700/90 rounded-lg overflow-hidden z-10 border border-gray-600/20 shadow-lg mt-2">
-                      {/* {selectedCrypto.networks.map((network) => (
+                      {console.log("selectedCrypto", selectedCrypto)}
+                      {selectedCrypto.network.map((network) => (
                         <button
-                          key={network}
+                          key={network._id}
                           onClick={() => {
-                            setSelectedNetwork(network);
+                            setSelectedNetwork(network.name);
                             setShowNetworkDropdown(false);
                           }}
                           className="w-full p-3 text-left hover:bg-gray-600/50 transition-all"
                         >
-                          {network}
+                          {network.name}
                         </button>
-                      ))} */}
+                      ))}
                     </div>
                   )}
                 </div>
@@ -584,7 +602,9 @@ export default function CryptoInterface() {
                           key={crypto.symbol}
                           onClick={() => {
                             setSelectedCrypto(crypto);
-                            setSelectedNetwork(crypto.networks[0]);
+                            setcryptoSymbol(crypto.code);
+                            setcryptoName(crypto.name);
+                            setSelectedNetwork(crypto.network[0].name);
                             setShowCryptoDropdown(false);
                           }}
                           className="w-full flex items-center gap-3 p-3 hover:bg-gray-600/50 transition-all"

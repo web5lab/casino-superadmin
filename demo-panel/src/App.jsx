@@ -8,12 +8,11 @@ import { useDispatch } from 'react-redux';
 import { GetUserData } from './store/global.Action';
 
 function App() {
-  const dispatch = useDispatch()
+  const dispatch = useDispatch();
   
   useEffect(() => {
     dispatch(GetUserData())
   }, [])
-  
   return (
     <BrowserRouter>
       <Routes>

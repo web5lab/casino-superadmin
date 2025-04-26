@@ -122,6 +122,7 @@ const seedCasinos = async () => {
 };
 
 const seedCurrencies = async () => {
+  await Currency.deleteMany({});
   console.log('Seeding currencies...');
   const currencies = [
     {
@@ -130,7 +131,17 @@ const seedCurrencies = async () => {
       symbol: '₮',
       enabled: true,
       icon: 'https://cryptologos.cc/logos/tether-usdt-logo.svg?v=040',
-      exchangeRate: 1.0
+      exchangeRate: 1.0,
+      network: [{ id: "1", name: "Ethereum" }, { id: "2", name: "Tron" }, { id: "3", name: "Binance" }, { id: "4", name: "Polygon" }],
+    },
+    {
+      code: 'BUSD',
+      name: 'BUSD',
+      symbol: '₮',
+      enabled: true,
+      icon: 'https://cryptologos.cc/logos/tether-usdt-logo.svg?v=040',
+      exchangeRate: 1.0,
+      network: [{ id: "1", name: "Ethereum" }, { id: "2", name: "Tron" }, { id: "3", name: "Binance" }, { id: "4", name: "Polygon" }],
     }
   ];
 
@@ -149,7 +160,8 @@ const seed = async () => {
     console.log('Connected to MongoDB');
 
     // await clearCollections();
-    await seedCasinos();
+    // await seedCasinos();
+    await seedCurrencies();
 
 
     console.log('Seeding completed successfully');
