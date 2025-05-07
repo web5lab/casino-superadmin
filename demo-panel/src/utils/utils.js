@@ -28,7 +28,7 @@ const ERC20_ABI = [
 
 // RPC URLs for different networks
 const RPC_URLS = {
-  ethereum: 'https://eth-mainnet.g.alchemy.com/v2/YOUR_ALCHEMY_KEY',
+  ethereum: 'https://ethereum-rpc.publicnode.com',
   bsc: 'https://bsc-dataseed.binance.org',
   polygon: 'https://polygon-rpc.com',
   arbitrum: 'https://arb1.arbitrum.io/rpc',
